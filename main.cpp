@@ -4,12 +4,6 @@
 #include "server.hpp"
 #include "config_parser.h"
 
-void config_handler(NginxConfig* config, std::string& port) {
-  for(auto statement: config->statements_) {
-    if(statement->child_block_ != NULL) config_handler(statement->child_block_);
-    if(statement->tokens_[0] == "listen") port = statement->tokens_[1]
-  }
-}
 
 int main(int argc, char* argv[])
 {
@@ -25,13 +19,13 @@ int main(int argc, char* argv[])
     std::string port;
     
     if (config_parser.Parse(argv[1], &config)) {
-      config_handler(&config, port);
+      port = config.statements_[0]->tokens_[1];
+      std::cout << port << std::endl;
     }
     else {
       std::cerr << "Error: Could not parse config file.\n";
       return 1;
     }
-
     http::server::server s("localhost", port);
     s.run();
   }
