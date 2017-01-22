@@ -19,6 +19,7 @@ void connection::start() {
 }
 
 void connection::do_read() {
+  std::cout << "start to read!" << std::endl;
 	auto self(shared_from_this());
 	socket_.async_read_some(boost::asio::buffer(buffer_),
       [this, self](boost::system::error_code ec, std::size_t bytes_transferred)
@@ -26,12 +27,9 @@ void connection::do_read() {
         if (!ec)
         {
           reply_content.append(buffer_.data(), buffer_.data() + bytes_transferred);
-          if(buffer_[bytes_transferred - 1] == '\n'
-          	&& buffer_[bytes_transferred - 2] == '\r'
-          	&& buffer_[bytes_transferred - 3] == '\n'
-          	&& buffer_[bytes_transferred - 4] == '\r') {
+          if(reply_content.substr(reply_content.size() - 4, 4) == "\r\n\r\n") {
           		do_write();
-          	}
+          }
           else do_read();
         }
       });

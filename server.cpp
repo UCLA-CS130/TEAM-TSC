@@ -31,6 +31,7 @@ void server::do_accept()
       [this](boost::system::error_code ec)
       {
         if (!ec) {
+          std::cout << "new connection!" << std::endl;
         	std::make_shared<connection>(std::move(socket_))->start();
         }
 

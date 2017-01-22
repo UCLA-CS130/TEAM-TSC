@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
 
     http::server::server s(argv[1], argv[2]);
 
+    std::cout << "server running" << std::endl;
     s.run();
   }
   catch (std::exception& e) {
