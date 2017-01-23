@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
       std::cerr << "Error: Could not parse config file.\n";
       return 1;
     }
-    http::server::server s("localhost", port);
+    http::server::server s("0.0.0.0", port);
     s.run();
   }
   catch (std::exception& e) {
