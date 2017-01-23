@@ -26,6 +26,7 @@ void connection::do_read() {
         if (!ec)
         {
           reply_content.append(buffer_.data(), buffer_.data() + bytes_transferred);
+	  //TODO: Fix bug: Error if client sends string with size < 3
           if(reply_content.substr(reply_content.size() - 4, 4) == "\r\n\r\n") {
           		do_write();
           }
@@ -43,7 +44,7 @@ void connection::do_write() {
 	from_buffers.push_back(boost::asio::buffer(std::to_string(reply_content.size())));
 	from_buffers.push_back(boost::asio::buffer("\r\n"));
 
-	from_buffers.push_back(boost::asio::buffer("Content-Type: text/plain\r\n"));
+	from_buffers.push_back(boost::asio::buffer("Content-Type: text/plain\r\n\r\n"));
 
 	from_buffers.push_back(boost::asio::buffer(reply_content));
 
