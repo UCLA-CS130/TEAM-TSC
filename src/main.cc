@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
-#include "server.hpp"
+#include "server.h"
 #include "config_parser.h"
 
 
@@ -20,7 +20,6 @@ int main(int argc, char* argv[])
     
     if (config_parser.Parse(argv[1], &config)) {
       port = config.statements_[0]->tokens_[1];
-      std::cout << port << std::endl;
     }
     else {
       std::cerr << "Error: Could not parse config file.\n";
