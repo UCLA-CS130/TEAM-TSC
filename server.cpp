@@ -31,12 +31,12 @@ void server::do_accept()
       [this](boost::system::error_code ec)
       {
         if (!ec) {
-        	std::make_shared<connection>(std::move(socket_))->start();
+	  std::make_shared<connection>(std::move(socket_))->start();
         }
 
         do_accept();
       });
 }
 
-}
-}
+} //server
+} //http

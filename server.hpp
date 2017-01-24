@@ -11,22 +11,22 @@ namespace server {
 class server 
 {
 public:
-	server(const server&) = delete;
-	server& operator=(const server&) = delete;
+  server(const server&) = delete;
+  server& operator=(const server&) = delete;
 
-	explicit server(const std::string& address, const std::string& port);
+  explicit server(const std::string& address, const std::string& port);
 
-	void run();
+  void run();
 
 private:
 
-	void do_accept();
+  void do_accept();
 
-	boost::asio::io_service io_service_;
+  boost::asio::io_service io_service_;
 
-	boost::asio::ip::tcp::acceptor acceptor_;
+  boost::asio::ip::tcp::acceptor acceptor_;
 
-	boost::asio::ip::tcp::socket socket_;
+  boost::asio::ip::tcp::socket socket_;
 };
 
 
