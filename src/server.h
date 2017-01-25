@@ -3,7 +3,7 @@
 
 #include <boost/asio.hpp>
 #include <string>
-#include "connection.hpp"
+#include "connection.h"
 
 namespace http {
 namespace server {
