@@ -2,6 +2,8 @@ CXX=g++
 CXXOPTIMIZE= -O2
 CXXFLAGS= -g -Wall -pthread -std=c++0x $(CXXOPTIMIZE)
 OBJ = build/main.o build/config_parser.o build/connection.o build/server.o
+GTEST_DIR=googletest/googletest
+TEST_DIR=tests
 
 all: build/webserver
 
@@ -22,3 +24,10 @@ build/server.o: src/server.cc src/server.h
 
 clean:
 	rm -rf $(OBJ) build/webserver
+build_tests: $(wildcard tests/**/*) $(wildcard src/**/*)
+	$(CXX) -std=c++0x -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
+	ar -rv libgtest.a gtest-all.o
+	g++ -std=c++0x -isystem ${GTEST_DIR}/include -pthread tests/connection_test.cc src/connection.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o tests/connection_test
+
+test:
+	$(TEST_DIR)/connection_test
