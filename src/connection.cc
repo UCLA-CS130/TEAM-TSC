@@ -37,18 +37,17 @@ void connection::do_read() {
 
 void connection::do_write() {
 	auto self(shared_from_this());
-	std::vector<boost::asio::const_buffer> from_buffers;
-	from_buffers.push_back(boost::asio::buffer(ok));
 
-	from_buffers.push_back(boost::asio::buffer("Content-Length: "));
-	from_buffers.push_back(boost::asio::buffer(std::to_string(reply_content.size())));
-	from_buffers.push_back(boost::asio::buffer("\r\n"));
+  //Browser display strange things here if multiple push_back operations on buffer are used. 
+  std::string data_to_send =   ok
+                          + "Content-Length: "
+                          + std::to_string(reply_content.size())
+                          + "\r\nContent-Type: text/plain\r\n\r\n"
+                          + reply_content;
 
-	from_buffers.push_back(boost::asio::buffer("Content-Type: text/plain\r\n\r\n"));
 
-	from_buffers.push_back(boost::asio::buffer(reply_content));
 
-	boost::asio::async_write(socket_, from_buffers,
+	boost::asio::async_write(socket_, boost::asio::buffer(data_to_send),
       [this, self](boost::system::error_code ec, std::size_t)
       {
         if (!ec) {
