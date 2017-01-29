@@ -19,7 +19,11 @@ int main(int argc, char* argv[])
     std::string port;
     
     if (config_parser.Parse(argv[1], &config)) {
-      port = config.statements_[0]->tokens_[1];
+      port = config.GetConfigPort();
+      if(port==""){
+        std::cerr<<"Error: Invalid port number in config file.\n";
+        return 1;
+      }
     }
     else {
       std::cerr << "Error: Could not parse config file.\n";
