@@ -31,6 +31,9 @@ build_tests: $(wildcard tests/**/*) $(wildcard src/**/*)
 	$(CXX) -std=c++0x -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -pthread -c ${GTEST_DIR}/src/gtest-all.cc
 	ar -rv libgtest.a gtest-all.o
 	g++ -std=c++0x -isystem ${GTEST_DIR}/include -pthread tests/connection_test.cc src/connection.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o tests/connection_test
+	g++ -std=c++0x -isystem ${GTEST_DIR}/include -pthread tests/config_parser_test.cc src/config_parser.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o tests/config_parser_test
+
 
 test:
 	$(TEST_DIR)/connection_test
+	$(TEST_DIR)/config_parser_test
