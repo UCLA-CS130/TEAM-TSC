@@ -1,7 +1,7 @@
 CXX=g++
 CXXOPTIMIZE= -O2
 CXXFLAGS= -g -Wall -pthread -std=c++0x $(CXXOPTIMIZE)
-OBJ = build/main.o build/config_parser.o build/connection.o build/server.o
+OBJ = build/main.o build/config_parser.o build/connection.o build/server.o build/config_handler.o 
 GTEST_DIR=googletest/googletest
 TEST_DIR=tests
 
@@ -20,6 +20,9 @@ build/connection.o: src/connection.cc src/connection.h
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 build/server.o: src/server.cc src/server.h
+	$(CXX) -o $@ -c $< $(CXXFLAGS)
+
+build/config_handler.o: src/config_handler.cc  src/config_handler.h
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 clean:
