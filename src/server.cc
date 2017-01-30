@@ -5,13 +5,13 @@
 namespace http {
 namespace server {
 
-server::server(const std::string& address, const std::string& port)
+server::server(const config_opts& server_config)
 	: io_service_(),
 	  acceptor_(io_service_),
 	  socket_(io_service_)
 {
   boost::asio::ip::tcp::resolver resolver(io_service_);
-  boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({address, port});
+  boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({server_config.address, server_config.port});
   acceptor_.open(endpoint.protocol());
   acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);

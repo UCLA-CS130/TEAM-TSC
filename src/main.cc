@@ -26,8 +26,7 @@ int main(int argc, char* argv[])
       }
     //We will want to make it so that server takes a config_opts struct as its argument
 
-    port = server_config.port;
-    http::server::server s("0.0.0.0", port);
+    http::server::server s(server_config);
     s.run();
   }
   catch (std::exception& e) {

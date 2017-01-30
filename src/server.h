@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include <string>
 #include "connection.h"
+#include "config_opts.h"
 
 namespace http {
 namespace server {
@@ -14,7 +15,7 @@ public:
   server(const server&) = delete;
   server& operator=(const server&) = delete;
 
-  explicit server(const std::string& address, const std::string& port);
+  explicit server(const config_opts& server_config);
 
   void run();
 
