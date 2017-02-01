@@ -17,9 +17,6 @@
 
 #include "config_parser.h"
 
-const std::string NginxConfig::TOKEN_BEFORE_PORT = "listen";
-const int MAX_PORT = 65535;
-
 std::string NginxConfig::ToString(int depth) {
   std::string serialized_config;
   for (const auto& statement : statements_) {
@@ -28,32 +25,6 @@ std::string NginxConfig::ToString(int depth) {
   return serialized_config;
 }
 
-/* Get the config port number
- * return "" if port string can not be a number or exceed 65535 
- */
-std::string NginxConfig::GetConfigPort()
-{
-  try{
-    for(unsigned int i = 0;i < statements_.size();i++){
-      NginxConfigStatement* statementPtr = statements_[i].get();
-      for(unsigned int j = 0;j < statementPtr->tokens_.size()-1;j++){
-        if(statementPtr->tokens_[j] == TOKEN_BEFORE_PORT){
-          int portNum = std::stoi(statementPtr->tokens_[j+1]);
-          if(portNum <= MAX_PORT && portNum >= 0)  //a valid port number
-            return statementPtr->tokens_[j+1];
-          else return "";
-        }
-      }
-      //shall also check the child block if not null
-      if(statementPtr->child_block_ != nullptr){
-        std::string childReturn = statementPtr->child_block_->GetConfigPort();
-        if(childReturn != "")return childReturn;
-     }
-    }
-  }
-   catch(std::exception& e){}
-   return "";
-}
 
 std::string NginxConfigStatement::ToString(int depth) {
   std::string serialized_statement;

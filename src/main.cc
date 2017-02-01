@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <string>
 #include <boost/asio.hpp>
 #include "server.h"
@@ -16,17 +17,18 @@ int main(int argc, char* argv[])
 
     std::string port;
 
-    config_opts server_config;
-    config_handler server_config_handler;
+    ConfigHandler server_config_handler;
     
     //Attempt to fill in server_config based on the config file
-    if(!server_config_handler.setup_config(server_config, argv[1]))
-      {
-	return 1;
-      }
+    if(!server_config_handler.setup_config(argv[1])) {
+      std::cerr << "config file is wrong\n";
+      return 1;
+    }
+    config_opts server_config = server_config_handler.get_config_opt();
+
     //We will want to make it so that server takes a config_opts struct as its argument
 
-    http::server::server s(server_config);
+    http::server::Server s(server_config);
     s.run();
   }
   catch (std::exception& e) {

@@ -5,17 +5,20 @@
 #include <string>
 #include "connection.h"
 #include "config_opts.h"
+#include "server_interface.h"
 
 namespace http {
 namespace server {
 
-class server 
+class Server: public ServerInterface
 {
 public:
-  server(const server&) = delete;
-  server& operator=(const server&) = delete;
+  Server(const Server&) = delete;
+  Server& operator=(const Server&) = delete;
 
-  explicit server(const config_opts& server_config);
+  Server(const config_opts& server_config);
+
+  Server();
 
   void run();
 
