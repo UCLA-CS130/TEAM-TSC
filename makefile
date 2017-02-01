@@ -1,39 +1,29 @@
 CXX=g++
-CXXOPTIMIZE= -O2
-CXXFLAGS= -g -Wall -pthread -std=c++0x $(CXXOPTIMIZE)
-OBJ = build/main.o build/config_parser.o build/connection.o build/server.o build/config_handler.o 
+CXXFLAGS= -g -Wall -pthread -std=c++0x -lboost_system
+TESTFLAGS= -std=c++11 -isystem
+
 GTEST_DIR=googletest/googletest
 GMOCK_DIR=googletest/googlemock
-TEST_DIR=tests
+TEST_DIR=unit_tests
 SRC_DIR=src
 BUILD_DIR=build
 
-all: build/webserver
+CCFILE = src/*.cc
+DEPS = src/*.h
 
-$(BUILD_DIR)/webserver: $(OBJ)
-	$(CXX) -o $@ $^ $(CXXFLAGS) -lboost_system
+all: webserver
 
-$(BUILD_DIR)/main.o: $(SRC_DIR)/main.cc $(SRC_DIR)/server.h
-	$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(BUILD_DIR)/config_parser.o: $(SRC_DIR)/config_parser.cc $(SRC_DIR)/config_parser.h
-	$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(BUILD_DIR)/connection.o: $(SRC_DIR)/connection.cc $(SRC_DIR)/connection.h
-	$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(BUILD_DIR)/server.o: $(SRC_DIR)/server.cc $(SRC_DIR)/server.h
-	$(CXX) -o $@ -c $< $(CXXFLAGS)
-
-$(BUILD_DIR)/config_handler.o: $(SRC_DIR)/config_handler.cc  $(SRC_DIR)/config_handler.h
-	$(CXX) -o $@ -c $< $(CXXFLAGS)
+webserver: $(CCFILE) $(DEPS)
+	$(CXX) -o $(BUILD_DIR)/$@ $(CCFILE) $(CXXFLAGS)
 
 .PHONY: clean test
 
 clean:
-	rm -rf $(OBJ) $(BUILD_DIR)/webserver *.a *.o $(TEST_DIR)/connection_test $(TEST_DIR)/server_test $(TEST_DIR)/config_parser_test
+	rm -rf $(BUILD_DIR)/* *.a *.o 
 
-test_build: ${GTEST_DIR}/src/gtest-all.cc ${GMOCK_DIR}/src/gmock-all.cc
+test: gtest_setup config_parser_test connection_test server_test config_handler_test 
+
+gtest_setup:
 	g++ -isystem ${GTEST_DIR}/include -I${GTEST_DIR} \
     	-pthread -c ${GTEST_DIR}/src/gtest-all.cc
 	ar -rv libgtest.a gtest-all.o
@@ -42,22 +32,24 @@ test_build: ${GTEST_DIR}/src/gtest-all.cc ${GMOCK_DIR}/src/gmock-all.cc
     	-isystem ${GMOCK_DIR}/include -I${GMOCK_DIR} \
     	-pthread -c ${GMOCK_DIR}/src/gmock-all.cc
 	ar -rv libgmock.a gtest-all.o gmock-all.o
+	rm gtest-all.o gmock-all.o
 
+connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc
+	$(CXX) $(TESTFLAGS) ${GTEST_DIR}/include -pthread $^ ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o $(BUILD_DIR)/$@
 
-test: test_build $(TEST_DIR)/config_parser_test $(TEST_DIR)/connection_test $(TEST_DIR)/server_test $(TEST_DIR)/config_handler_test 
+config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc
+	$(CXX) $(TESTFLAGS) ${GTEST_DIR}/include -pthread $^ ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o $(BUILD_DIR)/$@
 
-$(TEST_DIR)/connection_test: $(TEST_DIR)/connection_test.cc
-	g++ -std=c++0x -isystem ${GTEST_DIR}/include -pthread $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o $(TEST_DIR)/connection_test
+config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handler.cc $(SRC_DIR)/config_parser.cc
+	$(CXX) $(TESTFLAGS) ${GTEST_DIR}/include -pthread $^ ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o $(BUILD_DIR)/$@
 
-$(TEST_DIR)/config_parser_test: $(SRC_DIR)/config_parser.cc $(TEST_DIR)/config_parser_test.cc
-	g++ -std=c++0x -isystem ${GTEST_DIR}/include -pthread $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o $(TEST_DIR)/config_parser_test
-
-$(TEST_DIR)/config_handler_test: $(SRC_DIR)/config_handler.cc $(TEST_DIR)/config_handler_test.cc
-	g++ -std=c++0x -isystem ${GTEST_DIR}/include -pthread $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handler.cc $(SRC_DIR)/config_parser.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a -lboost_system -o $(TEST_DIR)/config_handler_test
-
-$(TEST_DIR)/server_test: $(TEST_DIR)/server_test.cc 
+server_test: $(TEST_DIR)/server_test.cc 
 	g++ -c -I${GTEST_DIR}/include/ -I${GMOCK_DIR}/include $(TEST_DIR)/server_test.cc ${GTEST_DIR}/src/gtest_main.cc
-	g++ -o $(TEST_DIR)/server_test gtest_main.o server_test.o -L./ -lgmock -lgtest -lboost_system -lpthread
+	g++ -o $(BUILD_DIR)/$@ gtest_main.o server_test.o -L./ -lgmock -lgtest -lboost_system -lpthread
+	rm server_test.o gtest_main.o
+
+#server_test: $(TEST_DIR)/server_test.cc
+#	$(CXX) $(TESTFLAGS) ${GMOCK_DIR}/include -pthread $^ ${GTEST_DIR}/src/gtest_main.cc libgmock.a libgtest.a -lboost_system -o $(BUILD_DIR)/$@
 
 
 

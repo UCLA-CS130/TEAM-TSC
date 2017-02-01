@@ -21,7 +21,6 @@ bool ConfigHandler::setup_config(std::vector<std::shared_ptr<NginxConfigStatemen
 
     for(unsigned int j = 0; j < statementPtr->tokens_.size(); j++) { 
       std::string cur_token = statementPtr->tokens_[j];
-      std::cout << cur_token << std::endl;
 
       if(cur_token == TOKEN_BEFORE_PORT) {
         // should conform to 'port %d format'

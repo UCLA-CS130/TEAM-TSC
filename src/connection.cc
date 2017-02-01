@@ -7,7 +7,7 @@ namespace http {
 namespace server {
 
 const std::string ok =
-  "HTTP/1.0 200 OK\r\n";
+  "HTTP/1.1 200 OK\r\n";
 
 Connection::Connection(boost::asio::ip::tcp::socket socket)
 	: socket_(std::move(socket))
