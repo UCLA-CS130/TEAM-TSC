@@ -54,8 +54,6 @@ config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handle
 server_test: $(TEST_DIR)/server_test.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
-
-# bug!
 test_coverage: TESTARGS += -fprofile-arcs -ftest-coverage
 
 test_coverage: connection_test config_parser_test config_handler_test server_test
