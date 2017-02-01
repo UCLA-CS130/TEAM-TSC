@@ -56,7 +56,7 @@ server_test: $(TEST_DIR)/server_test.cc
 
 test_coverage: TESTARGS += -fprofile-arcs -ftest-coverage
 
-test_coverage: connection_test config_parser_test config_handler_test server_test
+test_coverage: connection_test config_handler_test config_parser_test server_test
 	./$(BUILD_DIR)/connection_test && gcov -r connection.cc;\
 	./$(BUILD_DIR)/config_parser_test && gcov -r config_parser.cc;\
 	./$(BUILD_DIR)/config_handler_test && gcov -r config_handler.cc;\
