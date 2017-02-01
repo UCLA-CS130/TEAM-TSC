@@ -2,8 +2,8 @@
 #define SERVER_TEST_H
 
 #include "../src/server_interface.h"
-#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "../src/config_opts.h"
 
 class MockServer

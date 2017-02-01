@@ -91,6 +91,6 @@ TEST_F(NginxConfigParserTest,recurBlockTest)
 
 TEST_F(NginxConfigParserTest, fileInput) 
 {
-  bool success = parser.Parse("../src/config_file", &outConfig);
+  bool success = parser.Parse("src/config_file", &outConfig);
   EXPECT_TRUE(success);
 }
