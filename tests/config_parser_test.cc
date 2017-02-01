@@ -45,37 +45,6 @@ TEST(NginxConfigToStringTest,NormalInput)
 	EXPECT_EQ(config.ToString(0),"port 1080;\nport 1080;\n");
 }
 
-
-class NginxConfigTest : public :: testing::Test
-{
-protected:
-	bool ValidPort(const std::string configString)
-	{
-		std::stringstream configStream(configString);
-		parser.Parse(&configStream,&outConfig);
-		if(outConfig.GetConfigPort()=="")return false;
-		else return true;
-	}
-
-	NginxConfigParser parser;
-	NginxConfig outConfig;
-};
-
-TEST_F(NginxConfigTest,correctInput)
-{
-	EXPECT_TRUE(ValidPort("listen 8080;"));
-	EXPECT_TRUE(ValidPort("server{listen 80;}"));
-}
-
-TEST_F(NginxConfigTest,invalidPort)
-{
-	EXPECT_FALSE(ValidPort("listen hello;"));
-	EXPECT_FALSE(ValidPort("listen 65536;"));
-}
-
-
-
-
 //unit test for class NginxConfigParser
 class NginxConfigParserTest : public::testing::Test
 {
@@ -122,6 +91,6 @@ TEST_F(NginxConfigParserTest,recurBlockTest)
 
 TEST_F(NginxConfigParserTest, fileInput) 
 {
-  bool success = parser.Parse("example_config", &outConfig);
+  bool success = parser.Parse("../src/config_file", &outConfig);
   EXPECT_TRUE(success);
 }

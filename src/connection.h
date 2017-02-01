@@ -3,20 +3,27 @@
 
 #include <boost/asio.hpp>
 #include <string>
+#include <boost/bind.hpp>
 
 namespace http {
 namespace server {
 
-class connection
-	: public std::enable_shared_from_this<connection>
+class Connection
+	: public std::enable_shared_from_this<Connection>
 {
 public:
-	connection(const connection&) = delete;
-  	connection& operator=(const connection&) = delete;
+	Connection(const Connection&) = delete;
+  	Connection& operator=(const Connection&) = delete;
 
-  	explicit connection(boost::asio::ip::tcp::socket socket);
+  	explicit Connection(boost::asio::ip::tcp::socket socket);
 
   	void start();
+
+  	bool handle_read(const boost::system::error_code& ec, 
+                     std::size_t bytes_transferred);
+
+  	bool handle_write(const boost::system::error_code& ec,
+  					  std::size_t);
 
 private:
 	void do_read();
