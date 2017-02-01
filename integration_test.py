@@ -1,8 +1,8 @@
 import subprocess
 import os
 
-print('make clean and make')
-subprocess.check_call('make clean; make', stdout=subprocess.PIPE, shell=True)
+#print('make clean and make')
+#subprocess.check_call('make clean; make', stdout=subprocess.PIPE, shell=True)
 
 print('start the sebserver')
 webserver = subprocess.Popen(['./build/webserver', 'src/config_file'])
