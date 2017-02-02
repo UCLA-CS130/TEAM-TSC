@@ -15,7 +15,7 @@ bool ConfigHandler::setup_config(const char* filename)
   }
 }
 
-bool ConfigHandler::setup_config(std::vector<std::shared_ptr<NginxConfigStatement>>& statements_) {
+bool ConfigHandler::setup_config(const std::vector<std::shared_ptr<NginxConfigStatement>>& statements_) {
   for (unsigned int i = 0; i < statements_.size(); i++) {
     NginxConfigStatement* statementPtr = statements_[i].get();
 

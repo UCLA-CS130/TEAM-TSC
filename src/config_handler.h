@@ -18,7 +18,7 @@ public:
 
   bool setup_config(const char* filename);
 
-  bool setup_config(std::vector<std::shared_ptr<NginxConfigStatement>>& statements_);
+  bool setup_config(const std::vector<std::shared_ptr<NginxConfigStatement>>& statements_);
 
   config_opts& get_config_opt() {
   	return config_opt;
