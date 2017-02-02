@@ -5,10 +5,9 @@
 #include "gmock/gmock.h"
 #include "../src/config_parser.h"
 
-class MockConfigParser: public ConfigParserInterface {
+class MockNginxConfigParser: public NginxConfigParserInterface {
 public:
-	MOCK_METHOD0(run, void());
-  	MOCK_METHOD0(do_accept, void());
+  	MOCK_METHOD2(Parse, bool(const char* file_name, NginxConfig* config));
 };
 
 #endif // CONFIG_PARSER_MOCK_H

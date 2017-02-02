@@ -48,7 +48,7 @@ connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc
 config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
-config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handler.cc $(SRC_DIR)/config_parser.cc
+config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handler.cc #$(SRC_DIR)/config_parser.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 server_test: $(TEST_DIR)/server_test.cc $(SRC_DIR)/server.cc $(SRC_DIR)/connection.cc

@@ -27,7 +27,6 @@ public:
 class NginxConfigParserInterface {
 public:
   virtual ~NginxConfigParserInterface() {};
-  virtual bool Parse(std::istream* config_file, NginxConfig* config) = 0;
   virtual bool Parse(const char* file_name, NginxConfig* config) = 0;
 };
 
