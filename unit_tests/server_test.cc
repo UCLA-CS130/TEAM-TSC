@@ -1,37 +1,25 @@
-//#include "gtest/gtest.h"
-#include <boost/asio.hpp>
-#include "server_test.h"
-#include "../src/server_interface.h"
+#include "gtest/gtest.h"
+#include "../src/config_opts.h"
+#include "../src/server.h"
 
-using ::testing::AtLeast;
-class TryServer {
-public:
- 	TryServer(ServerInterface* s_): s(s_) {
-  	}
-  
-  	~TryServer() {
-  	}
+class ServerTest: public ::testing::Test {
+protected:
+    bool handle_accept(boost::system::error_code ec) {
+      config_opts server_opt;
+      http::server::Server s(server_opt);
+      return s.handle_accept(ec);
+    }
+};
 
-  	void start() {
-  		s->run();
-  	}	
+TEST_F(ServerTest, HandleAccept) {
+	boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
+  EXPECT_TRUE(handle_accept(ec_success));
 
-private:
-	ServerInterface* s;
-}; // class Foo
-
-
-TEST(Server, ReadAndWrite)
-{
-	MockServer s;
-	TryServer tryserver(&s);
-	tryserver.start();
-
-	// bug here. don't know why run() is never called.
-	EXPECT_CALL(s, run()).Times(0);
-  EXPECT_CALL(s, do_accept()).Times(0);
+  boost::system::error_code ec_connection_aborted = boost::system::errc::make_error_code(boost::system::errc::connection_aborted);
+  EXPECT_FALSE(handle_accept(ec_connection_aborted));
 
 }
+
 
 
 

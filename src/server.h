@@ -5,22 +5,20 @@
 #include <string>
 #include "connection.h"
 #include "config_opts.h"
-#include "server_interface.h"
 
 namespace http {
 namespace server {
 
-class Server: public ServerInterface
-{
+class Server {
 public:
   Server(const Server&) = delete;
   Server& operator=(const Server&) = delete;
 
-  Server(const config_opts& server_config);
-
-  Server();
+  explicit Server(const config_opts& server_config);
 
   void run();
+
+  bool handle_accept(const boost::system::error_code& ec);
 
 private:
 
