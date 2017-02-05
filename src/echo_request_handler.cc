@@ -6,7 +6,7 @@ namespace http {
 namespace server {
 
 EchoRequestHandler::EchoRequestHandler(const std::vector<std::string>& serve_paths_): 
-    RequestHandler(serve_paths_) 
+    serve_paths(serve_paths_) 
 {
 }
 
@@ -21,6 +21,17 @@ EchoRequestHandler::handle_request(const std::string req, reply& rep) {
     rep.headers[0].value = std::to_string(rep.content.size());
     rep.headers[1].name = "Content-Type";
     rep.headers[1].value = "text/plain";
+}
+
+bool 
+EchoRequestHandler::check_serve_path(std::string uri) {
+  for (auto i: serve_paths) {
+    std::size_t found = uri.find(i);
+    if (found == 0) {
+      return true;
+    }
+  }
+  return false;
 }
 
 } // namespace server

@@ -19,8 +19,8 @@ public:
   	Connection& operator=(const Connection&) = delete;
 
   	explicit Connection(boost::asio::ip::tcp::socket socket, 
-                       EchoRequestHandler& echo_request_handler_, 
-                       StaticRequestHandler&  static_request_handler_);
+                        EchoRequestHandler& echo_request_handler_, 
+                        StaticRequestHandler&  static_request_handler_);
 
   	void start();
 

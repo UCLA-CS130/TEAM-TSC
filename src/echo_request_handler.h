@@ -12,9 +12,18 @@ namespace server {
 class EchoRequestHandler: public RequestHandler
 {
  public:
-  EchoRequestHandler(const std::vector<std::string>& valid_paths_);
+  EchoRequestHandler(const std::vector<std::string>& serve_paths_);
   
+  void handle_request(const request& req, reply& rep) {};
+
   void handle_request(const std::string req, reply& rep);
+
+  bool check_serve_path(std::string uri);
+
+ private:
+  std::vector<std::string> serve_paths;
+
+
 };
 
 } // server

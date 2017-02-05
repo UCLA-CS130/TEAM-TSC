@@ -9,7 +9,7 @@ namespace server {
 
 StaticRequestHandler::StaticRequestHandler(const std::vector<std::string>& serve_paths_,
                                            const std::map<std::string, std::string>& uri_root2base_dir_): 
-  RequestHandler(serve_paths_),
+  serve_paths(serve_paths_),
   uri_root2base_dir(uri_root2base_dir_)
 {
 }
@@ -45,7 +45,7 @@ StaticRequestHandler::handle_request(const request& req, reply& rep) {
       break;
     }
   }
-  
+
   // Determine the file extension.
   std::size_t last_slash_pos = request_uri.find_last_of("/");
   std::size_t last_dot_pos = request_uri.find_last_of(".");
@@ -76,6 +76,16 @@ StaticRequestHandler::handle_request(const request& req, reply& rep) {
   rep.headers[1].value = extension2type(extension);
 }
 
+bool 
+StaticRequestHandler::check_serve_path(std::string uri) {
+  for (auto i: serve_paths) {
+    std::size_t found = uri.find(i);
+    if (found == 0) {
+      return true;
+    }
+  }
+  return false;
+}
 
 } // namespace server
 } // namespace http

@@ -13,25 +13,12 @@ namespace server {
 class RequestHandler
 {
 public:
-  RequestHandler(const std::vector<std::string>& serve_paths_): serve_paths(serve_paths_) {};
-
   /// Handle a request and produce a reply.
-  void handle_request(const request& req, reply& rep);
+  virtual void handle_request(const request& req, reply& rep) = 0;
 
-  void handle_request(const std::string req, reply& rep);
+  virtual void handle_request(const std::string req, reply& rep) = 0;
 
-  bool check_serve_path(std::string uri) {
-    for (auto i: serve_paths) {
-      std::size_t found = uri.find(i);
-      if (found == 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-private:
-  std::vector<std::string> serve_paths;
+  virtual bool check_serve_path(std::string uri) = 0;
 
 };
 
