@@ -1,9 +1,12 @@
-#ifndef HTTP_CONNECTION_HPP
-#define HTTP_CONNECTION_HPP
+#ifndef HTTP_CONNECTION_H
+#define HTTP_CONNECTION_H
 
 #include <boost/asio.hpp>
 #include <string>
 #include <boost/bind.hpp>
+#include "echo_request_handler.h"
+#include "static_request_handler.h"
+#include "request_parser.h"
 
 namespace http {
 namespace server {
@@ -12,10 +15,12 @@ class Connection
 	: public std::enable_shared_from_this<Connection>
 {
 public:
-	Connection(const Connection&) = delete;
+	  Connection(const Connection&) = delete;
   	Connection& operator=(const Connection&) = delete;
 
-  	explicit Connection(boost::asio::ip::tcp::socket socket);
+  	explicit Connection(boost::asio::ip::tcp::socket socket, 
+                       EchoRequestHandler& echo_request_handler_, 
+                       StaticRequestHandler&  static_request_handler_);
 
   	void start();
 
@@ -30,11 +35,23 @@ private:
 
 	void do_write();
 
+	/// The handler used to process the incoming request.
+  EchoRequestHandler& echo_request_handler;
+
+  StaticRequestHandler& static_request_handler;
+
+  RequestParser request_parser;
+  
 	boost::asio::ip::tcp::socket socket_;
 
 	std::array<char, 8192> buffer_;
 
-	std::string reply_content;
+	std::string request_string;
+
+  reply reply_;
+
+  request request_;
+
 
 };
 

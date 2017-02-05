@@ -30,7 +30,15 @@ public:
 private:
   config_opts config_opt;
 
-  const std::string TOKEN_BEFORE_PORT = "listen";
+  enum StartTokenType {
+    TOKEN_BEFORE_PORT = 0,
+    TOKEN_BEFORE_HANDLER = 1,
+    TOKEN_SERVER = 2,
+    TOKEN_BASE_PATH = 3,
+    TOKEN_INVALID = 10
+  };
+
+  StartTokenType to_token_type(std::string token);
   const int MAX_PORT = 65535;
 
 };

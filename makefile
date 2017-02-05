@@ -5,7 +5,7 @@ SRC_DIR=src
 BUILD_DIR=build
 
 CXX=g++
-CXXFLAGS= -g -Wall -pthread -std=c++0x -lboost_system
+CXXFLAGS= -g -Wall -pthread -std=c++11 -lboost_system
 TESTFLAGS= -std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include
 TESTARGS= -pthread
 TESTLINK= -L./build/ -lgmock -lgtest -lboost_system -lpthread
