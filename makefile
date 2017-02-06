@@ -25,11 +25,12 @@ test: unit_test integration_test
 integration_test: webserver
 	python integration_test.py
 
-unit_test: gtest_setup config_handler_test config_parser_test server_test connection_test
+unit_test: gtest_setup config_handler_test config_parser_test server_test connection_test request_parser_test
 	./$(BUILD_DIR)/connection_test;\
 	./$(BUILD_DIR)/config_parser_test;\
 	./$(BUILD_DIR)/config_handler_test;\
-	./$(BUILD_DIR)/server_test
+	./$(BUILD_DIR)/server_test;\
+	./$(BUILD_DIR)/request_parser_test
 
 gtest_setup:
 	g++ -isystem ${GTEST_DIR}/include -I${GTEST_DIR} \
@@ -52,6 +53,9 @@ config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handle
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 server_test: $(TEST_DIR)/server_test.cc $(SRC_DIR)/server.cc $(SRC_DIR)/connection.cc
+	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
+
+request_parser_test: $(TEST_DIR)/request_parser_test.cc $(SRC_DIR)/request_parser.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 test_coverage: TESTARGS += -fprofile-arcs -ftest-coverage
