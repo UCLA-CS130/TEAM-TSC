@@ -20,6 +20,7 @@ EchoRequestHandler::handle_request(const std::string req_str, const request& req
     rep.headers[0].value = std::to_string(rep.content.size());
     rep.headers[1].name = "Content-Type";
     rep.headers[1].value = "text/plain";
+    return true;
 }
 
 bool 

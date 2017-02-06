@@ -25,17 +25,17 @@ public:
                      const boost::system::error_code& ec);
 
 private:
-
-  void do_accept();
-
-  EchoRequestHandler echo_request_handler;
-  StaticRequestHandler static_request_handler;
-
   boost::asio::io_service io_service_;
 
   boost::asio::ip::tcp::acceptor acceptor_;
 
   boost::asio::ip::tcp::socket socket_;
+
+  EchoRequestHandler echo_request_handler;
+  
+  StaticRequestHandler static_request_handler;
+
+  void do_accept();
 };
 
 

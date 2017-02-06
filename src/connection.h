@@ -33,18 +33,13 @@ public:
   					          std::size_t);
 
 private:
-	void do_read();
-
-	void do_write();
-
+  boost::asio::ip::tcp::socket socket_;
 	/// The handler used to process the incoming request.
   RequestHandler& echo_request_handler;
 
   RequestHandler& static_request_handler;
 
   RequestParserInterface *request_parser;
-  
-	boost::asio::ip::tcp::socket socket_;
 
 	std::array<char, 8192> buffer_;
 
@@ -53,6 +48,11 @@ private:
   reply reply_;
 
   request request_;
+
+  void do_read();
+
+  void do_write();
+
 };
 
 } // namespace server

@@ -14,9 +14,6 @@ class EchoRequestHandler: public RequestHandler
  public:
   EchoRequestHandler(const std::vector<std::string>& serve_paths_);
   
-  //void handle_request(const request& req, reply& rep) {};
-
-  //void handle_request(const std::string req, reply& rep);
   bool handle_request(const std::string req_str, const request& req, reply& rep);
 
   bool check_serve_path(std::string uri);
