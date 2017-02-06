@@ -17,7 +17,7 @@ class EchoRequestHandler: public RequestHandler
   //void handle_request(const request& req, reply& rep) {};
 
   //void handle_request(const std::string req, reply& rep);
-  void handle_request(const std::string req_str, const request& req, reply& rep);
+  bool handle_request(const std::string req_str, const request& req, reply& rep);
 
   bool check_serve_path(std::string uri);
 

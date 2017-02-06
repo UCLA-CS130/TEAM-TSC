@@ -1,4 +1,3 @@
-
 #include <string>
 #include "echo_request_handler.h"
 
@@ -10,7 +9,7 @@ EchoRequestHandler::EchoRequestHandler(const std::vector<std::string>& serve_pat
 {
 }
 
-void
+bool
 EchoRequestHandler::handle_request(const std::string req_str, const request& req, reply& rep) {
     // Fill out the reply to be sent to the client.
     rep.status = reply::ok;

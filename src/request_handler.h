@@ -15,7 +15,7 @@ class RequestHandler
 public:
   virtual ~RequestHandler() {};
   /// Handle a request and produce a reply.
-  virtual void handle_request(const std::string req_str, const request& req, reply& rep) = 0;
+  virtual bool handle_request(const std::string req_str, const request& req, reply& rep) = 0;
 
   //virtual void handle_request(const std::string req, reply& rep) = 0;
 

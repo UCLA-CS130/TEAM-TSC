@@ -24,12 +24,20 @@ StaticRequestHandler::extension2type(std::string extension) {
   else return "text/plain";
 }
 
-void 
+bool 
 StaticRequestHandler::handle_request(const std::string req_str, const request& req, reply& rep) {
   std::string request_uri = req.uri;
+  for(auto it = uri_root2base_dir.begin(); it != uri_root2base_dir.end(); ++it)
+  {
+      std::cout<<it->first<<" "<<it->second<<std::endl; 
+  }
+
   if (request_uri[request_uri.size() - 1] == '/') {
     request_uri += "index.html";
   }
+
+
+  std::cout<<request_uri<<std::endl;
 
   std::string full_path;
   // Request path must be absolute and not contain "..".
@@ -39,7 +47,8 @@ StaticRequestHandler::handle_request(const std::string req_str, const request& r
       // invalid if open a directory 
       if (request_uri.size() == uri_root.size()) {
         rep = reply::stock_reply(reply::not_found);
-        return;
+        std::cout<<"returned false from here1"<<std::endl;
+        return false;
       }
       full_path = it->second + request_uri.substr(uri_root.size());
       break;
@@ -56,11 +65,14 @@ StaticRequestHandler::handle_request(const std::string req_str, const request& r
   }
 
   // Open the file to send back.
+
+  std::cout<<"full_path: "<<full_path<<std::endl;
   std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
   if (!is)
   {
     rep = reply::stock_reply(reply::not_found);
-    return;
+    std::cout<<"returned false from here2"<<std::endl;
+    return false;
   }
 
   // Fill out the reply to be sent to the client.
@@ -74,6 +86,7 @@ StaticRequestHandler::handle_request(const std::string req_str, const request& r
   rep.headers[0].value = std::to_string(rep.content.size());
   rep.headers[1].name = "Content-Type";
   rep.headers[1].value = extension2type(extension);
+  return true;
 }
 
 bool 

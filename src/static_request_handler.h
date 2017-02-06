@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include "request_handler.h"
+#include "gtest/gtest_prod.h"
 
 namespace http {
 namespace server {
@@ -18,7 +19,7 @@ class StaticRequestHandler: public RequestHandler
 
   //void handle_request(const request& req, reply& rep);
 
-  void handle_request(const std::string req_str, const request& req, reply& rep);
+  bool handle_request(const std::string req_str, const request& req, reply& rep);
   //void handle_request(const std::string req, reply& rep) {};
 
   bool check_serve_path(std::string uri);
@@ -28,6 +29,9 @@ class StaticRequestHandler: public RequestHandler
 
   std::vector<std::string> serve_paths;
 
+  //add FRIEND_TEST so we can test this function
+  friend class StaticRequestHandlerTest;
+  FRIEND_TEST(StaticRequestHandlerTest, extension2TypeTest);
   std::string extension2type(std::string);
 };
 
