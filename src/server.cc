@@ -37,7 +37,7 @@ void Server::do_accept()
 }
 
 // for gtest (bool make test convenient)
-bool Server::handle_accept(RequestParser *request_parser, const boost::system::error_code& ec) {
+bool Server::handle_accept(RequestParserInterface *request_parser, const boost::system::error_code& ec) {
   if (!ec) {
     std::make_shared<Connection>(std::move(socket_), 
                                  echo_request_handler, 
@@ -45,7 +45,6 @@ bool Server::handle_accept(RequestParser *request_parser, const boost::system::e
                                  request_parser)->start();
   }
   else return false;
-  
   do_accept();
   return true;
 }
