@@ -18,8 +18,7 @@ int main(int argc, char* argv[])
 
     std::string port;
 
-    NginxConfigParser config_parser;
-    ConfigHandler server_config_handler(config_parser);
+    ConfigHandler server_config_handler;
     
     //Attempt to fill in server_config based on the config file
     if(!server_config_handler.setup_config(argv[1])) {

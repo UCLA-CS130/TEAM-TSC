@@ -7,7 +7,7 @@
 class ConfigHandler
 {
 public:
-  ConfigHandler(NginxConfigParserInterface& config_parser_): config_parser(config_parser_) {
+ ConfigHandler() : config_parser(parser_){
   };
 
   bool setup_config(const char* filename);
@@ -19,6 +19,7 @@ public:
   }
 
   NginxConfigParserInterface& config_parser;
+  NginxConfigParser parser_;
   NginxConfig config;
 
 private:
