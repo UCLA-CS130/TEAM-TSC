@@ -5,6 +5,7 @@
 #include "server.h"
 #include "config_opts.h"
 #include "config_handler.h"
+#include "config_parser.h"
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +18,8 @@ int main(int argc, char* argv[])
 
     std::string port;
 
-    ConfigHandler server_config_handler;
+    NginxConfigParser config_parser;
+    ConfigHandler server_config_handler(config_parser);
     
     //Attempt to fill in server_config based on the config file
     if(!server_config_handler.setup_config(argv[1])) {
