@@ -4,7 +4,7 @@ import os
 #print('make clean and make')
 #subprocess.check_call('make clean; make', stdout=subprocess.PIPE, shell=True)
 
-print('start the sebserver')
+print('start the webserver')
 webserver = subprocess.Popen(['./build/webserver', 'src/config_file'])
 
 print('send request to server by telnet')
