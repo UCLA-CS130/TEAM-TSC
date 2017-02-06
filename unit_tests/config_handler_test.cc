@@ -78,6 +78,7 @@ TEST_F(ConfigHandlerTest, StaticHandlerMap) {
 	statement->tokens_.push_back("/static1");
 	statement->tokens_.push_back("/static2");
 	EXPECT_TRUE(SetUpConfig(true, statement));
+
 	std::vector<std::string> real_static_paths = {"/static1", "/static2"};
 	EXPECT_EQ(config_handler->get_config_opt().static_paths, real_static_paths);
 	EXPECT_EQ(config_handler->get_config_opt().static_paths.size(), 2);
@@ -114,6 +115,7 @@ TEST_F(ConfigHandlerTest, BasePathMap) {
 	statement->tokens_.push_back("/static");
 	statement->tokens_.push_back("foo/bar");
 	EXPECT_TRUE(SetUpConfig(true, statement));
+	
 	std::map<std::string, std::string> real_base_path = {{"/static", "foo/bar"}};
 	EXPECT_EQ(config_handler->get_config_opt().url_root2base_dir, 
 			  real_base_path);
