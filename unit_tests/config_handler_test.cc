@@ -6,15 +6,15 @@ class ConfigHandlerTest: public::testing::Test
 {
 protected:
 	bool SetUpConfig(bool config_parser_return, NginxConfigStatement *statement) {
-		config_handler  = new ConfigHandler(&mock_config_parser);
-		config_handler->config->statements_.emplace_back(statement);
-		EXPECT_CALL(mock_config_parser, Parse(config_file_path, config_handler->config))\
+		config_handler  = new ConfigHandler(mock_config_parser);
+		config_handler.config->statements_.emplace_back(statement);
+		EXPECT_CALL(mock_config_parser, Parse(config_file_path, config_handler.config))\
 		    .Times(::testing::Exactly(1))\
 		    .WillOnce(::testing::Return(config_parser_return));
 		return config_handler->setup_config(config_file_path);
 	}
 
-    MockNginxConfigParser mock_config_parser;
+    NginxConfigParserMock mock_config_parser;
     ConfigHandler *config_handler;
     const char* config_file_path = ".";
 };

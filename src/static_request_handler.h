@@ -16,9 +16,10 @@ class StaticRequestHandler: public RequestHandler
   StaticRequestHandler(const std::vector<std::string>& serve_paths_, 
   					   const std::map<std::string, std::string>& url_root2base_dir_);
 
-  void handle_request(const request& req, reply& rep);
+  //void handle_request(const request& req, reply& rep);
 
-  void handle_request(const std::string req, reply& rep) {};
+  void handle_request(const std::string req_str, const request& req, reply& rep);
+  //void handle_request(const std::string req, reply& rep) {};
 
   bool check_serve_path(std::string uri);
 

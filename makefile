@@ -5,10 +5,10 @@ SRC_DIR=src
 BUILD_DIR=build
 
 CXX=g++
-CXXFLAGS= -g -Wall -pthread -std=c++11 -lboost_system
-TESTFLAGS= -std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include
+CXXFLAGS= -g -Wall -pthread -std=c++11 -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log
+TESTFLAGS= -std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS= -pthread
-TESTLINK= -L./build/ -lgmock -lgtest -lboost_system -lpthread
+TESTLINK= -L./build/ -lgmock -lgtest -lboost_system -lboost_log -lpthread
 
 CCFILE = src/*.cc
 DEPS = src/*.h
@@ -42,7 +42,7 @@ gtest_setup:
 	ar -rv $(BUILD_DIR)/libgmock.a gtest-all.o gmock-all.o
 	rm gtest-all.o gmock-all.o
 
-connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc
+connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/reply.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc

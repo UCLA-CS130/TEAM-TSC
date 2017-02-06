@@ -30,15 +30,19 @@ void Server::run()
 
 void Server::do_accept()
 {
+  RequestParser *request_parser = new RequestParser();
   acceptor_.async_accept(socket_,
-      boost::bind(&Server::handle_accept, this,
+      boost::bind(&Server::handle_accept, this, request_parser,
                   boost::asio::placeholders::error));
 }
 
 // for gtest (bool make test convenient)
-bool Server::handle_accept(const boost::system::error_code& ec) {
+bool Server::handle_accept(RequestParser *request_parser, const boost::system::error_code& ec) {
   if (!ec) {
-    std::make_shared<Connection>(std::move(socket_), echo_request_handler, static_request_handler)->start();
+    std::make_shared<Connection>(std::move(socket_), 
+                                 echo_request_handler, 
+                                 static_request_handler,
+                                 request_parser)->start();
   }
   else return false;
   

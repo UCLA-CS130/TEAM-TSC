@@ -25,7 +25,7 @@ StaticRequestHandler::extension2type(std::string extension) {
 }
 
 void 
-StaticRequestHandler::handle_request(const request& req, reply& rep) {
+StaticRequestHandler::handle_request(const std::string req_str, const request& req, reply& rep) {
   std::string request_uri = req.uri;
   if (request_uri[request_uri.size() - 1] == '/') {
     request_uri += "index.html";

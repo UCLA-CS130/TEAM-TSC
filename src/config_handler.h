@@ -7,14 +7,8 @@
 class ConfigHandler
 {
 public:
-  ConfigHandler(NginxConfigParserInterface* config_parser_): config_parser(config_parser_) {
-    config = new NginxConfig();
+  ConfigHandler(NginxConfigParserInterface& config_parser_): config_parser(config_parser_) {
   };
-
-  ConfigHandler() {
-    config_parser = new NginxConfigParser();
-    config = new NginxConfig();
-  }
 
   bool setup_config(const char* filename);
 
@@ -24,8 +18,8 @@ public:
   	return config_opt;
   }
 
-  NginxConfigParserInterface *config_parser;
-  NginxConfig *config;
+  NginxConfigParserInterface& config_parser;
+  NginxConfig config;
 
 private:
   config_opts config_opt;

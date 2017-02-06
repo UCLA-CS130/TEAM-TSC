@@ -7,6 +7,7 @@
 #include "config_opts.h"
 #include "echo_request_handler.h"
 #include "static_request_handler.h"
+#include "request_parser.h"
 
 namespace http {
 namespace server {
@@ -20,7 +21,8 @@ public:
 
   void run();
 
-  bool handle_accept(const boost::system::error_code& ec);
+  bool handle_accept(RequestParser *request_parser, 
+                     const boost::system::error_code& ec);
 
 private:
 

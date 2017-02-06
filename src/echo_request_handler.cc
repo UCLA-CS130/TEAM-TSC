@@ -11,10 +11,10 @@ EchoRequestHandler::EchoRequestHandler(const std::vector<std::string>& serve_pat
 }
 
 void
-EchoRequestHandler::handle_request(const std::string req, reply& rep) {
+EchoRequestHandler::handle_request(const std::string req_str, const request& req, reply& rep) {
     // Fill out the reply to be sent to the client.
     rep.status = reply::ok;
-    rep.content.append(req);
+    rep.content.append(req_str);
 
     rep.headers.resize(2);
     rep.headers[0].name = "Content-Length";

@@ -7,8 +7,8 @@ bool
 ConfigHandler::setup_config(const char* filename)
 {
   // parse the config file
-  if (config_parser->Parse(filename, config)) {
-    return setup_config(config->statements_);
+  if (config_parser.Parse(filename, &config)) {
+    return setup_config(config.statements_);
   }
   else {
     std::cerr << "Error: Could not parse config file.\n";
