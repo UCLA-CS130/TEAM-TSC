@@ -27,17 +27,11 @@ StaticRequestHandler::extension2type(std::string extension) {
 bool 
 StaticRequestHandler::handle_request(const std::string req_str, const request& req, reply& rep) {
   std::string request_uri = req.uri;
-  for(auto it = uri_root2base_dir.begin(); it != uri_root2base_dir.end(); ++it)
-  {
-      std::cout<<it->first<<" "<<it->second<<std::endl; 
-  }
 
   if (request_uri[request_uri.size() - 1] == '/') {
     request_uri += "index.html";
   }
 
-
-  std::cout<<request_uri<<std::endl;
 
   std::string full_path;
   // Request path must be absolute and not contain "..".
@@ -47,7 +41,6 @@ StaticRequestHandler::handle_request(const std::string req_str, const request& r
       // invalid if open a directory 
       if (request_uri.size() == uri_root.size()) {
         rep = reply::stock_reply(reply::not_found);
-        std::cout<<"returned false from here1"<<std::endl;
         return false;
       }
       full_path = it->second + request_uri.substr(uri_root.size());
@@ -71,7 +64,6 @@ StaticRequestHandler::handle_request(const std::string req_str, const request& r
   if (!is)
   {
     rep = reply::stock_reply(reply::not_found);
-    std::cout<<"returned false from here2"<<std::endl;
     return false;
   }
 

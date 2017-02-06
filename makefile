@@ -14,7 +14,7 @@ TESTLINK= -L./build/ -lgmock -lgtest -lboost_system -lboost_log -lpthread
 CCFILE = src/*.cc
 DEPS = src/*.h
 
-all: webserver
+all: gtest_setup webserver
 
 webserver: $(CCFILE) $(DEPS)
 	$(CXX) -o $(BUILD_DIR)/$@ $(CCFILE) $(CXXFLAGS) $(CXXLINK)
