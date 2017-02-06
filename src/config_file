@@ -1,3 +1,7 @@
 server {
 	listen 8080;
+	handler_map echo_handler /echo;
+	handler_map static_handler /static1 /static2;
+	base_path /static1 content1;
+	base_path /static2 content2;
 }

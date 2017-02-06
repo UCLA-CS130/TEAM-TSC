@@ -1,10 +1,13 @@
-#ifndef HTTP_SERVER_HPP
-#define HTTP_SERVER_HPP
+#ifndef HTTP_SERVER_H
+#define HTTP_SERVER_H
 
 #include <boost/asio.hpp>
 #include <string>
 #include "connection.h"
 #include "config_opts.h"
+#include "echo_request_handler.h"
+#include "static_request_handler.h"
+#include "request_parser.h"
 
 namespace http {
 namespace server {
@@ -18,17 +21,21 @@ public:
 
   void run();
 
-  bool handle_accept(const boost::system::error_code& ec);
+  bool handle_accept(RequestParser *request_parser, 
+                     const boost::system::error_code& ec);
 
 private:
-
-  void do_accept();
-
   boost::asio::io_service io_service_;
 
   boost::asio::ip::tcp::acceptor acceptor_;
 
   boost::asio::ip::tcp::socket socket_;
+
+  EchoRequestHandler echo_request_handler;
+  
+  StaticRequestHandler static_request_handler;
+
+  void do_accept();
 };
 
 
