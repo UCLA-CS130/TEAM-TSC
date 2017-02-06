@@ -75,14 +75,12 @@ ConfigHandler::setup_config(const std::vector<std::shared_ptr<NginxConfigStateme
         std::string token_handler_name = statementPtr->tokens_[1];
         if (token_handler_name == "echo_handler") {
           for (unsigned int j = 2; j < statementPtr->tokens_.size(); ++j) {
-
             config_opt.echo_paths.emplace_back(statementPtr->tokens_[j]);
           }
         }
         else if (token_handler_name == "static_handler") {
           for (unsigned int j = 2; j < statementPtr->tokens_.size(); ++j) {
-            config_opt.static_paths
-            .emplace_back(statementPtr->tokens_[j]);
+            config_opt.static_paths.emplace_back(statementPtr->tokens_[j]);
           }
         }
         continue;

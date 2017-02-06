@@ -15,7 +15,7 @@ protected:
 	}
 
     NginxConfigParserMock mock_config_parser;
-    ConfigHandler *config_handler;
+    ConfigHandler *config_handler = nullptr;
     const char* config_file_path = ".";
 };
 
@@ -26,24 +26,14 @@ TEST_F(ConfigHandlerTest, ParseFail) {
 	EXPECT_FALSE(SetUpConfig(false, statement));
 }
 
-TEST_F(ConfigHandlerTest, SimpleConfig) {
+TEST_F(ConfigHandlerTest, TokenBeforePort) {
 	NginxConfigStatement *statement = new NginxConfigStatement;
 	statement->tokens_.push_back("listen");
 	statement->tokens_.push_back("8080");
 	EXPECT_TRUE(SetUpConfig(true, statement));
-}
 
-TEST_F(ConfigHandlerTest, BlockConfig) {
-	NginxConfigStatement *statement = new NginxConfigStatement;
-	statement->tokens_.push_back("server");
-
-	NginxConfig* child_config = new NginxConfig;
-	child_config->statements_.emplace_back(new NginxConfigStatement);
-	child_config->statements_.back().get()->tokens_.push_back("listen");
-	child_config->statements_.back().get()->tokens_.push_back("1080");
-	statement->child_block_.reset(child_config);
-
-	EXPECT_TRUE(SetUpConfig(true, statement));
+	statement->tokens_.push_back("nothing");
+	EXPECT_FALSE(SetUpConfig(true, statement));
 }
 
 TEST_F(ConfigHandlerTest, TooLargePortNumber) {
@@ -58,6 +48,76 @@ TEST_F(ConfigHandlerTest, InvalidPortNumber) {
 	statement->tokens_.push_back("listen");
 	statement->tokens_.push_back("hgfer");
 	EXPECT_FALSE(SetUpConfig(true, statement));
+}
+
+TEST_F(ConfigHandlerTest, FormatForHandlerMap) {
+	NginxConfigStatement *statement = new NginxConfigStatement;
+	statement->tokens_.push_back("handler_map");
+	EXPECT_FALSE(SetUpConfig(true, statement));
+
+	statement->tokens_.push_back("echo_handler");
+	statement->tokens_.push_back("/echo");
+	EXPECT_TRUE(SetUpConfig(true, statement));
+}
+
+TEST_F(ConfigHandlerTest, EchoHandlerMap) {
+	NginxConfigStatement *statement = new NginxConfigStatement;
+	statement->tokens_.push_back("handler_map");
+	statement->tokens_.push_back("echo_handler");
+	statement->tokens_.push_back("/echo");
+	EXPECT_TRUE(SetUpConfig(true, statement));
+	EXPECT_EQ(config_handler->get_config_opt().echo_paths, std::vector<std::string>{"/echo"});
+	EXPECT_EQ(config_handler->get_config_opt().echo_paths.size(), 1);
+	EXPECT_EQ(config_handler->get_config_opt().static_paths.size(), 0);
+}
+
+TEST_F(ConfigHandlerTest, StaticHandlerMap) {
+	NginxConfigStatement *statement = new NginxConfigStatement;
+	statement->tokens_.push_back("handler_map");
+	statement->tokens_.push_back("static_handler");
+	statement->tokens_.push_back("/static1");
+	statement->tokens_.push_back("/static2");
+	EXPECT_TRUE(SetUpConfig(true, statement));
+	std::vector<std::string> real_static_paths = {"/static1", "/static2"};
+	EXPECT_EQ(config_handler->get_config_opt().static_paths, real_static_paths);
+	EXPECT_EQ(config_handler->get_config_opt().static_paths.size(), 2);
+	EXPECT_EQ(config_handler->get_config_opt().echo_paths.size(), 0);
+}
+
+TEST_F(ConfigHandlerTest, ServerToken) {
+	NginxConfigStatement *statement = new NginxConfigStatement;
+	statement->tokens_.push_back("server");
+	EXPECT_FALSE(SetUpConfig(true, statement));
+
+	NginxConfig* child_config = new NginxConfig;
+	child_config->statements_.emplace_back(new NginxConfigStatement);
+	child_config->statements_.back().get()->tokens_.push_back("listen");
+	child_config->statements_.back().get()->tokens_.push_back("1080");
+	statement->child_block_.reset(child_config);
+
+	EXPECT_TRUE(SetUpConfig(true, statement));
+}
+
+TEST_F(ConfigHandlerTest, FormatForBasePath) {
+	NginxConfigStatement *statement = new NginxConfigStatement;
+	statement->tokens_.push_back("base_path");
+	EXPECT_FALSE(SetUpConfig(true, statement));
+
+	statement->tokens_.push_back("/static");
+	statement->tokens_.push_back("foo/bar");
+	EXPECT_TRUE(SetUpConfig(true, statement));	
+}
+
+TEST_F(ConfigHandlerTest, BasePathMap) {
+	NginxConfigStatement *statement = new NginxConfigStatement;
+	statement->tokens_.push_back("base_path");
+	statement->tokens_.push_back("/static");
+	statement->tokens_.push_back("foo/bar");
+	EXPECT_TRUE(SetUpConfig(true, statement));
+	std::map<std::string, std::string> real_base_path = {{"/static", "foo/bar"}};
+	EXPECT_EQ(config_handler->get_config_opt().url_root2base_dir, 
+			  real_base_path);
+	EXPECT_EQ(config_handler->get_config_opt().url_root2base_dir.size(), 1);
 }
 
 
