@@ -28,8 +28,6 @@ int main(int argc, char* argv[])
     }
     config_opts server_config = server_config_handler.get_config_opt();
 
-    //We will want to make it so that server takes a config_opts struct as its argument
-
     http::server::Server s(server_config);
     s.run();
   }
