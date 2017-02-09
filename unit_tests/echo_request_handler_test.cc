@@ -1,13 +1,13 @@
 #include "../src/echo_request_handler.h"
 #include <string>
 #include "gtest/gtest.h"
-
-
+#include "config_opts.h"
 
 //unit test for check_serve_path function in class echo_request_handler 
 class EchoRequestHandlerTest : public::testing::Test
 {
 protected:
+	handler_opts handler_opts_;
 	std::vector<std::string> echo_path;
 	http::server::EchoRequestHandler* echoHandler;
 
@@ -15,12 +15,13 @@ protected:
 	{
 		echo_path.push_back("/echo1");
 		echo_path.push_back("/echo2");
-		echoHandler = new http::server::EchoRequestHandler(echo_path);
+		handler_opts_.paths = echo_path;
+		echoHandler = new http::server::EchoRequestHandler(handler_opts_);
 	}
 
 	~EchoRequestHandlerTest()
 	{
-		if(echoHandler != NULL)delete echoHandler;
+		if(echoHandler != nullptr) delete echoHandler;
 	}
 };
 

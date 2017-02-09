@@ -52,15 +52,15 @@ TEST_F(ConfigHandlerTest, InvalidPortNumber) {
 
 TEST_F(ConfigHandlerTest, FormatForHandlerMap) {
 	NginxConfigStatement *statement = new NginxConfigStatement;
-	statement->tokens_.push_back("handler_map");
+	statement->tokens_.push_back("path");
 	EXPECT_FALSE(SetUpConfig(true, statement));
 
-	statement->tokens_.push_back("echo_handler");
 	statement->tokens_.push_back("/echo");
+	statement->tokens_.push_back("EchoHandler");
 	EXPECT_TRUE(SetUpConfig(true, statement));
 }
 
-TEST_F(ConfigHandlerTest, EchoHandlerMap) {
+/*TEST_F(ConfigHandlerTest, EchoHandlerMap) {
 	NginxConfigStatement *statement = new NginxConfigStatement;
 	statement->tokens_.push_back("handler_map");
 	statement->tokens_.push_back("echo_handler");
@@ -120,7 +120,7 @@ TEST_F(ConfigHandlerTest, BasePathMap) {
 	EXPECT_EQ(config_handler->get_config_opt().url_root2base_dir, 
 			  real_base_path);
 	EXPECT_EQ(config_handler->get_config_opt().url_root2base_dir.size(), 1);
-}
+}*/
 
 
 

@@ -10,9 +10,15 @@ public:
   ConfigHandler(NginxConfigParserInterface& config_parser_): config_parser(config_parser_) {
   };
 
-  bool setup_config(const char* filename);
+  bool 
+  setup_config(const char* filename);
 
-  bool setup_config(const std::vector<std::shared_ptr<NginxConfigStatement>>& statements_);
+  bool 
+  setup_config(const std::vector<std::shared_ptr<NginxConfigStatement>>& statements_);
+
+  bool 
+  setup_handler_roots(handler_opts& handler,
+                      const std::vector<std::shared_ptr<NginxConfigStatement>>& statements_);
 
   config_opts& get_config_opt() {
   	return config_opt;
@@ -26,9 +32,9 @@ private:
 
   enum StartTokenType {
     TOKEN_BEFORE_PORT = 0,
-    TOKEN_BEFORE_HANDLER = 1,
+    TOKEN_PATH = 1,
     TOKEN_SERVER = 2,
-    TOKEN_BASE_PATH = 3,
+    TOKEN_ROOT = 3,
     TOKEN_INVALID = 10
   };
 

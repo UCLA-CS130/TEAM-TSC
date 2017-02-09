@@ -9,8 +9,8 @@ Server::Server(const config_opts& server_config)
 	: io_service_(),
 	  acceptor_(io_service_),
 	  socket_(io_service_),
-    echo_request_handler(server_config.echo_paths),
-    static_request_handler(server_config.static_paths, server_config.url_root2base_dir)
+    echo_request_handler(server_config.echo_handler),
+    static_request_handler(server_config.static_handler)
 {
 
   boost::asio::ip::tcp::resolver resolver(io_service_);

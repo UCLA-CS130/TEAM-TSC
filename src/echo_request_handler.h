@@ -4,6 +4,7 @@
 #include <string>
 #include "request_handler.h"
 #include <vector>
+#include "config_opts.h"
 
 namespace http {
 namespace server {
@@ -12,7 +13,7 @@ namespace server {
 class EchoRequestHandler: public RequestHandler
 {
  public:
-  EchoRequestHandler(const std::vector<std::string>& serve_paths_);
+  EchoRequestHandler(const handler_opts& hanlder_opts_);
   
   bool handle_request(const std::string req_str, const request& req, reply& rep);
 
