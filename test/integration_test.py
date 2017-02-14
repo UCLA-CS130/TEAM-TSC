@@ -1,9 +1,6 @@
 import subprocess
 import os
-
-#print('make clean and make')
-#subprocess.check_call('make clean; make', stdout=subprocess.PIPE, shell=True)
-
+import shutil
 
 class bcolors:
     HEADER = '\033[95m'
@@ -15,26 +12,33 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+TMP_FILE_DIR = 'tmp_files'
+os.makedirs(TMP_FILE_DIR)
+
+SCRIPT_PATH = os.path.dirname(__file__)
+EXE_PATH = os.path.join(SCRIPT_PATH, '..', 'build', 'webserver')
+
 print(bcolors.OKBLUE + '[==========] ' + bcolors.ENDC + 'start the webserver')
-wr = open('src/integration_config_file', 'w')
-config_contents = 'server {\
-listen 8080;\
-handler_map echo_handler /echo;\
-handler_map static_handler /static1 /static2;\
-base_path /static1 content1;\
-base_path /static2 content2;\
+wr = open(TMP_FILE_DIR + '/config_file', 'w')
+config_contents = '\
+server {\
+    listen 8080;\
+    path /echo EchoHandler;\
+    path /static1 /static2 StaticHandler {\
+        root /static1 content1;\
+        root /static2 content2;\
+    }\
 }'
 wr.write(config_contents)
 wr.close()
 
-webserver = subprocess.Popen(['./build/webserver', 'src/integration_config_file'])
+webserver = subprocess.Popen([EXE_PATH, TMP_FILE_DIR + '/config_file'])
 
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send echo request to server by telnet')
 #ECHO TESTS----------------------------------------------------------------------
 request = 'curl -i localhost:8080/echo'
-telnet_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
-
-response = telnet_proc.stdout.read().decode('utf-8')
+curl_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+response = curl_proc.stdout.read().decode('utf-8')
 
 expected_response = 'HTTP/1.0 200 OK\r\n\
 Content-Length: 82\r\n\
@@ -48,9 +52,8 @@ print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send static request to 
 
 #STATIC TESTS---------------------------------------------------------------------- 
 request_static = 'curl -i localhost:8080/static1/test.html'
-telnet_proc = subprocess.Popen(request_static, stdout=subprocess.PIPE, shell=True)
-
-response_static = telnet_proc.stdout.read().decode('utf-8')
+curl_proc = subprocess.Popen(request_static, stdout=subprocess.PIPE, shell=True)
+response_static = curl_proc.stdout.read().decode('utf-8')
 
 expected_response_static = 'HTTP/1.0 200 OK\r\n\
 Content-Length: 78\r\n\
@@ -60,21 +63,10 @@ Content-Type: text/html\r\n\r\n\
   <body><h1>TSC</h1></body>\n\
 </html>'
 
-wr = open('static_test', 'w')
-wr.write(expected_response_static + '\n' + response_static)
-wr.close()
-
 webserver.kill()
+shutil.rmtree(TMP_FILE_DIR)
 
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC +'check the results of echo and static tests')
-
-'''
-diff = []
-for index in range(len(response)):
-	if expected_response[index] != response[index]:
-		diff.append(response[index])
-print diff
-'''
 
 if response != expected_response:
 	print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + 'Incorrect Reply in Echo Test!')

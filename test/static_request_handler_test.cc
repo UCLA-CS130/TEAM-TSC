@@ -2,7 +2,7 @@
 #include <string>
 #include "../src/request.h"
 #include "../src/reply.h"
-#include "config_opts.h"
+#include "../src/config_opts.h"
 #include "gtest/gtest.h"
 
 
@@ -26,8 +26,8 @@ protected:
 		uri_root2base_dir_.insert(std::make_pair("/static1","content1"));
 		uri_root2base_dir_.insert(std::make_pair("/static2","content2"));
 		handler_opts_.paths = static_path;
-		handler_opts_.uri_root2base_dir = uri_root2base_dir_
-		staticHandler = new StaticRequestHandler(static_path,url_root2base_dir_);
+		handler_opts_.uri_root2base_dir = uri_root2base_dir_;
+		staticHandler = new StaticRequestHandler(handler_opts_);
 	}
 
 	~StaticRequestHandlerTest()

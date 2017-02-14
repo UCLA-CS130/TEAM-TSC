@@ -7,7 +7,7 @@
 #include <boost/log/trivial.hpp>
 #include "echo_request_handler.h"
 #include "static_request_handler.h"
-#include "request_parser_interface.h"
+#include "request_parser.h"
 
 namespace http {
 namespace server {
@@ -22,7 +22,7 @@ public:
   	explicit Connection(boost::asio::ip::tcp::socket socket, 
                         RequestHandler& echo_request_handler_, 
                         RequestHandler&  static_request_handler_,
-                        RequestParserInterface* request_parser_);
+                        RequestParser* request_parser_);
 
   	void start();
 
@@ -39,7 +39,7 @@ private:
 
   RequestHandler& static_request_handler;
 
-  RequestParserInterface *request_parser;
+  RequestParser *request_parser;
 
 	std::array<char, 8192> buffer_;
 

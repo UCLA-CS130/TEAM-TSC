@@ -1,7 +1,7 @@
 #include "../src/echo_request_handler.h"
 #include <string>
 #include "gtest/gtest.h"
-#include "config_opts.h"
+#include "../src/config_opts.h"
 
 //unit test for check_serve_path function in class echo_request_handler 
 class EchoRequestHandlerTest : public::testing::Test

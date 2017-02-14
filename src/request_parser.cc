@@ -24,6 +24,18 @@ void RequestParser::reset()
   state_ = method_start;
 }
 
+std::tuple<RequestParser::result_type, char*>
+RequestParser::parse(request& req, char* begin, char* end)
+{
+  while (begin != end)
+  {
+    RequestParser::result_type result = consume(req, *begin++);
+    if (result == good || result == bad)
+      return std::make_tuple(result, begin);
+  }
+  return std::make_tuple(indeterminate, begin);
+}
+
 RequestParser::result_type RequestParser::consume(request& req, char input)
 {
   switch (state_)

@@ -20,7 +20,6 @@ struct config_opts
   handler_opts static_handler;
   handler_opts echo_handler;
   //Add other options below
-
 };
 
 #endif //CONFIG_OPTS_H

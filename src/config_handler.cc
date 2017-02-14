@@ -34,7 +34,6 @@ ConfigHandler::setup_config(const std::vector<std::shared_ptr<NginxConfigStateme
   for (unsigned int i = 0; i < statements_.size(); i++) {
     NginxConfigStatement* statementPtr = statements_[i].get();
     std::string token_start = statementPtr->tokens_[0];
-    std::cout << token_start << std::endl;
 
     ConfigHandler::StartTokenType start_token_type = to_token_type(token_start);
     switch (start_token_type) 
@@ -115,7 +114,6 @@ ConfigHandler::setup_config(const std::vector<std::shared_ptr<NginxConfigStateme
       }
     } 
   }
-  std::cout << "233" << std::endl;
   return true;
 }
 
@@ -124,7 +122,6 @@ ConfigHandler::setup_handler_roots(handler_opts& handler,
                                    const std::vector<std::shared_ptr<NginxConfigStatement>>& statements_) {
   for (unsigned int i = 0; i < statements_.size(); i++) {
     std::string token_start = statements_[i]->tokens_[0];
-    std::cout << token_start << std::endl;
     ConfigHandler::StartTokenType start_token_type = to_token_type(token_start);
     switch (start_token_type)
     {
@@ -147,7 +144,6 @@ ConfigHandler::setup_handler_roots(handler_opts& handler,
       }
     }
   }
-  std::cout << "setup_handler_roots end" << std::endl;
   return true;
 }
 
