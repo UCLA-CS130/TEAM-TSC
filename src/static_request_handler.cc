@@ -7,10 +7,9 @@ namespace http {
 namespace server {
 
 
-StaticRequestHandler::StaticRequestHandler(const std::vector<std::string>& serve_paths_,
-                                           const std::map<std::string, std::string>& uri_root2base_dir_): 
-  serve_paths(serve_paths_),
-  uri_root2base_dir(uri_root2base_dir_)
+StaticRequestHandler::StaticRequestHandler(const handler_opts& handler_opts_):
+  serve_paths(handler_opts_.paths),
+  uri_root2base_dir(handler_opts_.uri_root2base_dir)
 {
 }
 

@@ -26,7 +26,7 @@ TEST(ConnectionTest, EchoHandler) {
 	boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
 
     char* ignore = new char;
-    std::tuple<RequestParserInterface::result_type, char*> request_parser_return = std::make_tuple(RequestParserInterface::good, ignore);
+    std::tuple<RequestParser::result_type, char*> request_parser_return = std::make_tuple(RequestParser::good, ignore);
     reply rep;
 
     RequestParserMock *request_parser_mock = new RequestParserMock();
@@ -58,7 +58,7 @@ TEST(ConnectionTest, StaticHandler) {
     boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
 
     char* ignore = new char;
-    std::tuple<RequestParserInterface::result_type, char*> request_parser_return = std::make_tuple(RequestParserInterface::good, ignore);
+    std::tuple<RequestParser::result_type, char*> request_parser_return = std::make_tuple(RequestParser::good, ignore);
     reply rep;
 
     RequestParserMock *request_parser_mock = new RequestParserMock();
@@ -93,7 +93,7 @@ TEST(ConnectionTest, NoneHandler) {
     boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
 
     char* ignore = new char;
-    std::tuple<RequestParserInterface::result_type, char*> request_parser_return = std::make_tuple(RequestParserInterface::good, ignore);
+    std::tuple<RequestParser::result_type, char*> request_parser_return = std::make_tuple(RequestParser::good, ignore);
     reply rep;
 
     RequestParserMock *request_parser_mock = new RequestParserMock();
@@ -126,7 +126,7 @@ TEST(ConnectionTest, RequestParserFail) {
     boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
 
     char* ignore = new char;
-    std::tuple<RequestParserInterface::result_type, char*> request_parser_return = std::make_tuple(RequestParserInterface::bad, ignore);
+    std::tuple<RequestParser::result_type, char*> request_parser_return = std::make_tuple(RequestParser::bad, ignore);
     reply rep;
 
     RequestParserMock *request_parser_mock = new RequestParserMock();

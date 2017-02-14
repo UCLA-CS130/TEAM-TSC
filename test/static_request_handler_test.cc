@@ -2,6 +2,7 @@
 #include <string>
 #include "../src/request.h"
 #include "../src/reply.h"
+#include "../src/config_opts.h"
 #include "gtest/gtest.h"
 
 
@@ -11,8 +12,9 @@ namespace server {
 class StaticRequestHandlerTest : public::testing::Test
 {
 protected:
+	handler_opts handler_opts_;
 	std::vector<std::string> static_path;
-	std::map<std::string,std::string> url_root2base_dir_;
+	std::map<std::string,std::string> uri_root2base_dir_;
 	StaticRequestHandler* staticHandler;
 	request req;
 	reply rep;
@@ -21,21 +23,23 @@ protected:
 	{
 		static_path.push_back("/static1");
 		static_path.push_back("/static2");
-		url_root2base_dir_.insert(std::make_pair("/static1","content1"));
-		url_root2base_dir_.insert(std::make_pair("/static2","content2"));
-		staticHandler = new StaticRequestHandler(static_path,url_root2base_dir_);
+		uri_root2base_dir_.insert(std::make_pair("/static1","content1"));
+		uri_root2base_dir_.insert(std::make_pair("/static2","content2"));
+		handler_opts_.paths = static_path;
+		handler_opts_.uri_root2base_dir = uri_root2base_dir_;
+		staticHandler = new StaticRequestHandler(handler_opts_);
 	}
 
 	~StaticRequestHandlerTest()
 	{
-		if(staticHandler != NULL) delete staticHandler;
+		if(staticHandler != nullptr) delete staticHandler;
 	}
 
 	bool validRequest(std::string uri)
 	{
 		req.uri = uri;
 		std::string requestString = "";
-		return staticHandler->handle_request(requestString,req,rep);
+		return staticHandler->handle_request(requestString, req, rep);
 	}
 };
 

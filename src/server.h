@@ -21,7 +21,7 @@ public:
 
   void run();
 
-  bool handle_accept(RequestParserInterface *request_parser, 
+  bool handle_accept(RequestParser *request_parser, 
                      const boost::system::error_code& ec);
 
 private:

@@ -6,6 +6,7 @@
 #include <map>
 #include "request_handler.h"
 #include "gtest/gtest_prod.h"
+#include "config_opts.h"
 
 namespace http {
 namespace server {
@@ -14,8 +15,7 @@ namespace server {
 class StaticRequestHandler: public RequestHandler
 {
  public:
-  StaticRequestHandler(const std::vector<std::string>& serve_paths_, 
-  					   const std::map<std::string, std::string>& url_root2base_dir_);
+  StaticRequestHandler(const handler_opts& hanlder_opts_);
 
   bool handle_request(const std::string req_str, const request& req, reply& rep);
 

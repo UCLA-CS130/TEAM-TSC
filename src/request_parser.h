@@ -1,7 +1,8 @@
 #ifndef HTTP_REQUEST_PARSER_H
 #define HTTP_REQUEST_PARSER_H
 
-#include "request_parser_interface.h"
+#include "request.h"
+#include "reply.h"
 
 namespace http {
 namespace server {
@@ -9,30 +10,24 @@ namespace server {
 //struct request;
 
 /// Parser for incoming requests.
-class RequestParser: public RequestParserInterface
+class RequestParser
 {
 public:
+  virtual ~RequestParser() {};
   /// Construct ready to parse the request method.
   RequestParser();
 
   /// Reset to initial parser state.
   void reset();
 
+  enum result_type { good, bad, indeterminate };
+
   /// Parse some data. The enum return value is good when a complete request has
   /// been parsed, bad if the data is invalid, indeterminate when more data is
   /// required. The InputIterator return value indicates how much of the input
   /// has been consumed.
-  std::tuple<result_type, char*> parse(request& req,
-                                      char* begin, char* end)
-  {
-    while (begin != end)
-    {
-      result_type result = consume(req, *begin++);
-      if (result == good || result == bad)
-        return std::make_tuple(result, begin);
-    }
-    return std::make_tuple(indeterminate, begin);
-  }
+  virtual std::tuple<result_type, char*> 
+  parse(request& req, char* begin, char* end);
 
 private:
   /// Handle the next character of input.

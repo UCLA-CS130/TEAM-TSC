@@ -4,8 +4,8 @@
 namespace http {
 namespace server {
 
-EchoRequestHandler::EchoRequestHandler(const std::vector<std::string>& serve_paths_): 
-    serve_paths(serve_paths_) 
+EchoRequestHandler::EchoRequestHandler(const handler_opts& handler_opts_):
+  serve_paths(handler_opts_.paths) 
 {
 }
 

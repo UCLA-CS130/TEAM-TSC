@@ -12,4 +12,4 @@ public:
   	MOCK_METHOD3(handle_request, bool(const std::string req_str, const request& req, reply& rep));
 };
 
-#endif // CONFIG_PARSER_MOCK_H
+#endif // REQUEST_HANDLER_MOCK_H

@@ -9,7 +9,7 @@ namespace server {
 Connection::Connection(boost::asio::ip::tcp::socket socket, 
                        RequestHandler& echo_request_handler_, 
                        RequestHandler& static_request_handler_,
-                       RequestParserInterface* request_parser_)
+                       RequestParser* request_parser_)
 	: socket_(std::move(socket)),
     echo_request_handler(echo_request_handler_),
     static_request_handler(static_request_handler_),
@@ -31,12 +31,12 @@ void Connection::do_read() {
 bool Connection::handle_read(const boost::system::error_code& ec, 
                              size_t bytes_transferred) {
   if (!ec) {
-    RequestParserInterface::result_type result;
+    RequestParser::result_type result;
     request_string.append(buffer_.data(), buffer_.data() + bytes_transferred);
     std::tie(result, std::ignore) = request_parser->parse(
               request_, buffer_.data(), buffer_.data() + bytes_transferred);
 
-    if (result == RequestParserInterface::good) {
+    if (result == RequestParser::good) {
       BOOST_LOG_TRIVIAL(trace) << "Connection: RequestParser returns good;\n";
       std::string uri = request_.uri;
       if (echo_request_handler.check_serve_path(uri)) {
@@ -48,7 +48,7 @@ bool Connection::handle_read(const boost::system::error_code& ec,
       else reply_ = reply::stock_reply(reply::bad_request);
       do_write();
     }
-    else if (result == RequestParserInterface::bad) {
+    else if (result == RequestParser::bad) {
       BOOST_LOG_TRIVIAL(trace) << "Connection: RequestParser returns bad;\n";
       reply_ = reply::stock_reply(reply::bad_request);
       do_write();
