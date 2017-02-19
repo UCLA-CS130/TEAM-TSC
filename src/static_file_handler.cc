@@ -64,7 +64,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   std::ifstream is(file_path.c_str(), std::ios::in | std::ios::binary);
   if (!is)
   {
-    BOOST_LOG_TRIVIAL(error) << "Not found file: " << file_path.c_str() << "\n";
+    BOOST_LOG_TRIVIAL(info) << "Not found file: " << file_path.c_str();
     response->SetStatus(Response::not_found);
     return RequestHandler::handle_fail;
   }
@@ -79,7 +79,6 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   response->SetBody(body);
   response->AddHeader("Content-Length", std::to_string(body.size()));
   response->AddHeader("Content-Type", extension2type(extension));
-  BOOST_LOG_TRIVIAL(trace) << "finish static handle";
   return RequestHandler::ok;
 }
 

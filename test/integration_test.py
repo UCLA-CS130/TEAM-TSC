@@ -36,7 +36,7 @@ wr.close()
 
 webserver = subprocess.Popen([EXE_PATH, TMP_FILE_DIR + '/config_file'])
 
-print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send echo request to server by telnet')
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send echo request to server by curl')
 #ECHO TESTS----------------------------------------------------------------------
 request = 'curl -i localhost:8080/echo'
 curl_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
@@ -50,7 +50,7 @@ User-Agent: curl/7.35.0\r\n\
 Host: localhost:8080\r\n\
 Accept: */*\r\n\r\n'
 
-print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send static request to server by telnet')
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send static request to server by curl')
 
 #STATIC TESTS---------------------------------------------------------------------- 
 request_static = 'curl -i localhost:8080/static1/test.html'

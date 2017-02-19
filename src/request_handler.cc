@@ -16,7 +16,7 @@ Request::Parse(const std::string& raw_request)
   boost::cmatch request_mat;
   boost::regex request_expression ("([^\r\n]*)\r\n(.*)\r\n\r\n(.*)");
   if (!boost::regex_match(raw_request.c_str(), request_mat, request_expression)) {
-    BOOST_LOG_TRIVIAL(error) << "Invalid request format\n";
+    BOOST_LOG_TRIVIAL(info) << "Invalid request format\n";
     return nullptr;
   }
   std::string request_line = std::string(request_mat[1]);
@@ -27,14 +27,14 @@ Request::Parse(const std::string& raw_request)
   boost::cmatch request_line_mat;
   boost::regex request_line_expression ("(\\S+)\\s(/\\S*)\\s(HTTP/\\d+\\.\\d+)");
   if (!boost::regex_match(request_line.c_str(), request_line_mat, request_line_expression)) {
-  	BOOST_LOG_TRIVIAL(error) << "Invalid request_line format\n";
+  	BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
   	return nullptr;
   }
   req->SetMethod(std::string(request_line_mat[1]));
   req->SetUri(std::string(request_line_mat[2]));
   req->SetVersion(std::string(request_line_mat[3]));
   if (req->uri().find("..") != std::string::npos) {
-    BOOST_LOG_TRIVIAL(error) << "Invalid request_line format\n";
+    BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
     return nullptr;
   }
 
@@ -47,7 +47,7 @@ Request::Parse(const std::string& raw_request)
     boost::cmatch header_mat;
   	boost::regex header_expression ("(\\S+)\\s*:\\s*(\\S.*)");
   	if (!boost::regex_match(header_str.c_str(), header_mat, header_expression)) {
-  	  BOOST_LOG_TRIVIAL(error) << "Invalid header format\n";
+  	  BOOST_LOG_TRIVIAL(info) << "Invalid header format\n";
   	  return nullptr;
   	}
     req->AddHeader(std::string(header_mat[1]), std::string(header_mat[2]));

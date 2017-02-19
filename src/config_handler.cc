@@ -1,3 +1,4 @@
+#include <boost/log/trivial.hpp>
 #include "config_handler.h"
 
 //Sets up config based on config file. Returns false
@@ -10,7 +11,7 @@ ConfigHandler::handle_config(const char* filename)
     return handle_statements(config.statements_);
   }
   else {
-    std::cerr << "Error: Could not parse config file.\n";
+    BOOST_LOG_TRIVIAL(error) << "Could not parse config file";
     return false;
   }
 }
@@ -42,7 +43,7 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
       case TOKEN_PORT:
       { 
         if (statementPtr->tokens_.size() != 2) {
-          std::cerr << "Error: Invalid config file format for" << token_start << "\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
           return false;
         }
 
@@ -52,7 +53,7 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
           portNum = std::stoi(statementPtr->tokens_[1]);
         }
         catch (const std::invalid_argument& e) {
-          std::cerr << "Error: Invalid port number(not a number)\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid port number(not a number)";
           return false;
         }
     
@@ -61,7 +62,7 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
           config_opt.port = statementPtr->tokens_[1];
         }
         else {
-          std::cerr<<"Error: Invalid port number(not in [0, 65535]).\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid port number(not in [0, 65535]).";
           return false;
         }
         continue;
@@ -69,32 +70,32 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
       case TOKEN_PATH:
       {
         if (statementPtr->tokens_.size() != 3) {
-          std::cerr << "Error: Invalid config file format for" << token_start << "\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
           return false;
         }
 
         std::string uri_prefix = statementPtr->tokens_[1];
         std::string handler_name = statementPtr->tokens_[2];
         if (check_duplicate_path.find(uri_prefix) != check_duplicate_path.end()) {
-          std::cerr << "Error: Illigal duplicate paths\n";
+          BOOST_LOG_TRIVIAL(error) << "Illigal duplicate paths";
           return false;
         }
         if (uri_prefix.back() == '/') {
-          std::cerr << "Error: Invalid path name terminated with /\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid path name terminated with /";
           return false;
         }
         check_duplicate_path[uri_prefix] = true;
         if (handler_name == "EchoHandler") {
           config_opt.echo_uri_prefixes.emplace_back(uri_prefix);
           if (statementPtr->child_block_ != nullptr) {
-            std::cerr << "Error: Invalid child block for EchoHandler\n";
+            BOOST_LOG_TRIVIAL(error) << "Invalid child block for EchoHandler";
             return false;
           }
         }
         else if (handler_name == "StaticHandler") {
           config_opt.static_file_uri_prefixes.emplace_back(uri_prefix);
           if (statementPtr->child_block_ == nullptr) {
-            std::cerr << "Error: Missing child block for StaticHandler\n";
+            BOOST_LOG_TRIVIAL(error) << "Missing child block for StaticHandler";
             return false;
           }
           config_opt.static_file_config.emplace_back(*statementPtr->child_block_);
@@ -104,19 +105,19 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
       case TOKEN_SERVER:
       {
         if (statementPtr->child_block_ == nullptr) {
-          std::cerr << "Error: Invalid config file format for" << token_start << "\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
           return false;
         }
         bool child_return = handle_statements(statementPtr->child_block_->statements_);
         if (!child_return) {
-          std::cerr << "Error: Invalid config file format for" << token_start << "\n";
+          BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
           return false;
         }
         continue;
       }
       default:
       {
-        std::cerr << "Error: Invalid config file format for" << token_start << "\n";
+        BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
         return false;
       }
     } 

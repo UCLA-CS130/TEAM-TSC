@@ -28,14 +28,14 @@ public:
   	bool handle_write(const boost::system::error_code& ec,
   					          std::size_t);
 
+    bool ProcessRequest(const std::string& uri_prefix);
+
 private:
   boost::asio::ip::tcp::socket socket_;
 	
   std::map<std::string, std::unique_ptr<RequestHandler>>& handlers;
 
 	std::array<char, 8192> buffer_;
-
-	std::string request_string;
 
   Response response;
 
@@ -44,9 +44,6 @@ private:
   void do_read();
 
   void do_write();
-
-  void ProcessRequest();
-
 };
 
 } // namespace server

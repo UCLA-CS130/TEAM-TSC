@@ -28,29 +28,29 @@ void Connection::do_read() {
 bool Connection::handle_read(const boost::system::error_code& ec, 
                              size_t bytes_transferred) {
   if (!ec) {
-    std::string raw_request;
+    std::string raw_request = "";
     raw_request.append(buffer_.data(), buffer_.data() + bytes_transferred);
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
     if (!request_ptr) {
-      BOOST_LOG_TRIVIAL(error) << "Invalid HTTP request format";
       response.SetStatus(Response::bad_request);
       //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
     }
     else {
       request = *request_ptr;
-      ProcessRequest();
-      do_write();
+      if (!ProcessRequest(request.uri())) {
+        //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
+      }
     }
+    do_write();
     return true;
   }
   else
     return false;
 }
 
-void
-Connection::ProcessRequest() 
+bool
+Connection::ProcessRequest(const std::string& uri) 
 {
-  std::string uri = request.uri();
   std::size_t pos = 1;
   std::string longest_prefix = "";
   while (true) {
@@ -61,21 +61,18 @@ Connection::ProcessRequest()
     else break;
   }
   if (longest_prefix == "") {
+    BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
-    //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
-    return;
+    return false;
   }
   
   RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);
-  if (status != RequestHandler::ok) {
-    //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
-    BOOST_LOG_TRIVIAL(trace) << "Error in request handle";
-  }
+  if (status != RequestHandler::ok) return false;
+  return true;
 }
 
 void 
 Connection::do_write() {
-  BOOST_LOG_TRIVIAL(trace) << "connection write";
 	boost::asio::async_write(socket_, boost::asio::buffer(response.ToString()),
       boost::bind(&Connection::handle_write, shared_from_this(),
                   boost::asio::placeholders::error,
