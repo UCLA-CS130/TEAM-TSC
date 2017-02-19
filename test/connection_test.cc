@@ -1,7 +1,6 @@
 #include <boost/asio.hpp>
 #include "../src/connection.h"
 #include "request_handler_mock.h"
-#include "request_parser_mock.h"
 #include "../src/reply.h"
 
 // for gmock testing

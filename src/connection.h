@@ -5,9 +5,7 @@
 #include <string>
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
-#include "echo_request_handler.h"
-#include "static_request_handler.h"
-#include "request_parser.h"
+#include "request_handler.h"
 
 namespace http {
 namespace server {
@@ -20,9 +18,7 @@ public:
   	Connection& operator=(const Connection&) = delete;
 
   	explicit Connection(boost::asio::ip::tcp::socket socket, 
-                        RequestHandler& echo_request_handler_, 
-                        RequestHandler&  static_request_handler_,
-                        RequestParser* request_parser_);
+                        std::map<std::string, std::unique_ptr<RequestHandler>>& handlers_);
 
   	void start();
 
@@ -34,24 +30,22 @@ public:
 
 private:
   boost::asio::ip::tcp::socket socket_;
-	/// The handler used to process the incoming request.
-  RequestHandler& echo_request_handler;
-
-  RequestHandler& static_request_handler;
-
-  RequestParser *request_parser;
+	
+  std::map<std::string, std::unique_ptr<RequestHandler>>& handlers;
 
 	std::array<char, 8192> buffer_;
 
 	std::string request_string;
 
-  reply reply_;
+  Response response;
 
-  request request_;
+  Request request;
 
   void do_read();
 
   void do_write();
+
+  void ProcessRequest();
 
 };
 

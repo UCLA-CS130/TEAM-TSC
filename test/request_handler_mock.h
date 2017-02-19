@@ -8,8 +8,8 @@
 using namespace http::server;
 class RequestHandlerMock: public RequestHandler {
 public:
-  	MOCK_METHOD1(check_serve_path, bool(std::string uri));
-  	MOCK_METHOD3(handle_request, bool(const std::string req_str, const request& req, reply& rep));
+  	MOCK_METHOD1(Init, RequestHandler::Status(const std::string& uri_prefix, const NginxConfig& config));
+  	MOCK_METHOD3(HandleRequest, RequestHandler::Status(const Request& request, Response* response));
 };
 
 #endif // REQUEST_HANDLER_MOCK_H

@@ -22,11 +22,13 @@ print(bcolors.OKBLUE + '[==========] ' + bcolors.ENDC + 'start the webserver')
 wr = open(TMP_FILE_DIR + '/config_file', 'w')
 config_contents = '\
 server {\
-    listen 8080;\
+    port 8080;\
     path /echo EchoHandler;\
-    path /static1 /static2 StaticHandler {\
-        root /static1 content1;\
-        root /static2 content2;\
+    path /static1 StaticHandler {\
+        root content1;\
+    }\
+    path /static2 StaticHandler {\
+        root content2;\
     }\
 }'
 wr.write(config_contents)
