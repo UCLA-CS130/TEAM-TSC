@@ -1,19 +1,16 @@
-#include "connection.h"
 #include <utility>
 #include <vector>
+#include <boost/log/trivial.hpp>
+#include "connection.h"
 
 
 namespace http {
 namespace server {
 
 Connection::Connection(boost::asio::ip::tcp::socket socket, 
-                       RequestHandler& echo_request_handler_, 
-                       RequestHandler& static_request_handler_,
-                       RequestParser* request_parser_)
+                       std::map<std::string, std::unique_ptr<RequestHandler>>& handlers_)
 	: socket_(std::move(socket)),
-    echo_request_handler(echo_request_handler_),
-    static_request_handler(static_request_handler_),
-    request_parser(request_parser_)
+    handlers(handlers_)
 {
 }
 
@@ -31,41 +28,52 @@ void Connection::do_read() {
 bool Connection::handle_read(const boost::system::error_code& ec, 
                              size_t bytes_transferred) {
   if (!ec) {
-    RequestParser::result_type result;
-    request_string.append(buffer_.data(), buffer_.data() + bytes_transferred);
-    std::tie(result, std::ignore) = request_parser->parse(
-              request_, buffer_.data(), buffer_.data() + bytes_transferred);
-
-    if (result == RequestParser::good) {
-      BOOST_LOG_TRIVIAL(trace) << "Connection: RequestParser returns good;\n";
-      std::string uri = request_.uri;
-      if (echo_request_handler.check_serve_path(uri)) {
-        echo_request_handler.handle_request(request_string, request_, reply_);
-      }
-      else if (static_request_handler.check_serve_path(uri)) {
-        static_request_handler.handle_request(request_string, request_, reply_);
-      }
-      else reply_ = reply::stock_reply(reply::bad_request);
-      do_write();
-    }
-    else if (result == RequestParser::bad) {
-      BOOST_LOG_TRIVIAL(trace) << "Connection: RequestParser returns bad;\n";
-      reply_ = reply::stock_reply(reply::bad_request);
-      do_write();
+    std::string raw_request = "";
+    raw_request.append(buffer_.data(), buffer_.data() + bytes_transferred);
+    std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
+    if (!request_ptr) {
+      response.SetStatus(Response::bad_request);
+      //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
     }
     else {
-      BOOST_LOG_TRIVIAL(trace) << "Connection: RequestParser returns intermediate;\n";
-      do_read();
+      request = *request_ptr;
+      if (!ProcessRequest(request.uri())) {
+        //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
+      }
     }
+    do_write();
     return true;
   }
   else
     return false;
 }
 
+bool
+Connection::ProcessRequest(const std::string& uri) 
+{
+  std::size_t pos = 1;
+  std::string longest_prefix = "";
+  while (true) {
+    std::size_t found = uri.find("/", pos);
+    auto it = handlers.find(uri.substr(0, found));
+    if (it != handlers.end()) longest_prefix = it->first;
+    if (found != std::string::npos) pos = found + 1;
+    else break;
+  }
+  if (longest_prefix == "") {
+    BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
+    response.SetStatus(Response::bad_request);
+    return false;
+  }
+  
+  RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);
+  if (status != RequestHandler::ok) return false;
+  return true;
+}
+
 void 
 Connection::do_write() {
-	boost::asio::async_write(socket_, reply_.to_buffers(),
+	boost::asio::async_write(socket_, boost::asio::buffer(response.ToString()),
       boost::bind(&Connection::handle_write, shared_from_this(),
                   boost::asio::placeholders::error,
                   boost::asio::placeholders::bytes_transferred));

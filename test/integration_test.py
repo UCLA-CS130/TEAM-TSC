@@ -22,11 +22,13 @@ print(bcolors.OKBLUE + '[==========] ' + bcolors.ENDC + 'start the webserver')
 wr = open(TMP_FILE_DIR + '/config_file', 'w')
 config_contents = '\
 server {\
-    listen 8080;\
+    port 8080;\
     path /echo EchoHandler;\
-    path /static1 /static2 StaticHandler {\
-        root /static1 content1;\
-        root /static2 content2;\
+    path /static1 StaticHandler {\
+        root content1;\
+    }\
+    path /static2 StaticHandler {\
+        root content2;\
     }\
 }'
 wr.write(config_contents)
@@ -34,7 +36,7 @@ wr.close()
 
 webserver = subprocess.Popen([EXE_PATH, TMP_FILE_DIR + '/config_file'])
 
-print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send echo request to server by telnet')
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send echo request to server by curl')
 #ECHO TESTS----------------------------------------------------------------------
 request = 'curl -i localhost:8080/echo'
 curl_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
@@ -48,7 +50,7 @@ User-Agent: curl/7.35.0\r\n\
 Host: localhost:8080\r\n\
 Accept: */*\r\n\r\n'
 
-print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send static request to server by telnet')
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send static request to server by curl')
 
 #STATIC TESTS---------------------------------------------------------------------- 
 request_static = 'curl -i localhost:8080/static1/test.html'

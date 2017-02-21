@@ -3,9 +3,6 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "server.h"
-#include "config_opts.h"
-#include "config_handler.h"
-#include "config_parser.h"
 
 int main(int argc, char* argv[])
 {
@@ -16,19 +13,11 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    std::string port;
-
-    NginxConfigParser config_parser;
-    ConfigHandler server_config_handler(config_parser);
-    
-    //Attempt to fill in server_config based on the config file
-    if(!server_config_handler.setup_config(argv[1])) {
-      std::cerr << "config file is wrong\n";
+    http::server::Server s;
+    if (!s.init(argv[1])) {
+      std::cerr << "Server Init Error\n";
       return 1;
     }
-    config_opts server_config = server_config_handler.get_config_opt();
-
-    http::server::Server s(server_config);
     s.run();
   }
   catch (std::exception& e) {
