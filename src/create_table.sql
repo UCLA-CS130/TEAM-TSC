@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS test;
+CREATE TABLE test (
+    x INTEGER,
+    y INTEGER,
+    PRIMARY KEY(x)
+);
+
+INSERT INTO test
+VALUES (1, 10), (2, 20), (3, 30);

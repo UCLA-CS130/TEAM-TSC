@@ -66,7 +66,11 @@ Connection::ProcessRequest(const std::string& uri)
     return false;
   }
   
-  RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);
+  RequestHandler::Status status;
+  if (request.method() == "GET")
+    status = handlers[longest_prefix]->HandleRequest(request, &response);
+  else if (request.method() == "POST")
+    status = handlers["DbHandler"]->HandleRequest(request, &response);
   if (status != RequestHandler::ok) return false;
   return true;
 }

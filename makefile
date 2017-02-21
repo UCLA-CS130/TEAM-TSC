@@ -6,7 +6,7 @@ BUILD_DIR=build
 
 CXX =g++
 CXXFLAGS =-g -Wall -pthread -std=c++11 -DBOOST_LOG_DYN_LINK  
-CXXLINK =-lboost_system -lboost_log -lboost_regex
+CXXLINK =-lboost_system -lboost_log -lboost_regex -lmysqlcppconn
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
 TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lpthread
@@ -14,7 +14,10 @@ TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -l
 CCFILE = src/*.cc
 DEPS = src/*.h
 
-all: webserver
+all: create_table webserver
+
+create_table:
+	mysql -u root TSC < $(SRC_DIR)/create_table.sql
 
 webserver: $(CCFILE) $(DEPS)
 	$(CXX) -o $(BUILD_DIR)/$@ $(CCFILE) $(CXXFLAGS) $(CXXLINK)
@@ -76,7 +79,10 @@ test_coverage: gtest_setup connection_test config_parser_test config_handler_tes
 	./$(BUILD_DIR)/echo_handler_test && gcov -r echo_handler.cc;\
 	./$(BUILD_DIR)/request_handler_test && gcov -r request_handler.cc;
 
-clean:
+drop_table:
+	mysql -u root TSC < $(SRC_DIR)/drop_table.sql
+
+clean: drop_table
 	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda
 
 

@@ -30,13 +30,19 @@ Request::Parse(const std::string& raw_request)
   	BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
   	return nullptr;
   }
-  req->SetMethod(std::string(request_line_mat[1]));
-  req->SetUri(std::string(request_line_mat[2]));
-  req->SetVersion(std::string(request_line_mat[3]));
-  if (req->uri().find("..") != std::string::npos) {
+  std::string uri;
+  if (!uri_decode(std::string(request_line_mat[2]), uri)) {
     BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
     return nullptr;
   }
+  if (uri.find("..") != std::string::npos) {
+    BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
+    return nullptr; 
+  }
+  req->SetMethod(std::string(request_line_mat[1]));
+  req->SetUri(uri);
+  req->SetVersion(std::string(request_line_mat[3]));
+
 
   // parse the headers
   std::size_t pos = 0;
@@ -59,6 +65,31 @@ Request::Parse(const std::string& raw_request)
   // parse the body
   req->SetBody(body_str);
   return req;
+}
+
+bool 
+Request
+::uri_decode(const std::string& in, std::string& out)
+{
+  out.clear();
+  out.reserve(in.size());
+  for (std::size_t i = 0; i < in.size(); ++i) {
+    if (in[i] == '%') {
+      if (i + 3 <= in.size()) {
+        int value = 0;
+        std::istringstream is(in.substr(i + 1, 2));
+        if (is >> std::hex >> value) {
+          out += static_cast<char>(value);
+          i += 2;
+        }
+        else return false;
+      }
+      else return false;
+    }
+    else if (in[i] == '+') out += ' ';
+    else out += in[i];
+  }
+  return true;
 }
 
 const std::string ok =
