@@ -23,6 +23,7 @@ Server::init(const char* config_file_path)
   }
   config_opts server_opt = config_handler.get_config_opt();
 
+
   // initialize echo_handlers
   // echo_config is an essential parameter in Init(). However EchoHandler doesn't have config_block
   NginxConfig echo_config;
@@ -33,6 +34,19 @@ Server::init(const char* config_file_path)
       std::cerr << "Error: Initialization of EchoHandler\n";
       return false;
     }
+    ServerStatus::getInstance().addHandlerToUri("EchoHandler",uri_prefix);
+  }
+
+  //intialize status_handlers
+  NginxConfig status_config;
+  for (auto uri_prefix: server_opt.status_uri_prefixes) {
+    handlers[uri_prefix] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("StatusHandler"));
+    RequestHandler::Status status = handlers[uri_prefix]->Init(uri_prefix,status_config);
+    if(status != RequestHandler::ok){
+      std::cerr << "Error: Initialization of StatusHandler\n";
+      return false;
+    }
+    ServerStatus::getInstance().addHandlerToUri("StatusHandler",uri_prefix);
   }
 
   // initialize static_handlers
@@ -48,6 +62,7 @@ Server::init(const char* config_file_path)
       std::cerr << "Error: Initialization of StaticHandler\n";
       return false;
     }
+    ServerStatus::getInstance().addHandlerToUri("StaticHandler",uri_prefix);
   }
 
   boost::asio::ip::tcp::resolver resolver(io_service_);

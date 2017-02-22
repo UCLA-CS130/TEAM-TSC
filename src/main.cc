@@ -3,6 +3,12 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "server.h"
+#include "server_status.h"
+
+std::map<std::string,long long> http::server::ServerStatus::uri_visit_count;
+std::map<std::string,long long> http::server::ServerStatus::status_code_count;
+std::map<std::string,std::vector<std::string>> http::server::ServerStatus::handler_to_uri;
+long long http::server::ServerStatus::total_visit = 0;
 
 int main(int argc, char* argv[])
 {
@@ -12,6 +18,7 @@ int main(int argc, char* argv[])
       std::cerr << "Usage: ./webserver <path to config file>\n";
       return 1;
     }
+
 
     http::server::Server s;
     if (!s.init(argv[1])) {

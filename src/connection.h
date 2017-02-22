@@ -6,6 +6,7 @@
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
 #include "request_handler.h"
+#include "server_status.h"
 
 namespace http {
 namespace server {

@@ -78,6 +78,10 @@ class Response {
     status = response_code;
   }
 
+  ResponseCode GetStatus(){
+    return status;
+  }
+
   void AddHeader(std::string header_name, std::string header_value)
   {
     headers_.push_back(std::make_pair(header_name, header_value));

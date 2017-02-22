@@ -63,10 +63,12 @@ Connection::ProcessRequest(const std::string& uri)
   if (longest_prefix == "") {
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
+    ServerStatus::getInstance().addRecord(uri,(ResponseCode)Response::bad_request);
     return false;
   }
   
   RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);
+  ServerStatus::getInstance().addRecord(uri,(ResponseCode)response.GetStatus());
   if (status != RequestHandler::ok) return false;
   return true;
 }

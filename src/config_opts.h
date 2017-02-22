@@ -13,6 +13,7 @@ struct config_opts
   std::vector<std::string> static_file_uri_prefixes;
   std::vector<NginxConfig> static_file_config;
   std::vector<std::string> echo_uri_prefixes;
+  std::vector<std::string> status_uri_prefixes;
   //Add other options below
 };
 
