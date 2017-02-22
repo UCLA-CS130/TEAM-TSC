@@ -7,22 +7,23 @@
 namespace http {
 namespace server {
 
-  class ErrorHandler : public RequestHandler
-  {
-  public:
-    ErrorHandler() {};
-    
-    RequestHandler::Status Init(const std::string& uri_prefix_,
-				const NginxConfig& config);
+class ErrorHandler : public RequestHandler
+{
+ public:
+  ErrorHandler() {};
+  
+  RequestHandler::Status Init(const std::string& uri_prefix_,
+			const NginxConfig& config);
 
-    RequestHandler::Status HandleRequest(const Request& request,
-					 Response* response);
+  RequestHandler::Status HandleRequest(const Request& request,
+				 Response* response);
 
-  private:
-    std::string uri_prefix;
+  std::string to_string(Response::ResponseCode status);
 
-  };
+ private:
+  std::string uri_prefix;
 
+};
 
 REGISTER_REQUEST_HANDLER(ErrorHandler);
 

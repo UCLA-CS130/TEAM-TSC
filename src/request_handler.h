@@ -88,12 +88,15 @@ class Response {
     headers_.push_back(std::make_pair(header_name, header_value));
   }
 
-
   void SetBody(const std::string& body)
   {
     body_ = body;
   }
   
+  ResponseCode GetStatus() {
+    return status;
+  }
+
   std::string ToString();
 
  private:
