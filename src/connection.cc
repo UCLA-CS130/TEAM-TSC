@@ -33,18 +33,12 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
-      if(handlers.find("ErrorHandler") == handlers.end()) {
-	      BOOST_LOG_TRIVIAL(info) << "ErrorHandler not exist";
-      }
-      else handlers["ErrorHandler"]->HandleRequest(request, &response);
+      handlers["ErrorHandler"]->HandleRequest(request, &response);
     }
     else {
       request = *request_ptr;
       if (!ProcessRequest(request.uri())) {
-        if(handlers.find("ErrorHandler") == handlers.end()) {
-          BOOST_LOG_TRIVIAL(info) << "ErrorHandler not exist";
-        }
-        else handlers["ErrorHandler"]->HandleRequest(request, &response);
+        handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
     do_write();

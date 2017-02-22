@@ -66,6 +66,11 @@ TEST_F(ConnectionProcessRequest, NoneMatch) {
 class ConnectionHandleIO: public::testing::Test
 {
 protected:
+    ConnectionHandleIO() {
+        // The handle_read/handle_write must have a 'ErrorHandler'
+        handlers["ErrorHandler"] = std::unique_ptr<RequestHandler>(new TestHandler1());
+    }
+
     bool HandleRead(const boost::system::error_code& ec)
     {
         boost::asio::ip::tcp::socket socket(io_service);
