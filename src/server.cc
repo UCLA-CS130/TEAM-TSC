@@ -5,6 +5,14 @@
 namespace http {
 namespace server {
 
+
+//Have to define these here (static vairable inside a class)
+std::map<std::string,long long> http::server::ServerStatus::uri_visit_count;
+std::map<std::string,long long> http::server::ServerStatus::status_code_count;
+std::map<std::string,std::vector<std::string>> http::server::ServerStatus::handler_to_uri;
+long long http::server::ServerStatus::total_visit = 0;
+
+
 Server::Server():
     io_service_(),
 	  acceptor_(io_service_),
