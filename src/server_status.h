@@ -43,10 +43,10 @@ private:
 
 	ServerStatus(){total_visit=0;};
 	//static std::vector<Record> records;
-	static std::map<std::string,long long> uri_visit_count;
-	static std::map<std::string,long long> status_code_count;
-	static std::map<std::string,std::vector<std::string>> handler_to_uri;
-	static long long total_visit;
+	std::map<std::string,long long> uri_visit_count;
+	std::map<std::string,long long> status_code_count;
+	std::map<std::string,std::vector<std::string>> handler_to_uri;
+	long long total_visit;
 
 };
 
