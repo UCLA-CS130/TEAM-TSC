@@ -33,12 +33,20 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
-      //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
+      if(handlers["ErrorHandler"]->HandleRequest(request, &response)!=RequestHandler::ok) {
+	BOOST_LOG_TRIVIAL(info) << "ErrorHandler for 400 bad request failed";
+	return false;
+      }
     }
     else {
       request = *request_ptr;
       if (!ProcessRequest(request.uri())) {
-        //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
+	response.SetStatus(Response::not_found);
+        if(handlers["ErrorHandler"]->HandleRequest(request, &response)!=RequestHandler::ok)
+	  {
+	    BOOST_LOG_TRIVIAL(info) << "ErrorHandler for 404 not found failed";
+	    return false;
+	  }
       }
     }
     do_write();

@@ -50,6 +50,15 @@ Server::init(const char* config_file_path)
     }
   }
 
+  NginxConfig error_config;
+  handlers["ErrorHandler"] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("ErrorHandler"));
+  RequestHandler::Status err_handler_status = handlers["ErrorHandler"]->Init("ErrorHandler", error_config);
+  if(err_handler_status != RequestHandler::ok) {
+    std::cerr << "Error: Initialization of ErrorHandler\n";
+    return false;
+  }
+
+
   boost::asio::ip::tcp::resolver resolver(io_service_);
   boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({server_opt.address, server_opt.port});
   acceptor_.open(endpoint.protocol());
