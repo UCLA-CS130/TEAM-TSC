@@ -34,14 +34,16 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
-      //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
+      handlers["ErrorHandler"]->HandleRequest(request, &response);
+      ServerStatus::getInstance().addUri();
     }
     else {
       request = *request_ptr;
       if (!ProcessRequest(request.uri())) {
-        //handlers["ErrorHandler"]->HandleRequest(*request, response.get());
+        handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
+    ServerStatus::getInstance().addStatusCodeAndTotalVisit(response.GetStatus());
     do_write();
     return true;
   }
@@ -64,12 +66,11 @@ Connection::ProcessRequest(const std::string& uri)
   if (longest_prefix == "") {
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
-    ServerStatus::getInstance().addRecord(uri,(ResponseCode)Response::bad_request);
+    ServerStatus::getInstance().addUri();
     return false;
   }
   
   RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);
-  ServerStatus::getInstance().addRecord(uri,(ResponseCode)response.GetStatus());
   if (status != RequestHandler::ok) return false;
   return true;
 }

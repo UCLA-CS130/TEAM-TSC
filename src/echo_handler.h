@@ -3,6 +3,7 @@
 
 #include <string>
 #include "request_handler.h"
+#include "server_status.h"
 
 namespace http {
 namespace server {

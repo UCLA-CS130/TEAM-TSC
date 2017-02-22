@@ -15,13 +15,13 @@ ServerStatus::getRecordNum(){
 }
 
 std::string
-ServerStatus::responseToString(ResponseCode response){
+ServerStatus::responseToString(Response::ResponseCode response){
 	switch(response){
-		case  ResponseCode::ok:
+		case  Response::ResponseCode::ok:
 		return "200";
-		case  ResponseCode::bad_request:
+		case  Response::ResponseCode::bad_request:
 		return "400";
-		case ResponseCode::not_found:
+		case Response::ResponseCode::not_found:
 		return "404";
 		default:
 		return "500";
@@ -33,6 +33,7 @@ ServerStatus::addHandlerToUri(std::string handlerName, std::string uri){
 	handler_to_uri[handlerName].push_back(uri);
 }
 
+/*
 void 
 ServerStatus::addRecord(std::string uri, ResponseCode response){
 	if(uri_visit_count.count(uri) <= 0)
@@ -46,7 +47,24 @@ ServerStatus::addRecord(std::string uri, ResponseCode response){
 	total_visit++;
 	return;
 }
+*/
 
+void 
+ServerStatus::addUri(std::string uri){
+	if(uri_visit_count.count(uri) <= 0)
+		uri_visit_count[uri] = 0;
+	uri_visit_count[uri]++;	
+}
+
+
+void 
+ServerStatus::addStatusCodeAndTotalVisit(Response::ResponseCode response){
+	if(status_code_count.count(responseToString(response)) <= 0)
+		status_code_count[responseToString(response)] = 0;
+	status_code_count[responseToString(response)]++;
+
+	total_visit++;
+}
 
 std::string 
 ServerStatus::getStatusString(){

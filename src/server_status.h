@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "response.h"
 
 
 
@@ -12,6 +13,7 @@
 namespace http{
 namespace server{
 
+/*
 enum ResponseCode {
 // Define your HTTP response codes here.
 ok = 200,
@@ -19,7 +21,7 @@ bad_request = 400,
 not_found = 404,
 internal_server_error = 500
 };
-
+*/
 
 
 class ServerStatus{
@@ -31,11 +33,16 @@ public:
 
 	void addHandlerToUri(std::string handlerName, std::string uri);
 
-	void addRecord(std::string uri, ResponseCode response);
+	//void addRecord(std::string uri, ResponseCode response);
+	void addUri(std::string uri = "Invalid uri");
+
+	void addStatusCodeAndTotalVisit(Response::ResponseCode response);
+
+
 
 	long long getRecordNum();
 
-	std::string responseToString(ResponseCode response);
+	std::string responseToString(Response::ResponseCode response);
 
 	std::string getStatusString();
 
