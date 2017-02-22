@@ -11,16 +11,16 @@ TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/includ
 TESTARGS =-pthread
 TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lpthread
 
-CCFILE = src/*.cc
-DEPS = src/*.h
+SRCFILE = src/*.cc cpp-markdown/*.cpp
+DEPS = src/*.h cpp-markdown/*.h
 
 all: create_table webserver
 
 create_table:
 	mysql -u root TSC < $(SRC_DIR)/create_table.sql
 
-webserver: $(CCFILE) $(DEPS)
-	$(CXX) -o $(BUILD_DIR)/$@ $(CCFILE) $(CXXFLAGS) $(CXXLINK)
+webserver: $(SRCFILE) $(DEPS) 
+	$(CXX) -o $(BUILD_DIR)/$@ $(SRCFILE) $(CXXFLAGS) $(CXXLINK)
 
 .PHONY: clean test
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <boost/log/trivial.hpp>
 #include "static_file_handler.h"
+#include "../cpp-markdown/markdown.h"
 
 namespace http {
 namespace server {
@@ -71,9 +72,21 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
 
   // Fill out the response to be sent to the client.
   char buf[512];
-  std::string body = "";
-  while (is.read(buf, sizeof(buf)).gcount() > 0)
+  std::string body;
+  // Implement Markdown rendering using cpp-markdown library
+  if (extension == "md") {
+    std::ostringstream os_body;
+    markdown::Document doc;
+    doc.read(is);
+    doc.write(os_body);
+    body = os_body.str();
+    // convert the extension to 'html'
+    extension = "html";
+  }
+  else {
+    while (is.read(buf, sizeof(buf)).gcount() > 0)
     body.append(buf, is.gcount());
+  }
 
   response->SetStatus(Response::ok);
   response->SetBody(body);
