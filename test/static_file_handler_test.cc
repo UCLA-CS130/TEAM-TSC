@@ -102,10 +102,6 @@ TEST_F(StaticHandleRequest, FileNotFound) {
 	delete response;
 }
 
-
-
-
-
 } // namespace server
 } // namespace http
 
