@@ -1,11 +1,39 @@
-#A simple echo web server.
+#A simple web server.
+A web server written in C++ using Boost Lib. 
 
-##Run
-- git clone --recursive https://github.com/UCLA-CS130/TSC.git
-- make
-- ./build/webserver src/config_file
-- To test, run 'make test' (or 'make unit_test'/'make integration_test' seperately)
-- To see test-coverage, run 'make test_coverage'
+##SetUp
+###Installation
+```
+$ git clone --recursive https://github.com/UCLA-CS130/TSC.git
+```
+###Dependencies
+####Boost
+```
+$ sudo apt-get install libboost-all-dev
+```
+###Usage
+To run web-server
+```
+$ make
+$ ./build/webserver src/config_file
+```
+To test (including unit-tests and integration-test)
+```
+$ make test
+```
+To see test-coverage
+```
+$ make test-coverage
+```
+##Source Code layout
+- src
+- test
+
+##RequestHanlders
+- EchoHandler
+- StaticFileHandler
+- StatusHandler
+- ErrorHandler
 
 ##Contributors
 - Thomas Chang
