@@ -29,7 +29,7 @@ $ make test-coverage
 - src
 - test
 
-##RequestHanlders
+##RequestHandlers
 - EchoHandler : Echo client request.
 - StaticFileHandler : Return static file to client.
 - StatusHandler : Show the webserver status including details of request received and service provide.
