@@ -7,9 +7,11 @@
 #include "connection.h"
 #include "config_handler.h"
 #include "request_handler.h"
+#include "server_status.h"
 
 namespace http {
 namespace server {
+
 
 class Server {
 public:

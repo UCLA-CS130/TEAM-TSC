@@ -66,6 +66,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   {
     BOOST_LOG_TRIVIAL(info) << "Not found file: " << file_path.c_str();
     response->SetStatus(Response::not_found);
+    ServerStatus::getInstance().addUri();
     return RequestHandler::handle_fail;
   }
 
@@ -79,6 +80,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   response->SetBody(body);
   response->AddHeader("Content-Length", std::to_string(body.size()));
   response->AddHeader("Content-Type", extension2type(extension));
+  ServerStatus::getInstance().addUri(request_uri);
   return RequestHandler::ok;
 }
 

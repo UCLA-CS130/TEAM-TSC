@@ -48,7 +48,8 @@ gtest_setup:
 	ar -rv $(BUILD_DIR)/libgmock.a gtest-all.o gmock-all.o
 	rm gtest-all.o gmock-all.o
 
-connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc
+
+connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_status.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc
@@ -57,10 +58,14 @@ config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.c
 config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handler.cc 
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
-static_file_handler_test: $(TEST_DIR)/static_file_handler_test.cc $(SRC_DIR)/static_file_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc
+
+request_handler_test: $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc 
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
-echo_handler_test: $(TEST_DIR)/echo_handler_test.cc $(SRC_DIR)/echo_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc
+static_file_handler_test: $(TEST_DIR)/static_file_handler_test.cc $(SRC_DIR)/static_file_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc $(SRC_DIR)/server_status.cc
+	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
+
+echo_handler_test: $(TEST_DIR)/echo_handler_test.cc $(SRC_DIR)/echo_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc $(SRC_DIR)/server_status.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 request_test: $(TEST_DIR)/request_test.cc $(SRC_DIR)/request.cc

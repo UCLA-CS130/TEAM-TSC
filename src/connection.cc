@@ -4,6 +4,7 @@
 #include "connection.h"
 
 
+
 namespace http {
 namespace server {
 
@@ -34,6 +35,7 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);
+      ServerStatus::getInstance().addUri();
     }
     else {
       request = *request_ptr;
@@ -41,6 +43,7 @@ bool Connection::handle_read(const boost::system::error_code& ec,
         handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
+    ServerStatus::getInstance().addStatusCodeAndTotalVisit(response.GetStatus());
     do_write();
     return true;
   }
@@ -63,6 +66,7 @@ Connection::ProcessRequest(const std::string& uri)
   if (longest_prefix == "") {
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
+    ServerStatus::getInstance().addUri();
     return false;
   }
   

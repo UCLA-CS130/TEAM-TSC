@@ -3,6 +3,8 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "server.h"
+#include "server_status.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -12,6 +14,7 @@ int main(int argc, char* argv[])
       std::cerr << "Usage: ./webserver <path to config file>\n";
       return 1;
     }
+
 
     http::server::Server s;
     if (!s.init(argv[1])) {

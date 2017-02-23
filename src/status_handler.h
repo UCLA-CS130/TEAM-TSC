@@ -1,37 +1,33 @@
-#ifndef HTTP_STATIC_REQUEST_HANDLER_H
-#define HTTP_STATIC_REQUEST_HANDLER_H
+#ifndef HTTP_STATUS_REQUEST_HANDLER_H
+#define HTTP_STATUS_REQUEST_HANDLER_H
 
 #include <string>
 #include "request_handler.h"
 #include "server_status.h"
 
 namespace http {
-namespace server {
-  
+namespace server{
 /// The common handler for all incoming requests.
-class StaticFileHandler: public RequestHandler
+class StatusHandler: public RequestHandler
 {
  public:
-  StaticFileHandler() {};
+  StatusHandler() {};
 
   RequestHandler::Status Init(const std::string& uri_prefix_,
                               const NginxConfig& config);
 
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
-
+  
 
  private:
   std::string uri_prefix;
 
-  std::string base_dir;
-
-  std::string extension2type(std::string);
 };
 
-REGISTER_REQUEST_HANDLER(StaticFileHandler);
+REGISTER_REQUEST_HANDLER(StatusHandler);
 
-} // server
-} // http
+}
+}
 
-#endif // HTTP_STATIC_REQUEST_HANDLER_H
+#endif

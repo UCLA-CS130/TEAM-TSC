@@ -19,6 +19,7 @@ EchoHandler::HandleRequest(const Request& request, Response* response)
     response->SetBody(request.raw_request());
     response->AddHeader("Content-Length", std::to_string(request.raw_request().size()));
     response->AddHeader("Content-Type", "text/plain");
+    ServerStatus::getInstance().addUri("/echo");
     return RequestHandler::ok;
 }
 
