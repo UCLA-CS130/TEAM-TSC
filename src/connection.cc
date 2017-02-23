@@ -3,8 +3,6 @@
 #include <boost/log/trivial.hpp>
 #include "connection.h"
 
-
-
 namespace http {
 namespace server {
 
@@ -35,7 +33,6 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);
-      ServerStatus::getInstance().addUri();
     }
     else {
       request = *request_ptr;
@@ -66,7 +63,6 @@ Connection::ProcessRequest(const std::string& uri)
   if (longest_prefix == "") {
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
-    ServerStatus::getInstance().addUri();
     return false;
   }
   
@@ -93,6 +89,5 @@ Connection::handle_write(const boost::system::error_code& ec, std::size_t) {
   else return false;
 }
 
-
-}
-}
+} // namespace server
+} // namespace http

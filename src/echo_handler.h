@@ -14,16 +14,15 @@ class EchoHandler: public RequestHandler
  public:
   EchoHandler() {};
 
-  RequestHandler::Status Init(const std::string& uri_prefix_,
+  RequestHandler::Status Init(const std::string& uri_prefix,
                               const NginxConfig& config);
 
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
-  
 
  private:
-  std::string uri_prefix;
-
+  std::string uri_prefix_;
+  
 };
 
 REGISTER_REQUEST_HANDLER(EchoHandler);

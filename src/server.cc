@@ -5,9 +5,6 @@
 namespace http {
 namespace server {
 
-
-
-
 Server::Server():
     io_service_(),
 	  acceptor_(io_service_),

@@ -25,7 +25,6 @@ std::string NginxConfig::ToString(int depth) {
   return serialized_config;
 }
 
-
 std::string NginxConfigStatement::ToString(int depth) {
   std::string serialized_statement;
   for (int i = 0; i < depth; ++i) {

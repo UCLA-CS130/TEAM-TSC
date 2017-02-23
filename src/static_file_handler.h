@@ -20,7 +20,6 @@ class StaticFileHandler: public RequestHandler
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
 
-
  private:
   std::string uri_prefix;
 

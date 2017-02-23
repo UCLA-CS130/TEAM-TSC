@@ -13,21 +13,20 @@ class StatusHandler: public RequestHandler
  public:
   StatusHandler() {};
 
-  RequestHandler::Status Init(const std::string& uri_prefix_,
+  RequestHandler::Status Init(const std::string& uri_prefix,
                               const NginxConfig& config);
 
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
   
-
  private:
-  std::string uri_prefix;
+  std::string uri_prefix_;
 
 };
 
 REGISTER_REQUEST_HANDLER(StatusHandler);
 
-}
-}
+} // namespace server
+} // namespace http
 
-#endif
+#endif // HTTP_STATUS_REQUEST_HANDLER_H

@@ -66,7 +66,6 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   {
     BOOST_LOG_TRIVIAL(info) << "Not found file: " << file_path.c_str();
     response->SetStatus(Response::not_found);
-    ServerStatus::getInstance().addUri();
     return RequestHandler::handle_fail;
   }
 
@@ -76,6 +75,8 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   while (is.read(buf, sizeof(buf)).gcount() > 0)
     body.append(buf, is.gcount());
 
+  // TODO here: If the url is a directory?
+  if (body.size() == 0) body = "Empty file or Directory!";
   response->SetStatus(Response::ok);
   response->SetBody(body);
   response->AddHeader("Content-Length", std::to_string(body.size()));

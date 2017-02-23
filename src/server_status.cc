@@ -7,8 +7,6 @@
 namespace http{
 namespace server{
 
-
-
 long long
 ServerStatus::getRecordNum(){
 	return total_visit;
@@ -17,14 +15,14 @@ ServerStatus::getRecordNum(){
 std::string
 ServerStatus::responseToString(Response::ResponseCode response){
 	switch(response){
-		case  Response::ResponseCode::ok:
-		return "200";
-		case  Response::ResponseCode::bad_request:
-		return "400";
-		case Response::ResponseCode::not_found:
-		return "404";
-		default:
-		return "500";
+	case  Response::ResponseCode::ok:
+	  return "200";
+	case  Response::ResponseCode::bad_request:
+	  return "400";
+	case Response::ResponseCode::not_found:
+	  return "404";
+	default:
+	  return "500";
 	}
 }
 
@@ -33,29 +31,12 @@ ServerStatus::addHandlerToUri(std::string handlerName, std::string uri){
 	handler_to_uri[handlerName].push_back(uri);
 }
 
-/*
-void 
-ServerStatus::addRecord(std::string uri, ResponseCode response){
-	if(uri_visit_count.count(uri) <= 0)
-		uri_visit_count[uri] = 0;
-	uri_visit_count[uri]++;
-
-	if(status_code_count.count(responseToString(response)) <= 0)
-		status_code_count[responseToString(response)] = 0;
-	status_code_count[responseToString(response)]++;
-
-	total_visit++;
-	return;
-}
-*/
-
 void 
 ServerStatus::addUri(std::string uri){
 	if(uri_visit_count.count(uri) <= 0)
 		uri_visit_count[uri] = 0;
 	uri_visit_count[uri]++;	
 }
-
 
 void 
 ServerStatus::addStatusCodeAndTotalVisit(Response::ResponseCode response){
@@ -98,5 +79,5 @@ ServerStatus::getStatusString(){
 	return result;
 }
 
-}
-}
+} // namespace server
+} // namespace http

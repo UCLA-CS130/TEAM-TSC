@@ -4,10 +4,9 @@
 namespace http {
 namespace server {
 
-RequestHandler::Status ErrorHandler::Init(const std::string& uri_prefix_,
+RequestHandler::Status ErrorHandler::Init(const std::string& uri_prefix,
 				                                  const NginxConfig& config)
 {
-  uri_prefix = uri_prefix_;
   return RequestHandler::ok;
 }
 
@@ -18,6 +17,7 @@ ErrorHandler::HandleRequest(const Request& request, Response* response)
   response->SetBody(err_message);
   response->AddHeader("Content-Length", std::to_string(err_message.size()));
   response->AddHeader("Content-Type", "text/html");
+  ServerStatus::getInstance().addUri();
   return RequestHandler::ok; 
 }
 

@@ -5,9 +5,9 @@ namespace http {
 namespace server {
 
 RequestHandler::Status
-EchoHandler::Init(const std::string& uri_prefix_, const NginxConfig& config)
+EchoHandler::Init(const std::string& uri_prefix, const NginxConfig& config)
 {
-	uri_prefix = uri_prefix_;
+	uri_prefix_ = uri_prefix_;
 	return RequestHandler::ok;
 }
 
@@ -19,7 +19,7 @@ EchoHandler::HandleRequest(const Request& request, Response* response)
     response->SetBody(request.raw_request());
     response->AddHeader("Content-Length", std::to_string(request.raw_request().size()));
     response->AddHeader("Content-Type", "text/plain");
-    ServerStatus::getInstance().addUri("/echo");
+    ServerStatus::getInstance().addUri(uri_prefix_);
     return RequestHandler::ok;
 }
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "request_handler.h"
+#include "server_status.h"
 
 namespace http {
 namespace server {
@@ -12,16 +13,13 @@ class ErrorHandler : public RequestHandler
  public:
   ErrorHandler() {};
   
-  RequestHandler::Status Init(const std::string& uri_prefix_,
-			const NginxConfig& config);
+  RequestHandler::Status Init(const std::string& uri_prefix,
+							  const NginxConfig& config);
 
   RequestHandler::Status HandleRequest(const Request& request,
-				 Response* response);
+				 					   Response* response);
 
   std::string to_string(Response::ResponseCode status);
-
- private:
-  std::string uri_prefix;
 
 };
 
