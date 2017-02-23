@@ -32,8 +32,8 @@ $ make test-coverage
 ##RequestHanlders
 - EchoHandler : Echo client request.
 - StaticFileHandler : Return static file to client.
-- StatusHandler : Show the webserver status including details of request received and service provided.
-- ErrorHandler : Handle different HTTP error and show details.
+- StatusHandler : Show the webserver status including details of request received and service provide.
+- ErrorHandler : Handle different HTTP errors and show details.
 
 ##Contributors
 - Thomas Chang
