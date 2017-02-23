@@ -3,4 +3,6 @@
 *.a
 webserver
 build/*
-
+*.gcno
+*.gcov
+*.gcda
