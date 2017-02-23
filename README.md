@@ -38,7 +38,6 @@ $ make test-coverage
  - StaticFileHandler : Static file handling
 - test : Contains tests for each class
 - build : build files
-- content1 and content2 : webserver's static directories
 
 ###Connection Class
 - Bulk of interaction with other classes occurs here
