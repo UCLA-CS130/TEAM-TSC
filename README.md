@@ -26,6 +26,7 @@ To see test-coverage
 $ make test-coverage
 ```
 ##Source Code layout
+###Folder Layout
 - src : Source code for the webserver
  - Server : Runs the server and accepts connections
  - Connection : Handles connection-related events (reading and writing)
