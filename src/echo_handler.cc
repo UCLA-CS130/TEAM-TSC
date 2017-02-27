@@ -7,7 +7,7 @@ namespace server {
 RequestHandler::Status
 EchoHandler::Init(const std::string& uri_prefix, const NginxConfig& config)
 {
-	uri_prefix_ = uri_prefix_;
+	uri_prefix_ = uri_prefix;
 	return RequestHandler::ok;
 }
 
