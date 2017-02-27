@@ -14,6 +14,8 @@ namespace server {
 //   auto request = Request::Parse(raw_request);
 class Request {
  public:
+
+  Request():partial_(false),body_length_(0){}
   static std::unique_ptr<Request> Parse(const std::string& raw_request);
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
@@ -42,6 +44,14 @@ class Request {
     return body_; 
   }
 
+  bool partial() const {
+    return partial_;
+  }
+
+  int body_length() const{
+    return body_length_;
+  }
+
   void SetRawRequest(const std::string& raw_request) { 
     raw_request_ = raw_request; 
   }
@@ -66,6 +76,7 @@ class Request {
     body_ = body; 
   }
 
+
  private:
   std::string raw_request_;
   std::string method_;
@@ -73,6 +84,8 @@ class Request {
   std::string version_;
   Headers headers_;
   std::string body_;
+  bool partial_;
+  int body_length_;
 };
 
 } // namespace server

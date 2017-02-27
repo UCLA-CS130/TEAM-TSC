@@ -14,21 +14,32 @@ Connection::Connection(boost::asio::ip::tcp::socket socket,
 }
 
 void Connection::start() {
-	do_read();
+	do_read_partial();
 }
 
-void Connection::do_read() {
-	socket_.async_read_some(boost::asio::buffer(buffer_),
+void Connection::do_read_partial() {
+
+  boost::asio::async_read_until(socket_,buffer_,"\r\n\r\n",
+   boost::bind(&Connection::handle_read, shared_from_this(),
+                  boost::asio::placeholders::error,
+                  boost::asio::placeholders::bytes_transferred));
+}
+
+
+void Connection::do_read_body(int body_length){
+    std::size_t max_len = int(buffer_.max_size()) > body_length ? body_length : buffer_.max_size();
+    boost::asio::async_read(socket_,buffer_,boost::asio::transfer_exactly(max_len),
       boost::bind(&Connection::handle_read, shared_from_this(),
                   boost::asio::placeholders::error,
                   boost::asio::placeholders::bytes_transferred));
 }
 
+
 bool Connection::handle_read(const boost::system::error_code& ec, 
                              size_t bytes_transferred) {
   if (!ec) {
-    std::string raw_request = "";
-    raw_request.append(buffer_.data(), buffer_.data() + bytes_transferred);
+    auto data = buffer_.data();
+    raw_request.append(boost::asio::buffers_begin(data), boost::asio::buffers_begin(data) + bytes_transferred);
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
@@ -36,7 +47,12 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     }
     else {
       request = *request_ptr;
-      if (!ProcessRequest(request.uri())) {
+      if(request.partial()){
+        //then we should go on reading the request body
+        do_read_body(request.body_length());
+        return true;
+      }
+      else if (!ProcessRequest(request.uri())) {
         handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
