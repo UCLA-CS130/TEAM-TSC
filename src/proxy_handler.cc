@@ -2,9 +2,9 @@
 
 namespace http{
 	namespace server{
-		RequestHandler::Status Init(const std::string& uri_prefix_, const NginxConfig& config){
+	  RequestHandler::Status ProxyHandler::Init(const std::string& uri_prefix_, const NginxConfig& config){
 			uri_prefix = uri_prefix_;
-  			int root_num = 0;
+  			//int root_num = 0;
   			for (auto statement: config.statements_) {
     			std::string start_token = statement->tokens_[0];
     			if (start_token == "url") {
@@ -29,7 +29,7 @@ namespace http{
   			return RequestHandler::ok;
 		}
 
-  		RequestHandler::Status HandleRequest(const Request& request, Response* response){
+	  RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Response* response){
   			return RequestHandler::ok;
   		}
 	}
