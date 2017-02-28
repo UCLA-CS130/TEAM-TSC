@@ -12,7 +12,7 @@ namespace server {
 class ProxyHandler: public RequestHandler
 {
  public:
-  ProxyHandler() {};
+  ProxyHandler() { std::cout << "ProxyHandler created!" << std:endl; };
 
   RequestHandler::Status Init(const std::string& uri_prefix_,
                               const NginxConfig& config);
