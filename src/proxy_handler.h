@@ -4,6 +4,7 @@
 #include <string>
 #include "request_handler.h"
 #include "server_status.h"
+#include "request.h"
 
 namespace http {
 namespace server {
