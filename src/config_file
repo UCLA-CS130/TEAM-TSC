@@ -8,4 +8,9 @@ server {
 	path /static2 StaticHandler {
 		root content2;
 	}
+	path /proxy1 ProxyHandler {
+	     	url www.ucla.edu;
+		port 9000;
+	}	
+
 }
