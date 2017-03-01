@@ -30,6 +30,7 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     std::string raw_request = "";
     raw_request.append(buffer_.data(), buffer_.data() + bytes_transferred);
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
+    std::cout << request_ptr->raw_request() << std::endl << std::endl;
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);
