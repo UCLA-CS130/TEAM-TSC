@@ -24,7 +24,7 @@ class ProxyHandler: public RequestHandler
  private:
   std::string uri_prefix;
 
-  std::string url;
+  std::string host_name;
   std::string portno;
 };
 

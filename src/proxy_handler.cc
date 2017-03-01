@@ -13,9 +13,9 @@ namespace http{
   			//int root_num = 0;
   			for (auto statement: config.statements_) {
     			std::string start_token = statement->tokens_[0];
-    			if (start_token == "url") {
+    			if (start_token == "host") {
       				if(statement->tokens_.size() != 1){
-      					url = statement->tokens_[1];
+      					host_name = statement->tokens_[1];
       				}
       				else {
       					//throw error.
@@ -44,7 +44,7 @@ namespace http{
 
 			    // Get a list of endpoints corresponding to the server name.
 			    tcp::resolver resolver(io_service);
-			    tcp::resolver::query query(url, "http");
+			    tcp::resolver::query query(host_name, "http");
 			    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
 			    // Try each endpoint until we successfully establish a connection.
@@ -72,10 +72,15 @@ namespace http{
 			    std::istream response_stream(&responseBuf);
 			    std::string http_version;
 			    response_stream >> http_version;
+			    std::cout << http_version << std::endl;
+
 			    unsigned int status_code;
 			    response_stream >> status_code;
+			    std::cout << status_code << std::endl;
+
 			    std::string status_message;
 			    std::getline(response_stream, status_message);
+			    std::cout << status_message << std::endl;
 			    //std::cout << "Got here baby." << std::endl;
 			    if (!response_stream || http_version.substr(0, 5) != "HTTP/")
 			    {
@@ -90,11 +95,11 @@ namespace http{
 			    }
 			    else if(status_code == 404){
 			      response->SetStatus(Response::not_found);
-    			  return RequestHandler::handle_fail;
+			      return RequestHandler::handle_fail;
 			    }
 			    else {
 			      response->SetStatus(Response::bad_request);
-    			  return RequestHandler::handle_fail;
+			      return RequestHandler::handle_fail;
 			    }
 
 			    // Read the response headers, which are terminated by a blank line.
