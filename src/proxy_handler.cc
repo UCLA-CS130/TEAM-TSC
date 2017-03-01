@@ -58,20 +58,35 @@ namespace http{
 			    // std::ostream request_stream(&request);
 			    // request_stream << request.raw_request();
 
-			    // Send the request.
+			    // Modify the original request.
 			    std::string req = request.raw_request();
 			    std::cout << "old raw request: " << req << std::endl;
 			    
-			    // remove "/proxy1" from the uri in the new request
-			    size_t index = req.find("/proxy1");
+			    // remove the proxy's uri_prefix from the uri in the new request
+			    size_t index = req.find(uri_prefix);
 			    if (index == std::string::npos)
 			      {
-				std::cout << "Error: substring '/proxy1' not found in original request to proxy handler" << std::endl;
+				std::cout << "Error: proxy uri-prefix not found in original request to proxy handler" << std::endl;
 				response->SetStatus(Response::bad_request);
 				return RequestHandler::handle_fail;
 			      }
-			    // "proxy1" is 7 chars long, so erase the next 7 chars starting at index
-			    req.erase(index, 7);
+			    // erase the next size(proxy-uri-prefix) chars starting at index
+			    req.erase(index, uri_prefix.size());
+			    
+			    // replace the old host header with a new host header
+			    // TODO: add some error handling
+			    size_t start = req.find("Host");
+			    // look for the next '\r' after "Host" to find the end of the host header field
+			    size_t end = req.find('\r', start);
+			    std::string host_field = req.substr(start, end-start);
+			    std::cout << "host field: " << host_field << std::endl;
+
+			    std::string new_host_field = "Host: " + host_name + ":" + portno;
+			    std::cout << "new host field: " << new_host_field << std::endl;
+			    
+			    // replace the old host field with the new host field
+			    req.replace(start, end-start, new_host_field);
+
 			    std::cout << "new raw request: " << req << std::endl;
 
 			    boost::asio::write(socket, boost::asio::buffer(req, req.size()));
