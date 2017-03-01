@@ -89,6 +89,7 @@ namespace http{
 
 			    std::cout << "new raw request: " << req << std::endl;
 
+			    // write the modified request to the new host
 			    boost::asio::write(socket, boost::asio::buffer(req, req.size()));
 
 			    // Read the response status line. The response streambuf will automatically
@@ -153,6 +154,7 @@ namespace http{
 			    //if (responseBuf.size() > 0)
 			      //std::cout << &responseBuf;
 			   	//std::ostringstream ss;
+			    /*
 			   //  Read until EOF, writing data to output as we go.
 			    boost::system::error_code error;
 			    while (boost::asio::read(socket, responseBuf,
@@ -167,7 +169,14 @@ namespace http{
 		  		// respBody = ss.str();
 		  		// std::cout << respBody << std::endl;
 		  		// response->SetBody(respBody);
-		  	}
+				*/
+			
+			    //std::string content;
+			    //response_stream >> content;
+			    //std::cout << "content: " << content << std::endl;
+			    //response->SetBody(content);
+			}
+
 		  	catch (std::exception& e)
 		  	{
 		    	std::cout << "Exception: " << e.what() << "\n";
