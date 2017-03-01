@@ -60,6 +60,20 @@ namespace http{
 
 			    // Send the request.
 			    std::string req = request.raw_request();
+			    std::cout << "old raw request: " << req << std::endl;
+			    
+			    // remove "/proxy1" from the uri in the new request
+			    size_t index = req.find("/proxy1");
+			    if (index == std::string::npos)
+			      {
+				std::cout << "Error: substring '/proxy1' not found in original request to proxy handler" << std::endl;
+				response->SetStatus(Response::bad_request);
+				return RequestHandler::handle_fail;
+			      }
+			    // "proxy1" is 7 chars long, so erase the next 7 chars starting at index
+			    req.erase(index, 7);
+			    std::cout << "new raw request: " << req << std::endl;
+
 			    boost::asio::write(socket, boost::asio::buffer(req, req.size()));
 
 			    // Read the response status line. The response streambuf will automatically
@@ -72,16 +86,16 @@ namespace http{
 			    std::istream response_stream(&responseBuf);
 			    std::string http_version;
 			    response_stream >> http_version;
-			    std::cout << http_version << std::endl;
+			    std::cout << "http version: " << http_version << std::endl;
 
 			    unsigned int status_code;
 			    response_stream >> status_code;
-			    std::cout << status_code << std::endl;
+			    std::cout << "status code: " << status_code << std::endl;
 
 			    std::string status_message;
 			    std::getline(response_stream, status_message);
-			    std::cout << status_message << std::endl;
-			    //std::cout << "Got here baby." << std::endl;
+			    std::cout << "status message: " << status_message << std::endl;
+			    
 			    if (!response_stream || http_version.substr(0, 5) != "HTTP/")
 			    {
 			      std::cout << "Invalid response\n";
@@ -108,7 +122,7 @@ namespace http{
 			    // Process the response headers.
 			    std::string header;
 			    while (std::getline(response_stream, header) && header != "\r"){
-			      	std::cout << header << "\n";
+			        std::cout << "response header: " << header << "\n";
 			      	boost::char_separator<char> separator{": "};
     				boost::tokenizer<boost::char_separator<char>> tokens(header, separator);
 					boost::tokenizer<boost::char_separator<char>>::iterator tokens_it = tokens.begin();
@@ -121,14 +135,14 @@ namespace http{
 			    // 	ss << &responseBuf;
 			    //std::string respBody = &responseBuf;
 			    // Write whatever content we already have to output.
-			    if (responseBuf.size() > 0)
-			      std::cout << &responseBuf;
+			    //if (responseBuf.size() > 0)
+			      //std::cout << &responseBuf;
 			   	//std::ostringstream ss;
 			   //  Read until EOF, writing data to output as we go.
 			    boost::system::error_code error;
 			    while (boost::asio::read(socket, responseBuf,
 			          boost::asio::transfer_at_least(1), error)){
-			        std::cout << &responseBuf;
+			      //std::cout << &responseBuf;
 			    	//respBody.append(&responseBuf);
 			    	//ss << &responseBuf;
 			    }
