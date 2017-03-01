@@ -37,14 +37,18 @@ private:
   boost::asio::ip::tcp::socket socket_;
 	
   std::map<std::string, std::unique_ptr<RequestHandler>>& handlers;
-
-	std::array<char, 8192> buffer_;
+  //change to streambuf to fit in async_read_until function
+  boost::asio::streambuf buffer_;
 
   Response response;
 
   Request request;
 
-  void do_read();
+  std::string raw_request;
+
+  void do_read_partial();
+
+  void do_read_body(int body_length);
 
   void do_write();
 };

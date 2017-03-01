@@ -14,7 +14,7 @@ Request::Parse(const std::string& raw_request)
 
   // split the request_line, headers and body
   boost::cmatch request_mat;
-  boost::regex request_expression ("([^\r\n]*)\r\n(.*)\r\n\r\n(.*)");
+  boost::regex request_expression ("([^\r\n]*)\r\n(.+)\r\n\r\n(.*)");
   if (!boost::regex_match(raw_request.c_str(), request_mat, request_expression)) {
     BOOST_LOG_TRIVIAL(info) << "Invalid request format\n";
     return nullptr;
@@ -55,9 +55,14 @@ Request::Parse(const std::string& raw_request)
   	if (header_end == std::string::npos) break;
   	pos = header_end + 2;
   }
-
   // parse the body
   req->SetBody(body_str);
+  for (auto header : req->headers()){
+    if(header.first == "Content-Length" && stoi(header.second) > 0 ){
+      req->partial_ = true;
+      req->body_length_ = stoi(header.second);
+    }
+  }
   return req;
 }
 
