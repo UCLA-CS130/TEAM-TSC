@@ -2,15 +2,16 @@
 #include <sstream>
 #include <string>
 #include <boost/log/trivial.hpp>
+#include <boost/filesystem.hpp>
 #include "static_file_handler.h"
 
 namespace http {
 namespace server {
 
 RequestHandler::Status
-StaticFileHandler::Init(const std::string& uri_prefix_, const NginxConfig& config)
+StaticFileHandler::Init(const std::string& uri_prefix, const NginxConfig& config)
 {
-  uri_prefix = uri_prefix_;
+  uri_prefix_ = uri_prefix;
   int root_num = 0;
   for (auto statement: config.statements_) {
     std::string start_token = statement->tokens_[0];
@@ -45,19 +46,27 @@ RequestHandler::Status
 StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   std::string request_uri = request.uri();
 
-  if (request_uri[request_uri.size() - 1] == '/') {
-    request_uri += "index.html";
+  std::string file_path = base_dir + '/' + request_uri.substr(uri_prefix_.size());
+
+  if (file_path[file_path.size() - 1] == '/') {
+    file_path += "index.html";
   }
 
-  std::string file_path = base_dir + request_uri.substr(uri_prefix.size());
-
   // Determine the file extension.
-  std::size_t last_slash_pos = request_uri.find_last_of("/");
-  std::size_t last_dot_pos = request_uri.find_last_of(".");
+  std::size_t last_slash_pos = file_path.find_last_of("/");
+  std::size_t last_dot_pos = file_path.find_last_of(".");
   std::string extension;
   if (last_dot_pos != std::string::npos && last_dot_pos > last_slash_pos)
   {
-    extension = request_uri.substr(last_dot_pos + 1);
+    extension = file_path.substr(last_dot_pos + 1);
+  }
+
+  boost::filesystem::path boost_path(file_path);
+  if (!boost::filesystem::exists(file_path) || 
+      !boost::filesystem::is_regular_file(file_path)) {
+    BOOST_LOG_TRIVIAL(info) << "Not found file: " << file_path.c_str();
+    response->SetStatus(Response::not_found);
+    return RequestHandler::handle_fail;
   }
 
   // Open the file to send back.
@@ -76,7 +85,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
     body.append(buf, is.gcount());
 
   // TODO here: If the url is a directory?
-  if (body.size() == 0) body = "Empty file or Directory!";
+  //if (body.size() == 0) body = "Empty file or Directory!";
   response->SetStatus(Response::ok);
   response->SetBody(body);
   response->AddHeader("Content-Length", std::to_string(body.size()));

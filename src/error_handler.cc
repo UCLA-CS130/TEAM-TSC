@@ -29,7 +29,7 @@ const char bad_request[] =
 const char not_found[] =
   "<html>"
   "<head><title>Not Found</title></head>"
-  "<body><h1>404 Not Found</h1><img src=\"pooh_not_found.png\"></body>"
+  "<body><h1>404 Not Found</h1><img src=\"/static2/pooh_not_found.png\"></body>"
   "</html>";
 const char internal_server_error[] =
   "<html>"

@@ -91,9 +91,8 @@ Server::init(const char* config_file_path)
 void Server::run()
 {
   std::vector<boost::shared_ptr<boost::thread>> thread_pool;
-  for(int index = 0; index < total_thread_num_;index++){
-    boost::shared_ptr<boost::thread> thread
-    (new boost::thread(boost::bind(&boost::asio::io_service::run,&io_service_)));
+  for(int index = 0; index < total_thread_num_; index++){
+    boost::shared_ptr<boost::thread> thread(new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service_)));
     thread_pool.push_back(thread);
 
   }
