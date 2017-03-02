@@ -1,8 +1,10 @@
 #ifndef HTTP_CONNECTION_H
 #define HTTP_CONNECTION_H
 
-#include <boost/asio.hpp>
+#include <iostream>
+#include <sstream>
 #include <string>
+#include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
 #include "request_handler.h"
@@ -25,13 +27,17 @@ public:
 
   	void start();
 
-  	bool handle_read(const boost::system::error_code& ec, 
-                     std::size_t bytes_transferred);
+  	bool handle_read_partial(const boost::system::error_code& ec, 
+                             std::size_t bytes_transferred);
+
+    bool handle_read_body(const boost::system::error_code& ec, 
+                          size_t bytes_transferred); 
+
+    bool ProcessRequest(const std::string& uri_prefix);
 
   	bool handle_write(const boost::system::error_code& ec,
   					          std::size_t);
 
-    bool ProcessRequest(const std::string& uri_prefix);
 
 private:
   boost::asio::ip::tcp::socket socket_;
@@ -48,7 +54,7 @@ private:
 
   void do_read_partial();
 
-  void do_read_body(int body_length);
+  void do_read_body(std::size_t left_content_length);
 
   void do_write();
 };

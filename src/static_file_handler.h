@@ -21,7 +21,7 @@ class StaticFileHandler: public RequestHandler
                                        Response* response);
 
  private:
-  std::string uri_prefix;
+  std::string uri_prefix_;
 
   std::string base_dir;
 

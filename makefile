@@ -6,10 +6,10 @@ BUILD_DIR=build
 
 CXX =g++
 CXXFLAGS =-g -Wall -pthread -std=c++11 -DBOOST_LOG_DYN_LINK  
-CXXLINK =-lboost_system -lboost_log -lboost_regex -lboost_thread
+CXXLINK =-lboost_system -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
-TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lpthread
+TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
 
 CCFILE = src/*.cc
 DEPS = src/*.h

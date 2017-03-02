@@ -15,13 +15,16 @@ namespace server {
 class Request {
  public:
 
-  Request():partial_(false),body_length_(0){}
+  Request():content_length_(0) {}
+
   static std::unique_ptr<Request> Parse(const std::string& raw_request);
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
 
-  std::string raw_request() const { 
-    return raw_request_; 
+  std::string ToString() const;
+
+  std::string raw_request() const {
+    return raw_request_;
   }
 
   std::string method() const { 
@@ -44,16 +47,12 @@ class Request {
     return body_; 
   }
 
-  bool partial() const {
-    return partial_;
+  std::size_t content_length() const{
+    return content_length_;
   }
 
-  int body_length() const{
-    return body_length_;
-  }
-
-  void SetRawRequest(const std::string& raw_request) { 
-    raw_request_ = raw_request; 
+  void SetRawRequest(const std::string& raw_request) {
+    raw_request_ = raw_request;
   }
 
   void SetMethod(const std::string& method) { 
@@ -76,6 +75,14 @@ class Request {
     body_ = body; 
   }
 
+  void SetContentLength(const std::size_t content_length) {
+    content_length_ = content_length;
+  }
+
+  void AppendBody(const std::string left_body) {
+    body_.append(left_body);
+    raw_request_.append(left_body);
+  }
 
  private:
   std::string raw_request_;
@@ -84,8 +91,7 @@ class Request {
   std::string version_;
   Headers headers_;
   std::string body_;
-  bool partial_;
-  int body_length_;
+  std::size_t content_length_;
 };
 
 } // namespace server

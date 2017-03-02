@@ -1,4 +1,5 @@
 #include <boost/log/trivial.hpp>
+#include <boost/lexical_cast.hpp>
 #include "config_handler.h"
 
 //Sets up config based on config file. Returns false
@@ -133,9 +134,10 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
         // invalid number
         int threadNum = 0;
         try {
-          threadNum = std::stoi(statementPtr->tokens_[1]);
+          threadNum = boost::lexical_cast<int>(statementPtr->tokens_[1]);
         }
-        catch (const std::invalid_argument& e) {
+        catch(boost::bad_lexical_cast &e)
+        {
           BOOST_LOG_TRIVIAL(error) << "Invalid thread number(not a number)";
           return false;
         }
