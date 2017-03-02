@@ -58,7 +58,16 @@ namespace http{
 		    
 		    std::string uri = request.uri() == uri_prefix ? "/" : request.uri();
 
-		    boost::asio::streambuf requestBuf;
+		    //int loc = uri.substr(1).find_first_of("/");
+
+		    int findLoc = uri.find(uri_prefix);
+
+		    if(findLoc != -1){
+		    	uri.erase(findLoc, uri_prefix.size());
+		    }
+
+		    std::cout << "URIBEINGSENT:  " << uri << std::endl;
+ 		    boost::asio::streambuf requestBuf;
 		    std::ostream request_stream(&requestBuf);
 		    request_stream << "GET " << uri << " HTTP/1.1\r\n";
 		    request_stream << "Host: " << host_name << ":" << portno << "\r\n"; 
@@ -99,7 +108,7 @@ namespace http{
 		      response->SetStatus(Response::ok);
 		      //return 1;
 		    }
-		    else if(status_code == 302){
+		    else if(status_code == 302 || status_code == 301){
 		      response->SetStatus(Response::redirect);
 		      //return RequestHandler::handle_fail;
 		    }
@@ -122,6 +131,11 @@ namespace http{
 		        std::cout << "response header: " << header << "\n";
 				std::string head = header.substr(0, header.find(":"));
 				std::string value = header.substr(header.find(":")+2);
+				if(head == "Location"){
+					int loc = value.find_last_of("/");
+					value = value.substr(0, loc+1);
+					std::cout << value << std::endl;
+				}
 				std::cout << head << "," << value << std::endl;
 				response->AddHeader(head, value);
 		    }

@@ -39,7 +39,7 @@ bool Connection::handle_read(const boost::system::error_code& ec,
       std::string currRequestUri = request_ptr->uri();
       for (auto pair : request_ptr->headers()) {
         if (pair.first == "Referer") {
-            auto ref_uri = pair.second.find_last_of("/");
+            auto ref_uri = pair.second.find("/",8);
             currRequestUri = pair.second.substr(ref_uri);
         }
       }
