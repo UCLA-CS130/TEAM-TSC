@@ -64,26 +64,17 @@ namespace http{
 			    // Form the request. We specify the "Connection: close" header so that the
 			    // server will close the socket after transmitting the response. This will
 			    // allow us to treat all data up until the EOF as the content.
-			    
-			    std::string uri = request.uri();
-			    std::string newUri;
-			    /*
-			    int loc = uri.substr(1).find_first_of("/");
-			    std::string newUri;
-			    if(loc == -1)
-			      newUri = "/";
-			    else
-			      newUri = uri.substr(loc+1);
-			    */
 
-			    size_t index = uri.find(uri_prefix);
-			    if (index != std::string::npos)
-			      {
-				uri.erase(index, uri_prefix.size());
-			      }
-			    newUri = uri;
+			    std::cout << "IN PROXY HANDLER" << std::endl;
+			   	std::string uri = request.uri();
+			   	int loc = uri.substr(1).find_first_of("/");
+			   	std::string newUri;
+			   	if(loc == -1)
+			   		newUri = "/";
+			   	else
+			   		newUri = uri.substr(loc+1);
+			   	std::cout << newUri << std::endl;
 
-			    std::cout << newUri << std::endl;
 			    boost::asio::streambuf request;
 			    std::ostream request_stream(&request);
 			    request_stream << "GET " << newUri << " HTTP/1.0\r\n";
@@ -125,6 +116,10 @@ namespace http{
 			      response->SetStatus(Response::ok);
 			      //return 1;
 			    }
+			    else if(status_code == 302){
+			      response->SetStatus(Response::redirect);
+			      //return RequestHandler::handle_fail;
+			    }
 			    else if(status_code == 404){
 			      response->SetStatus(Response::not_found);
 			      return RequestHandler::handle_fail;
@@ -141,12 +136,6 @@ namespace http{
 			    std::string header;
 			    while (std::getline(response_stream, header) && header != "\r"){
 			        std::cout << "response header: " << header << "\n";
-			      	//boost::char_separator<char*> separator{": "};
-    				//boost::tokenizer<boost::char_separator<char*>> tokens(header, separator);
-					//boost::tokenizer<boost::char_separator<char*>>::iterator tokens_it = tokens.begin();
-					//std::string head = *(tokens_it);
-					//++tokens_it;
-					//std::string value = *(tokens_it);
 					std::string head = header.substr(0, header.find(":"));
 					std::string value = header.substr(header.find(":")+2);
 					std::cout << head << "," << value << std::endl;

@@ -9,7 +9,7 @@ server {
 		root content2;
 	}
 	path /proxy1 ProxyHandler {
-		host www.google.com;
+		host ucla.edu;
 		port 80;
 	}	
 
