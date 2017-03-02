@@ -54,15 +54,26 @@ namespace http{
 			    // Form the request. We specify the "Connection: close" header so that the
 			    // server will close the socket after transmitting the response. This will
 			    // allow us to treat all data up until the EOF as the content.
+			    
+			    std::string uri = request.uri();
+			    std::string newUri;
+			    /*
+			    int loc = uri.substr(1).find_first_of("/");
+			    std::string newUri;
+			    if(loc == -1)
+			      newUri = "/";
+			    else
+			      newUri = uri.substr(loc+1);
+			    */
 
-			   	std::string uri = request.uri();
-			   	int loc = uri.substr(1).find_first_of("/");
-			   	std::string newUri;
-			   	if(loc == -1)
-			   		newUri = "/";
-			   	else
-			   		newUri = uri.substr(loc+1);
-			   	std::cout << newUri << std::endl;
+			    size_t index = uri.find(uri_prefix);
+			    if (index != std::string::npos)
+			      {
+				uri.erase(index, uri_prefix.size());
+			      }
+			    newUri = uri;
+
+			    std::cout << newUri << std::endl;
 			    boost::asio::streambuf request;
 			    std::ostream request_stream(&request);
 			    request_stream << "GET " << newUri << " HTTP/1.0\r\n";
