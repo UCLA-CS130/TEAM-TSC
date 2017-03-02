@@ -30,6 +30,7 @@ bool Connection::handle_read(const boost::system::error_code& ec,
     std::string raw_request = "";
     raw_request.append(buffer_.data(), buffer_.data() + bytes_transferred);
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
+    std::cout << request_ptr->raw_request() << std::endl << std::endl;
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);
@@ -53,6 +54,7 @@ Connection::ProcessRequest(const std::string& uri)
 {
   std::size_t pos = 1;
   std::string longest_prefix = "";
+  std::cout << "URI IN CONECTION PROCESSREQUEST: " << uri << std::endl;
   while (true) {
     std::size_t found = uri.find("/", pos);
     auto it = handlers.find(uri.substr(0, found));
@@ -61,9 +63,11 @@ Connection::ProcessRequest(const std::string& uri)
     else break;
   }
   if (longest_prefix == "") {
+    /*
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
-    return false;
+    return false;*/
+    longest_prefix = "/proxy1";
   }
   
   RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);

@@ -20,7 +20,8 @@ class RequestHandler {
   enum Status {
     ok = 0,
     handle_fail = 1,
-    invalid_root_format = 2
+    invalid_root_format = 2,
+    invalid_config = 3
   };
 
   static RequestHandler* CreateByName(const char* type);

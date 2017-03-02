@@ -10,33 +10,43 @@ namespace http{
 	namespace server{
 		RequestHandler::Status ProxyHandler::Init(const std::string& uri_prefix_, const NginxConfig& config){
 			uri_prefix = uri_prefix_;
-  			//int root_num = 0;
+  		        
   			for (auto statement: config.statements_) {
-    			std::string start_token = statement->tokens_[0];
-    			if (start_token == "host") {
-      				if(statement->tokens_.size() != 1){
-      					host_name = statement->tokens_[1];
-      				}
-      				else {
-      					//throw error.
-      				}
-    			}
-
-    			if(start_token == "port"){
-    				if(statement->tokens_.size() != 1){
-      					portno = statement->tokens_[1];
-      				}
-      				else {
-      					//throw error.
-      				}
-    			}
+			  std::string start_token = statement->tokens_[0];
+			  if (start_token == "host") {
+			    if(statement->tokens_.size() != 1){
+			      host_name = statement->tokens_[1];
+			    }
+			    else {
+			      return RequestHandler::invalid_config;
+			    }
+			  }
+			  
+			  if(start_token == "port"){
+			    if(statement->tokens_.size() != 1){
+			      portno = statement->tokens_[1];
+			      // verify that portno is a valid number
+			      for (size_t i = 0; i < portno.size(); i++){
+				if (!std::isdigit(portno[i])){
+				  return RequestHandler::invalid_config;
+				}
+			      }
+			    }
+			    else {
+			      return RequestHandler::invalid_config;
+			    }
+			  }
     		// other statements
   			}
+			// make some final checks:
+			if ((host_name == "") || (portno == "")) {
+			  return RequestHandler::invalid_config;
+			}
   			return RequestHandler::ok;
 		}
-
-		using boost::asio::ip::tcp;
-
+	  
+	  using boost::asio::ip::tcp;
+	  
   		RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Response* response){
   			try
   			{
@@ -54,43 +64,35 @@ namespace http{
 			    // Form the request. We specify the "Connection: close" header so that the
 			    // server will close the socket after transmitting the response. This will
 			    // allow us to treat all data up until the EOF as the content.
-			    // boost::asio::streambuf request;
-			    // std::ostream request_stream(&request);
-			    // request_stream << request.raw_request();
-
-			    // Modify the original request.
-			    std::string req = request.raw_request();
-			    std::cout << "old raw request: " << req << std::endl;
 			    
-			    // remove the proxy's uri_prefix from the uri in the new request
-			    size_t index = req.find(uri_prefix);
-			    if (index == std::string::npos)
+			    std::string uri = request.uri();
+			    std::string newUri;
+			    /*
+			    int loc = uri.substr(1).find_first_of("/");
+			    std::string newUri;
+			    if(loc == -1)
+			      newUri = "/";
+			    else
+			      newUri = uri.substr(loc+1);
+			    */
+
+			    size_t index = uri.find(uri_prefix);
+			    if (index != std::string::npos)
 			      {
-				std::cout << "Error: proxy uri-prefix not found in original request to proxy handler" << std::endl;
-				response->SetStatus(Response::bad_request);
-				return RequestHandler::handle_fail;
+				uri.erase(index, uri_prefix.size());
 			      }
-			    // erase the next size(proxy-uri-prefix) chars starting at index
-			    req.erase(index, uri_prefix.size());
-			    
-			    // replace the old host header with a new host header
-			    // TODO: add some error handling
-			    size_t start = req.find("Host");
-			    // look for the next '\r' after "Host" to find the end of the host header field
-			    size_t end = req.find('\r', start);
-			    std::string host_field = req.substr(start, end-start);
-			    std::cout << "host field: " << host_field << std::endl;
+			    newUri = uri;
 
-			    std::string new_host_field = "Host: " + host_name + ":" + portno;
-			    std::cout << "new host field: " << new_host_field << std::endl;
-			    
-			    // replace the old host field with the new host field
-			    req.replace(start, end-start, new_host_field);
+			    std::cout << newUri << std::endl;
+			    boost::asio::streambuf request;
+			    std::ostream request_stream(&request);
+			    request_stream << "GET " << newUri << " HTTP/1.0\r\n";
+			    request_stream << "Host: " << host_name << ":" << portno << "\r\n";
+			    request_stream << "Accept: */*\r\n";
+			    request_stream << "Connection: keep-alive\r\n\r\n";
 
-			    std::cout << "new raw request: " << req << std::endl;
-
-			    // write the modified request to the new host
-			    boost::asio::write(socket, boost::asio::buffer(req, req.size()));
+			    // Send the request.
+			    boost::asio::write(socket, request);
 
 			    // Read the response status line. The response streambuf will automatically
 			    // grow to accommodate the entire line. The growth may be limited by passing
@@ -139,11 +141,18 @@ namespace http{
 			    std::string header;
 			    while (std::getline(response_stream, header) && header != "\r"){
 			        std::cout << "response header: " << header << "\n";
-			      	boost::char_separator<char> separator{": "};
-    				boost::tokenizer<boost::char_separator<char>> tokens(header, separator);
-					boost::tokenizer<boost::char_separator<char>>::iterator tokens_it = tokens.begin();
-					response->AddHeader(*(tokens_it), *(++tokens_it));
+			      	//boost::char_separator<char*> separator{": "};
+    				//boost::tokenizer<boost::char_separator<char*>> tokens(header, separator);
+					//boost::tokenizer<boost::char_separator<char*>>::iterator tokens_it = tokens.begin();
+					//std::string head = *(tokens_it);
+					//++tokens_it;
+					//std::string value = *(tokens_it);
+					std::string head = header.substr(0, header.find(":"));
+					std::string value = header.substr(header.find(":")+2);
+					std::cout << head << "," << value << std::endl;
+					response->AddHeader(head, value);
 			    }
+			    response->AddHeader("Content-Location", host_name);
 			    std::cout << "\n";
 			    
 			    // std::ostringstream ss;
@@ -154,11 +163,11 @@ namespace http{
 			    //if (responseBuf.size() > 0)
 			      //std::cout << &responseBuf;
 			   	//std::ostringstream ss;
-			    /*
+			    
 			   //  Read until EOF, writing data to output as we go.
 			    boost::system::error_code error;
 			    while (boost::asio::read(socket, responseBuf,
-			          boost::asio::transfer_at_least(1), error)){
+			          boost::asio::transfer_all(), error)){
 			      //std::cout << &responseBuf;
 			    	//respBody.append(&responseBuf);
 			    	//ss << &responseBuf;
@@ -169,12 +178,12 @@ namespace http{
 		  		// respBody = ss.str();
 		  		// std::cout << respBody << std::endl;
 		  		// response->SetBody(respBody);
-				*/
-			
-			    //std::string content;
+			  	const char* body = boost::asio::buffer_cast<const char*>(responseBuf.data());
+			  	std::string content = "";
+			    content += (std::string)body;
 			    //response_stream >> content;
 			    //std::cout << "content: " << content << std::endl;
-			    //response->SetBody(content);
+			    response->SetBody(content);
 			}
 
 		  	catch (std::exception& e)
