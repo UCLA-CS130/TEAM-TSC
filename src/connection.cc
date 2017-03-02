@@ -54,6 +54,7 @@ Connection::ProcessRequest(const std::string& uri)
 {
   std::size_t pos = 1;
   std::string longest_prefix = "";
+  std::cout << "URI IN CONECTION PROCESSREQUEST: " << uri << std::endl;
   while (true) {
     std::size_t found = uri.find("/", pos);
     auto it = handlers.find(uri.substr(0, found));
@@ -62,9 +63,11 @@ Connection::ProcessRequest(const std::string& uri)
     else break;
   }
   if (longest_prefix == "") {
+    /*
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
-    return false;
+    return false;*/
+    longest_prefix = "/proxy1";
   }
   
   RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);

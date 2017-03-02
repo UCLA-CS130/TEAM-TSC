@@ -10,33 +10,43 @@ namespace http{
 	namespace server{
 		RequestHandler::Status ProxyHandler::Init(const std::string& uri_prefix_, const NginxConfig& config){
 			uri_prefix = uri_prefix_;
-  			//int root_num = 0;
+  		        
   			for (auto statement: config.statements_) {
-    			std::string start_token = statement->tokens_[0];
-    			if (start_token == "host") {
-      				if(statement->tokens_.size() != 1){
-      					host_name = statement->tokens_[1];
-      				}
-      				else {
-      					//throw error.
-      				}
-    			}
-
-    			if(start_token == "port"){
-    				if(statement->tokens_.size() != 1){
-      					portno = statement->tokens_[1];
-      				}
-      				else {
-      					//throw error.
-      				}
-    			}
+			  std::string start_token = statement->tokens_[0];
+			  if (start_token == "host") {
+			    if(statement->tokens_.size() != 1){
+			      host_name = statement->tokens_[1];
+			    }
+			    else {
+			      return RequestHandler::invalid_config;
+			    }
+			  }
+			  
+			  if(start_token == "port"){
+			    if(statement->tokens_.size() != 1){
+			      portno = statement->tokens_[1];
+			      // verify that portno is a valid number
+			      for (size_t i = 0; i < portno.size(); i++){
+				if (!std::isdigit(portno[i])){
+				  return RequestHandler::invalid_config;
+				}
+			      }
+			    }
+			    else {
+			      return RequestHandler::invalid_config;
+			    }
+			  }
     		// other statements
   			}
+			// make some final checks:
+			if ((host_name == "") || (portno == "")) {
+			  return RequestHandler::invalid_config;
+			}
   			return RequestHandler::ok;
 		}
-
-		using boost::asio::ip::tcp;
-
+	  
+	  using boost::asio::ip::tcp;
+	  
   		RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Response* response){
   			try
   			{
@@ -64,6 +74,7 @@ namespace http{
 			   	else
 			   		newUri = uri.substr(loc+1);
 			   	std::cout << newUri << std::endl;
+
 			    boost::asio::streambuf request;
 			    std::ostream request_stream(&request);
 			    request_stream << "GET " << newUri << " HTTP/1.0\r\n";
