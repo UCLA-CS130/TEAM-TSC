@@ -65,7 +65,7 @@ TEST(ProxyHandlerInit, BadPortNum) {
 }
 
 TEST(ProxyHandlerInit, EmptyConfig) {
-	ProxyFileHandler handler;
+	ProxyHandler handler;
 	std::string uri_prefix = "/proxy1";
 	NginxConfig config;
 	EXPECT_EQ(handler.Init(uri_prefix, config), 
