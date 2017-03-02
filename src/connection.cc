@@ -1,5 +1,6 @@
 #include <utility>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 #include "connection.h"
 
 namespace http {
@@ -53,9 +54,13 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
     }
     else {
       request = *request_ptr;
-      if (request.body().length() < request.content_length()) {
+      std::size_t content_length;
+      std::string content_length_str = request.GetHeaderValueByName("Content-Length");
+      if (content_length_str.empty()) content_length = 0;
+      else content_length = boost::lexical_cast<std::size_t>(content_length_str);
+      if (request.body().length() < content_length) {
         //then we should go on reading the request body
-        do_read_body(request.content_length() - request.body().length());
+        do_read_body(content_length - request.body().length());
         return true;
       }
       else if (!ProcessRequest(request.uri())) {

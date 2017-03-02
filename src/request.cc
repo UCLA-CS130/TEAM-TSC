@@ -57,15 +57,6 @@ Request::Parse(const std::string& raw_request)
 
   // parse the body
   req->SetBody(body_str);
-  for (auto header : req->headers()){
-    if(header.first == "Content-Length") {
-      if (!header.second.empty()) {
-        // content-length must be > 0
-        req->SetContentLength(boost::lexical_cast<std::size_t>(header.second));
-      }
-      else req->SetContentLength(0);
-    }
-  }
   return req;
 }
 

@@ -15,7 +15,7 @@ namespace server {
 class Request {
  public:
 
-  Request():content_length_(0) {}
+  Request() {}
 
   static std::unique_ptr<Request> Parse(const std::string& raw_request);
 
@@ -47,8 +47,11 @@ class Request {
     return body_; 
   }
 
-  std::size_t content_length() const{
-    return content_length_;
+  std::string GetHeaderValueByName(const std::string& name) const {
+    for (auto header: headers_) {
+      if (header.first == "Content-Length") return header.second;
+    } 
+    return "";
   }
 
   void SetRawRequest(const std::string& raw_request) {
@@ -75,10 +78,6 @@ class Request {
     body_ = body; 
   }
 
-  void SetContentLength(const std::size_t content_length) {
-    content_length_ = content_length;
-  }
-
   void AppendBody(const std::string left_body) {
     body_.append(left_body);
     raw_request_.append(left_body);
@@ -91,7 +90,6 @@ class Request {
   std::string version_;
   Headers headers_;
   std::string body_;
-  std::size_t content_length_;
 };
 
 } // namespace server
