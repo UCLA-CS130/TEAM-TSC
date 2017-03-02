@@ -36,8 +36,24 @@ bool Connection::handle_read(const boost::system::error_code& ec,
       handlers["ErrorHandler"]->HandleRequest(request, &response);
     }
     else {
+      std::string currRequestUri = request_ptr->uri();
+      for (auto pair : request_ptr->headers()) {
+        if (pair.first == "Referer") {
+            auto ref_uri = pair.second.find_last_of("/");
+            currRequestUri = pair.second.substr(ref_uri);
+        }
+      }
       request = *request_ptr;
-      if (!ProcessRequest(request.uri())) {
+      // if(it != request_ptr->headers().end()){
+      //   std::cout << "THIRD" << std::endl;
+      //   std::cout << "REFERER IS " << it->second << std::endl;
+      //   std::string cutString = it->second.substr(7);
+      //   int loc = cutString.find_first_of("/");
+      //   int locCheck = cutString.substr(loc+1).find_first_of("/");
+      //   std::cout << "REFERER IS " << cutString.substr(loc) << "    " <<  cutString.substr(locCheck) << std::endl;
+      // }
+      std::cout << currRequestUri << std::endl;
+      if (!ProcessRequest(currRequestUri)) {
         handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
@@ -54,6 +70,7 @@ Connection::ProcessRequest(const std::string& uri)
 {
   std::size_t pos = 1;
   std::string longest_prefix = "";
+  std::cout << uri << std::endl;
   while (true) {
     std::size_t found = uri.find("/", pos);
     auto it = handlers.find(uri.substr(0, found));

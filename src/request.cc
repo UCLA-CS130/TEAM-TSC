@@ -1,5 +1,6 @@
 #include <boost/regex.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/lexical_cast.hpp>
 #include "request.h"
 
 namespace http{
@@ -14,7 +15,7 @@ Request::Parse(const std::string& raw_request)
 
   // split the request_line, headers and body
   boost::cmatch request_mat;
-  boost::regex request_expression ("([^\r\n]*)\r\n(.*)\r\n\r\n(.*)");
+  boost::regex request_expression ("([^\r\n]*)\r\n(.+)\r\n\r\n(.*)");
   if (!boost::regex_match(raw_request.c_str(), request_mat, request_expression)) {
     BOOST_LOG_TRIVIAL(info) << "Invalid request format\n";
     return nullptr;
@@ -27,8 +28,8 @@ Request::Parse(const std::string& raw_request)
   boost::cmatch request_line_mat;
   boost::regex request_line_expression ("(\\S+)\\s(/\\S*)\\s(HTTP/\\d+\\.\\d+)");
   if (!boost::regex_match(request_line.c_str(), request_line_mat, request_line_expression)) {
-  	BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
-  	return nullptr;
+    BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
+    return nullptr;
   }
   req->SetMethod(std::string(request_line_mat[1]));
   req->SetUri(std::string(request_line_mat[2]));
@@ -39,26 +40,39 @@ Request::Parse(const std::string& raw_request)
   }
 
   // parse the headers
-  std::size_t pos = 0;
-  while(true) {
-  	std::size_t header_end = headers_str.find("\r\n", pos);
-  	std::string header_str = headers_str.substr(pos, header_end);
-
-    boost::cmatch header_mat;
-  	boost::regex header_expression ("(\\S+)\\s*:\\s*(\\S.*)");
-  	if (!boost::regex_match(header_str.c_str(), header_mat, header_expression)) {
-  	  BOOST_LOG_TRIVIAL(info) << "Invalid header format\n";
-  	  return nullptr;
-  	}
+  // seperate the headers by '\r\n'
+  boost::regex delimeter("\r\n");  
+  boost::sregex_token_iterator itrBegin(headers_str.begin(), headers_str.end(), delimeter, -1);
+  boost::sregex_token_iterator itrEnd;
+  boost::cmatch header_mat;
+  boost::regex header_expression ("(\\S+)\\s*:\\s*(\\S[^\r\n]*)");
+  for(boost::sregex_token_iterator itr = itrBegin; itr != itrEnd; ++itr) {
+    std::string header_str = *itr;
+    if (!boost::regex_match(header_str.c_str(), header_mat, header_expression)) {
+      BOOST_LOG_TRIVIAL(info) << "Invalid header format\n";
+      return nullptr;
+    }
     req->AddHeader(std::string(header_mat[1]), std::string(header_mat[2]));
-
-  	if (header_end == std::string::npos) break;
-  	pos = header_end + 2;
   }
 
   // parse the body
   req->SetBody(body_str);
   return req;
+}
+
+std::string
+Request::ToString() const
+{
+  std::string str = method_ + " " + uri_ + " " + version_ + "\r\n";
+  for (auto header: headers_) {
+    str += header.first;
+    str += ": ";
+    str += header.second;
+    str += "\r\n";
+  }
+  str += "\r\n";
+  str += body_;
+  return str;
 }
 
 } // namespace server

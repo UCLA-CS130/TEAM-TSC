@@ -14,12 +14,17 @@ namespace server {
 //   auto request = Request::Parse(raw_request);
 class Request {
  public:
+
+  Request() {}
+
   static std::unique_ptr<Request> Parse(const std::string& raw_request);
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
 
-  std::string raw_request() const { 
-    return raw_request_; 
+  std::string ToString() const;
+
+  std::string raw_request() const {
+    return raw_request_;
   }
 
   std::string method() const { 
@@ -42,8 +47,15 @@ class Request {
     return body_; 
   }
 
-  void SetRawRequest(const std::string& raw_request) { 
-    raw_request_ = raw_request; 
+  std::string GetHeaderValueByName(const std::string& name) const {
+    for (auto header: headers_) {
+      if (header.first == "Content-Length") return header.second;
+    } 
+    return "";
+  }
+
+  void SetRawRequest(const std::string& raw_request) {
+    raw_request_ = raw_request;
   }
 
   void SetMethod(const std::string& method) { 
@@ -64,6 +76,11 @@ class Request {
 
   void SetBody(const std::string& body) { 
     body_ = body; 
+  }
+
+  void AppendBody(const std::string left_body) {
+    body_.append(left_body);
+    raw_request_.append(left_body);
   }
 
  private:
