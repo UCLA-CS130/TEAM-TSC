@@ -30,6 +30,10 @@ server {\
     path /static2 StaticHandler {\
         root content2;\
     }\
+    path /proxy1 ProxyHandler {\
+        host www.google.com;\
+        port 80;\
+    }\
 }'
 wr.write(config_contents)
 wr.close()
@@ -65,10 +69,21 @@ Content-Type: text/html\r\n\r\n\
   <body><h1>TSC</h1></body>\n\
 </html>'
 
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send proxy request to server by curl')
+
+#PROXY TESTS---------------------------------------------------------------------- 
+request_proxy = 'curl -i localhost:8080/proxy1/'
+curl_proc = subprocess.Popen(request_proxy, stdout=subprocess.PIPE, shell=True)
+response_proxy = curl_proc.stdout.read().decode('utf-8')
+
+expected_response_proxy = 'TODO'
+
+
+
 webserver.kill()
 shutil.rmtree(TMP_FILE_DIR)
 
-print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC +'check the results of echo and static tests')
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC +'check the results of echo, static, and proxy tests')
 
 if response != expected_response:
 	print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + 'Incorrect Reply in Echo Test!')
@@ -84,4 +99,13 @@ if response_static != expected_response_static:
         exit(1)
 else:
         print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + 'Static Test Succeeded!')
+        exit(0)
+
+if response_proxy != expected_response_proxy:
+        print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + 'Incorrect Reply in Proxy Test!')
+        print('Expected: ' + str(len(expected_response_proxy)) + '\n' + expected_response_proxy)
+        print('Response: ' + str(len(response_proxy)) + '\n' + response_proxy)
+        exit(1)
+else:
+        print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + 'Proxy Test Succeeded!')
         exit(0)
