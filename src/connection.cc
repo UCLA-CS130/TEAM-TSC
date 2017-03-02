@@ -70,7 +70,6 @@ Connection::ProcessRequest(const std::string& uri)
 {
   std::size_t pos = 1;
   std::string longest_prefix = "";
-  std::cout << uri << std::endl;
   while (true) {
     std::size_t found = uri.find("/", pos);
     auto it = handlers.find(uri.substr(0, found));
