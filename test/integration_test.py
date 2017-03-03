@@ -74,7 +74,7 @@ print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send proxy request to s
 #PROXY TESTS---------------------------------------------------------------------- 
 request_proxy = 'curl -i localhost:8080/proxy1/'
 curl_proc = subprocess.Popen(request_proxy, stdout=subprocess.PIPE, shell=True)
-response_proxy = curl_proc.stdout.read().decode('utf-8')
+response_proxy = curl_proc.stdout.read()
 
 expected_response_proxy = 'TODO'
 
