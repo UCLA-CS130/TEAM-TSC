@@ -31,7 +31,7 @@ multi_threading_test: webserver
 	python $(TEST_DIR)/threading_integration_test.py 2
 
 
-unit_test: gtest_setup connection_test config_parser_test config_handler_test static_file_handler_test echo_handler_test request_test response_test
+unit_test: gtest_setup connection_test config_parser_test config_handler_test static_file_handler_test echo_handler_test request_test response_test proxy_handler_test
 
 	./$(BUILD_DIR)/connection_test;\
 	./$(BUILD_DIR)/config_parser_test;\
