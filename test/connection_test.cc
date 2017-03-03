@@ -71,12 +71,19 @@ protected:
         handlers["ErrorHandler"] = std::unique_ptr<RequestHandler>(new TestHandler1());
     }
 
-    bool HandleRead(const boost::system::error_code& ec)
+    bool HandleReadPartial(const boost::system::error_code& ec)
     {
         boost::asio::ip::tcp::socket socket(io_service);
         std::shared_ptr<Connection> conn = std::make_shared<Connection>(std::move(socket), handlers);
-        return conn->handle_read(ec, 0);
+        return conn->handle_read_partial(ec, 0);
     }
+
+    bool HandleReadBody(const boost::system::error_code& ec)
+    {
+        boost::asio::ip::tcp::socket socket(io_service);
+        std::shared_ptr<Connection> conn = std::make_shared<Connection>(std::move(socket), handlers);
+        return conn->handle_read_body(ec, 0);
+    }    
 
     bool HandleWrite(const boost::system::error_code& ec)
     {
@@ -90,15 +97,26 @@ private:
     std::map<std::string, std::unique_ptr<RequestHandler>> handlers;
 };
 
-TEST_F(ConnectionHandleIO, HandleRead) {
+TEST_F(ConnectionHandleIO, HandleReadPartial) {
     boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
-    EXPECT_TRUE(HandleRead(ec_success)); 
+    EXPECT_TRUE(HandleReadPartial(ec_success)); 
 
     boost::system::error_code ec_broken_pipeline = boost::system::errc::make_error_code(boost::system::errc::broken_pipe);
-    EXPECT_FALSE(HandleRead(ec_broken_pipeline));    
+    EXPECT_FALSE(HandleReadPartial(ec_broken_pipeline));    
 
     boost::system::error_code ec_connection_aborted = boost::system::errc::make_error_code(boost::system::errc::connection_aborted);
-    EXPECT_FALSE(HandleRead(ec_connection_aborted));   
+    EXPECT_FALSE(HandleReadPartial(ec_connection_aborted));   
+}
+
+TEST_F(ConnectionHandleIO, HandleReadBody) {
+    boost::system::error_code ec_success = boost::system::errc::make_error_code(boost::system::errc::success);
+    EXPECT_TRUE(HandleReadBody(ec_success)); 
+
+    boost::system::error_code ec_broken_pipeline = boost::system::errc::make_error_code(boost::system::errc::broken_pipe);
+    EXPECT_FALSE(HandleReadBody(ec_broken_pipeline));    
+
+    boost::system::error_code ec_connection_aborted = boost::system::errc::make_error_code(boost::system::errc::connection_aborted);
+    EXPECT_FALSE(HandleReadBody(ec_connection_aborted));   
 }
 
 TEST_F(ConnectionHandleIO, HandleWrite) {
@@ -106,10 +124,10 @@ TEST_F(ConnectionHandleIO, HandleWrite) {
     EXPECT_TRUE(HandleWrite(ec_success)); 
 
     boost::system::error_code ec_broken_pipeline = boost::system::errc::make_error_code(boost::system::errc::broken_pipe);
-    EXPECT_FALSE(HandleRead(ec_broken_pipeline));    
+    EXPECT_FALSE(HandleWrite(ec_broken_pipeline));    
 
     boost::system::error_code ec_connection_aborted = boost::system::errc::make_error_code(boost::system::errc::connection_aborted);
-    EXPECT_FALSE(HandleRead(ec_connection_aborted));   
+    EXPECT_FALSE(HandleWrite(ec_connection_aborted));   
 }
 
 } // namespace server

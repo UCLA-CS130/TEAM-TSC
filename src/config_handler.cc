@@ -1,4 +1,5 @@
 #include <boost/log/trivial.hpp>
+#include <boost/lexical_cast.hpp>
 #include "config_handler.h"
 
 //Sets up config based on config file. Returns false
@@ -26,6 +27,8 @@ ConfigHandler::to_token_type(std::string token) {
     return TOKEN_SERVER;
   else if (token == "root")
     return TOKEN_ROOT;
+  else if (token == "thread")
+    return TOKEN_THREAD;
   else if (token == "default")
     return TOKEN_DEFAULT;
   else return TOKEN_INVALID;
@@ -126,6 +129,34 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
         bool child_return = handle_statements(statementPtr->child_block_->statements_);
         if (!child_return) {
           BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
+          return false;
+        }
+        continue;
+      }
+      case TOKEN_THREAD:
+      {
+        if (statementPtr->tokens_.size() != 2) {
+          BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
+          return false;
+        }
+
+        // invalid number
+        int threadNum = 0;
+        try {
+          threadNum = boost::lexical_cast<int>(statementPtr->tokens_[1]);
+        }
+        catch(boost::bad_lexical_cast &e)
+        {
+          BOOST_LOG_TRIVIAL(error) << "Invalid thread number(not a number)";
+          return false;
+        }
+    
+        // invalid port
+        if(threadNum > 0) {
+          config_opt.threadCount = threadNum;
+        }
+        else {
+          BOOST_LOG_TRIVIAL(error) << "Invalid thread number(not positive).";
           return false;
         }
         continue;

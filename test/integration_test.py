@@ -1,6 +1,8 @@
 import subprocess
 import os
 import shutil
+import sys
+import telnetlib
 
 class bcolors:
     HEADER = '\033[95m'
@@ -79,10 +81,38 @@ response_proxy = curl_proc.stdout.read()
 expected_response_proxy_code = "HTTP/1.0 200 OK"
 
 
+
+#MULTITHREAD TESTS------------------------------------------------------------------
+host = "localhost"
+expected_response_thread = 'HTTP/1.0 200 OK\r\n\
+Content-Length: 77\r\n\
+Content-Type: text/plain\r\n\r\n\
+GET /echo HTTP/1.1\r\n\
+User-Agent: telnet\r\n\
+Host: localhost:8080\r\n\
+Accept: */*\r\n\r\n'
+
+first_half_message = "GET /echo HTTP/1.1\r\n\
+User-Agent: telnet\r\n\
+Host: localhost:8080\r\n"
+second_half_message = "Accept: */*\r\n\r\n"
+
+tn1 = telnetlib.Telnet(host, 8080, 5)
+tn1.write(first_half_message)
+tn1_response = tn1.read_eager() 
+
+tn2 = telnetlib.Telnet(host, 8080, 5)
+tn2.write(first_half_message + second_half_message)
+tn2_response = tn2.read_all()
+
+tn1.write(second_half_message)
+tn1_response = tn1_response + tn1.read_all()
+
 webserver.kill()
 shutil.rmtree(TMP_FILE_DIR)
 
-print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC +'check the results of echo, static, and proxy tests')
+
+print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC +'check the results of echo and static and multithread tests')
 
 if response != expected_response:
 	print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + 'Incorrect Reply in Echo Test!')
@@ -98,13 +128,14 @@ if response_static != expected_response_static:
         exit(1)
 else:
         print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + 'Static Test Succeeded!')
-        exit(0)
-"""
-if expected_response_proxy_code not in response_proxy:
-        print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + 'Incorrect Reply in Proxy Test!')
-        print('Expected: ' + str(len(expected_response_proxy)) + '\n' + expected_response_proxy)
-        print('Response: ' + str(len(response_proxy)) + '\n' + response_proxy)
-        exit(1)
+
+if tn1_response != expected_response_thread or tn2_response != expected_response_thread:
+    print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + "Incorrect Reply in multithread test!")
+    print("Expected first response: " + str(len(expected_response_thread)) + '\n' + expected_response_thread)
+    print("First response: " + str(len(tn1_response)) + '\n' + tn1_response)
+    print("Second response: " + str(len(tn2_response)) + '\n' + tn2_response)
+    exit(1)
 else:
-        print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + 'Proxy Test Succeeded!')
-        exit(0)
+    print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + "Multithread Test Succeeded!")
+    exit(0)
+

@@ -27,6 +27,8 @@ public:
   bool handle_accept(const boost::system::error_code& ec);
 
 private:
+  int total_thread_num_;
+
   boost::asio::io_service io_service_;
 
   boost::asio::ip::tcp::acceptor acceptor_;

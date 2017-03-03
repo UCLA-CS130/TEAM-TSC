@@ -1,5 +1,7 @@
 
 #include "server.h"
+#include "boost/shared_ptr.hpp"
+#include "boost/thread.hpp"
 #include <utility>
 
 namespace http {
@@ -22,6 +24,8 @@ Server::init(const char* config_file_path)
     return false;
   }
   config_opts server_opt = config_handler.get_config_opt();
+  //intialize how many thread to run on the server
+  total_thread_num_ = server_opt.threadCount;
 
 
   // initialize echo_handlers
@@ -102,7 +106,15 @@ Server::init(const char* config_file_path)
 
 void Server::run()
 {
-  io_service_.run();
+  std::vector<boost::shared_ptr<boost::thread>> thread_pool;
+  for(int index = 0; index < total_thread_num_; index++){
+    boost::shared_ptr<boost::thread> thread(new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service_)));
+    thread_pool.push_back(thread);
+
+  }
+  for(int index = 0; index < total_thread_num_ ; index++){
+    thread_pool[index] -> join();
+  }
 }
 
 void Server::do_accept()

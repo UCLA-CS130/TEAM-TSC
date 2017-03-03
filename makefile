@@ -6,10 +6,10 @@ BUILD_DIR=build
 
 CXX =g++
 CXXFLAGS =-g -Wall -pthread -std=c++11 -DBOOST_LOG_DYN_LINK  
-CXXLINK =-lboost_system -lboost_log -lboost_regex
+CXXLINK =-lboost_system -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
-TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lpthread
+TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
 
 CCFILE = src/*.cc
 DEPS = src/*.h
@@ -26,7 +26,13 @@ test: unit_test integration_test
 integration_test: webserver
 	python $(TEST_DIR)/integration_test.py
 
-unit_test: gtest_setup connection_test config_parser_test config_handler_test static_file_handler_test echo_handler_test request_test response_test proxy_handler_test
+
+multi_threading_test: webserver
+	python $(TEST_DIR)/threading_integration_test.py 2
+
+
+unit_test: gtest_setup connection_test config_parser_test config_handler_test static_file_handler_test echo_handler_test request_test response_test
+
 	./$(BUILD_DIR)/connection_test;\
 	./$(BUILD_DIR)/config_parser_test;\
 	./$(BUILD_DIR)/config_handler_test;\
