@@ -71,7 +71,7 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
         do_read_body(content_length - request.body().length());
         return true;
       }
-      else if (!ProcessRequest(request.uri())) {
+      else if (!ProcessRequest(currRequestUri)) {
         handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
