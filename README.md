@@ -36,6 +36,7 @@ $ make test-coverage
  - RequestHandler : Parent to the webserver handlers that defines shared functionality
  - EchoHandler : Echo handling
  - StaticFileHandler : Static file handling
+ - ProxyHandler: Handle requests to a remote host by proxy
 - test : Contains tests for each class
 - build : build files
 
@@ -51,7 +52,7 @@ $ make test-coverage
 - StaticFileHandler : Return static file to client.
 - StatusHandler : Show the webserver status including details of request received and service provide.
 - ErrorHandler : Handle different HTTP errors and show details.
-
+- ProxyHandler : Open a new connection to a remote host and handle requests using new connection.
 
 
 ##Contributors

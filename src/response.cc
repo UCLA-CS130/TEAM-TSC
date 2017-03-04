@@ -13,6 +13,8 @@ const std::string not_found =
   "HTTP/1.0 404 Not Found\r\n";
 const std::string internal_server_error =
   "HTTP/1.0 500 Internal Server Error\r\n";
+const std::string redirect =
+  "HTTP/1.0 302 Redirect\r\n";
 
 static inline std::string 
 status_to_string(Response::ResponseCode code)
@@ -27,6 +29,8 @@ status_to_string(Response::ResponseCode code)
     return not_found;
   case Response::internal_server_error:
     return internal_server_error;
+  case Response::redirect:
+    return redirect;
   default:
     return internal_server_error;
   }

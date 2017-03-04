@@ -28,8 +28,8 @@ Request::Parse(const std::string& raw_request)
   boost::cmatch request_line_mat;
   boost::regex request_line_expression ("(\\S+)\\s(/\\S*)\\s(HTTP/\\d+\\.\\d+)");
   if (!boost::regex_match(request_line.c_str(), request_line_mat, request_line_expression)) {
-  	BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
-  	return nullptr;
+    BOOST_LOG_TRIVIAL(info) << "Invalid request_line format\n";
+    return nullptr;
   }
   req->SetMethod(std::string(request_line_mat[1]));
   req->SetUri(std::string(request_line_mat[2]));

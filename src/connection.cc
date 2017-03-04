@@ -48,11 +48,19 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
     raw_request = ss.str();
 
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
+    std::cout << request_ptr->raw_request() << std::endl << std::endl;
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);
     }
     else {
+      std::string currRequestUri = request_ptr->uri();
+      for (auto pair : request_ptr->headers()) {
+        if (pair.first == "Referer") {
+            auto ref_uri = pair.second.find("/",8);
+            currRequestUri = pair.second.substr(ref_uri);
+        }
+      }
       request = *request_ptr;
       std::size_t content_length;
       std::string content_length_str = request.GetHeaderValueByName("Content-Length");

@@ -109,6 +109,15 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
           }
           config_opt.static_file_config.emplace_back(*statementPtr->child_block_);
         }
+	else if (handler_name == "ProxyHandler") {
+	  std::cout << uri_prefix << std::endl;
+	  config_opt.proxy_uri_prefixes.emplace_back(uri_prefix);
+          if (statementPtr->child_block_ == nullptr) {
+            BOOST_LOG_TRIVIAL(error) << "Missing child block for ProxyHandler";
+            return false;
+          }
+          config_opt.proxy_config.emplace_back(*statementPtr->child_block_);
+        }
         continue;
       }
       case TOKEN_SERVER:

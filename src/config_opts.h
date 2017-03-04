@@ -16,6 +16,8 @@ struct config_opts
   std::vector<std::string> echo_uri_prefixes;
   std::vector<std::string> status_uri_prefixes;
   //Add other options below
+  std::vector<std::string> proxy_uri_prefixes;
+  std::vector<NginxConfig> proxy_config;
 };
 
 #endif //CONFIG_OPTS_H
