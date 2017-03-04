@@ -9,11 +9,11 @@ server {
 	path /static2 StaticHandler {
 		root content2;
 	}
-	path /proxy1 ProxyHandler {
+	path / ProxyHandler {
 		host www.google.com;
 		port 80;
 	}
-	path / ProxyHandler {
+	path /proxy2 ProxyHandler {
 		host ucla.edu;
 		port 80;
 	}	
