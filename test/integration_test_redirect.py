@@ -14,15 +14,26 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-CONFIG_FILE_DIR = 'src'
+TMP_FILE_DIR = 'tmp_files'
+os.makedirs(TMP_FILE_DIR)
 
 SCRIPT_PATH = os.path.dirname(__file__)
 EXE_PATH = os.path.join(SCRIPT_PATH, '..', 'build', 'webserver')
 
-
 print(bcolors.OKBLUE + '[==========] ' + bcolors.ENDC + 'start the webserver')
+wr = open(TMP_FILE_DIR + '/config_file', 'w')
+config_contents = '\
+server {\
+    port 8080;\
+    path / ProxyHandler {\
+        host ucla.com;\
+        port 80;\
+    }\
+}'
+wr.write(config_contents)
+wr.close()
 
-webserver = subprocess.Popen([EXE_PATH, CONFIG_FILE_DIR + '/config_file'])
+webserver = subprocess.Popen([EXE_PATH, TMP_FILE_DIR + '/config_file'])
 
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send a request to server by curl')
 
@@ -38,5 +49,6 @@ else:
 	exit(1)
 
 webserver.kill()
+shutil.rmtree(TMP_FILE_DIR)
 
 
