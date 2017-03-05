@@ -70,6 +70,7 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
   	response->Clear();
   	boost::system::error_code ec;
 	tcp::resolver resolver(io_service_);
+	BOOST_LOG_TRIVIAL(trace) << server_host << ":" << server_port;
     tcp::resolver::iterator endpoint_iterator = resolver.resolve({server_host, server_port}, ec);
     if (ec) return HandleError("resolve", ec);
 
