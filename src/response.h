@@ -26,10 +26,16 @@ class Response {
   };
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
+
+  void SetVersion(const std::string& version) {
+    version_ = version;
+  }
   
   void SetStatus(const ResponseCode& response_code) {
     status_ = response_code;
   }
+
+  void SetStatus(const unsigned int response_code);
 
   void AddHeader(std::string header_name, std::string header_value) {
     headers_.push_back(std::make_pair(header_name, header_value));
@@ -42,6 +48,11 @@ class Response {
   void AppendBody(const std::string& body) {
     body_.append(body);
   }
+
+  void Clear() {
+    headers_.clear();
+    body_.clear();
+  }
   
   ResponseCode GetStatus() {
     return status_;
@@ -50,6 +61,7 @@ class Response {
   std::string ToString();
 
  private:
+  std::string version_;
   ResponseCode status_;
   Headers headers_;
   std::string body_;

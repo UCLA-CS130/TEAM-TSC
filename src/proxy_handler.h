@@ -22,6 +22,14 @@ class ProxyHandler: public RequestHandler
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
 
+  RequestHandler::Status HandleError(const std::string& error_info, 
+                                     const boost::system::error_code& ec);
+
+  void ParseLocation(const std::string& location_header,
+                     std::string& server,
+                     std::string& port,
+                     std::string& path);
+
  private:
   boost::asio::io_service io_service_;
 

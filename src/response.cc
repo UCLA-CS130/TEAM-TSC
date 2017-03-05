@@ -6,15 +6,15 @@ namespace http{
 namespace server{
 
 const std::string ok =
-  "HTTP/1.0 200 OK\r\n";
+  "200 OK\r\n";
 const std::string bad_request =
-  "HTTP/1.0 400 Bad Request\r\n";
+  "400 Bad Request\r\n";
 const std::string not_found =
-  "HTTP/1.0 404 Not Found\r\n";
+  "404 Not Found\r\n";
 const std::string internal_server_error =
-  "HTTP/1.0 500 Internal Server Error\r\n";
+  "500 Internal Server Error\r\n";
 const std::string redirect =
-  "HTTP/1.0 302 Redirect\r\n";
+  "302 Redirect\r\n";
 
 static inline std::string 
 status_to_string(Response::ResponseCode code)
@@ -36,11 +36,29 @@ status_to_string(Response::ResponseCode code)
   }
 }
 
+void
+Response::SetStatus(const unsigned int response_code)
+{
+  if (response_code == 200)
+    status_ = Response::ok;
+  else if (response_code == 400)
+    status_ = Response::bad_request;
+  else if (response_code == 404)
+    status_ = Response::not_found;
+  else if (response_code == 500)
+    status_ = Response::internal_server_error;
+  else if (response_code == 302)
+    status_ = Response::redirect;
+  else 
+    status_ = Response::internal_server_error;
+}
+
 std::string
 Response::ToString()
 {
   std::string str = "";
-  str += status_to_string(status_);
+  if (version_ == "") version_ = "HTTP/1.1"; 
+  str += version_ + " " + status_to_string(status_);
   for (auto header: headers_) {
   	str += header.first;
   	str += ": ";
