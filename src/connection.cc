@@ -54,13 +54,6 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
       handlers["ErrorHandler"]->HandleRequest(request, &response);
     }
     else {
-      std::string currRequestUri = request_ptr->uri();
-      for (auto pair : request_ptr->headers()) {
-        if (pair.first == "Referer") {
-            auto ref_uri = pair.second.find("/",8);
-            currRequestUri = pair.second.substr(ref_uri);
-        }
-      }
       request = *request_ptr;
       std::size_t content_length;
       std::string content_length_str = request.GetHeaderValueByName("Content-Length");
@@ -71,7 +64,7 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
         do_read_body(content_length - request.body().length());
         return true;
       }
-      else if (!ProcessRequest(currRequestUri)) {
+      else if (!ProcessRequest(request)) {
         handlers["ErrorHandler"]->HandleRequest(request, &response);
       }
     }
@@ -94,7 +87,7 @@ bool Connection::handle_read_body(const boost::system::error_code& ec,
     std::string left_request = ss.str();
 
     request.AppendBody(left_request);
-    if (!ProcessRequest(request.uri())) {
+    if (!ProcessRequest(request)) {
       handlers["ErrorHandler"]->HandleRequest(request, &response);
     }
     do_write();
@@ -107,17 +100,26 @@ bool Connection::handle_read_body(const boost::system::error_code& ec,
 }
 
 bool
-Connection::ProcessRequest(const std::string& uri) 
+Connection::ProcessRequest(const Request& request) 
 {
-  std::size_t pos = 1;
-  std::string longest_prefix = "";
-  while (true) {
-    std::size_t found = uri.find("/", pos);
-    auto it = handlers.find(uri.substr(0, found));
-    if (it != handlers.end()) longest_prefix = it->first;
-    if (found != std::string::npos) pos = found + 1;
-    else break;
+  std::string longest_prefix = request.uri();
+  std::string referer = request.GetHeaderValueByName("Referer");
+  std::string host = request.GetHeaderValueByName("Host");
+  // if is a followed proxy request
+  if (referer != "" && referer.find(host) != std::string::npos) {
+    auto ref_uri = referer.find("/",8);
+    longest_prefix = referer.substr(ref_uri);
   }
+  if (longest_prefix == "/" && handlers.find("/") != handlers.end());
+  else {
+    while(!longest_prefix.empty()) {
+      auto it = handlers.find(longest_prefix);
+      if (it != handlers.end()) break;
+      std::size_t pos = longest_prefix.find_last_of("/");
+      longest_prefix = longest_prefix.substr(0, pos);
+    } 
+  }
+
   if (longest_prefix == "") {
     BOOST_LOG_TRIVIAL(info) << "No matched handler for request prefix";
     response.SetStatus(Response::bad_request);
