@@ -94,7 +94,7 @@ Accept: */*\r\n\r\n'
 
 first_half_message = "GET /echo HTTP/1.1\r\n\
 User-Agent: telnet\r\n\
-Host: localhost:8080\r\n"i
+Host: localhost:8080\r\n"
 second_half_message = "Accept: */*\r\n\r\n"
 
 tn1 = telnetlib.Telnet(host, 8080, 5)
