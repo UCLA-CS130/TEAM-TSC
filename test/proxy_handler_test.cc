@@ -79,6 +79,7 @@ protected:
 		config.statements_.emplace_back(new NginxConfigStatement);
 		config.statements_.back().get()->tokens_.push_back("host");
 		config.statements_.back().get()->tokens_.push_back("www.google.com");
+		config.statements_.emplace_back(new NginxConfigStatement);
 		config.statements_.back().get()->tokens_.push_back("port");
 		config.statements_.back().get()->tokens_.push_back("80");
 		handler.Init(uri_prefix, config);

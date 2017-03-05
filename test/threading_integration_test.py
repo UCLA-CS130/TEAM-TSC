@@ -50,7 +50,7 @@ response = curl_proc.stdout.read().decode('utf-8')
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'Begin testing for mutithreading')
 #MULTITHREAD TESTS------------------------------------------------------------------
 host = "localhost"
-expected_response_thread = 'HTTP/1.0 200 OK\r\n\
+expected_response_thread = 'HTTP/1.1 200 OK\r\n\
 Content-Length: 77\r\n\
 Content-Type: text/plain\r\n\r\n\
 GET /echo HTTP/1.1\r\n\
