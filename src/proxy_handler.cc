@@ -67,6 +67,8 @@ namespace http{
 			    	uri.erase(findLoc, uri_prefix.size());
 			    }
 
+			    if (uri == "" || uri[0] != '/') uri = "/" + uri;
+
 			    std::cout << "URIBEINGSENT:  " << uri << std::endl;
 	 		    boost::asio::streambuf requestBuf;
 			    std::ostream request_stream(&requestBuf);

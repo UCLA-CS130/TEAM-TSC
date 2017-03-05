@@ -49,7 +49,7 @@ class Request {
 
   std::string GetHeaderValueByName(const std::string& name) const {
     for (auto header: headers_) {
-      if (header.first == "Content-Length") return header.second;
+      if (header.first == name) return header.second;
     } 
     return "";
   }

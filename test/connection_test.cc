@@ -34,7 +34,7 @@ class TestHandler2: public RequestHandler
 class ConnectionProcessRequest: public::testing::Test
 {
 protected:
-    bool ProcessRequest(std::string uri_prefix) {
+    bool ProcessRequest(const Request& request) {
         boost::asio::io_service io_service;
         boost::asio::ip::tcp::socket socket(io_service);
         std::map<std::string, std::unique_ptr<RequestHandler>> handlers;
@@ -44,23 +44,32 @@ protected:
         handlers["/handler/foo/bar"] = std::unique_ptr<RequestHandler>(new TestHandler2());
 
         std::shared_ptr<Connection> conn = std::make_shared<Connection>(std::move(socket), handlers);
-        return conn->ProcessRequest(uri_prefix);
+        return conn->ProcessRequest(request);
     }
 };
 
 TEST_F(ConnectionProcessRequest, SimpleRequestHandle) {
-    EXPECT_TRUE(ProcessRequest("/handler1"));
-    EXPECT_FALSE(ProcessRequest("/handler"));
+    Request request;
+    request.SetUri("/handler1");
+    EXPECT_TRUE(ProcessRequest(request));
+    request.SetUri("/handler");
+    EXPECT_FALSE(ProcessRequest(request));
 }
 
 TEST_F(ConnectionProcessRequest, LongestMatch) {
-    EXPECT_TRUE(ProcessRequest("/handler/1"));
-    EXPECT_FALSE(ProcessRequest("/handler/foo/bar"));
+    Request request;
+    request.SetUri("/handler/1");
+    EXPECT_TRUE(ProcessRequest(request));
+    request.SetUri("/handler/foo/bar");
+    EXPECT_FALSE(ProcessRequest(request));
 }
 
 TEST_F(ConnectionProcessRequest, NoneMatch) {
-    EXPECT_FALSE(ProcessRequest("/handler/foo"));
-    EXPECT_FALSE(ProcessRequest("/handler3"));
+    Request request;
+    request.SetUri("/handler/foo");
+    EXPECT_FALSE(ProcessRequest(request));
+    request.SetUri("/handler3");
+    EXPECT_FALSE(ProcessRequest(request));
 }
 
 class ConnectionHandleIO: public::testing::Test

@@ -33,7 +33,7 @@ public:
     bool handle_read_body(const boost::system::error_code& ec, 
                           size_t bytes_transferred); 
 
-    bool ProcessRequest(const std::string& uri_prefix);
+    bool ProcessRequest(const Request& request);
 
   	bool handle_write(const boost::system::error_code& ec,
   					          std::size_t);
