@@ -38,6 +38,10 @@ class Response {
   void SetBody(const std::string& body) {
     body_ = body;
   }
+
+  void AppendBody(const std::string& body) {
+    body_.append(body);
+  }
   
   ResponseCode GetStatus() {
     return status_;
