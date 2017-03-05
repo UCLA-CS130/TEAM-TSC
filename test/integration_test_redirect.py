@@ -31,7 +31,7 @@ curl_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
 response = curl_proc.stdout.read().decode('utf-8')
 
 response = response.split('\r\n')
-if response[0] == "HTTP/1.0 200 OK":
+if response[0] == "HTTP/1.1 200 OK":
 	print "Redirect integration test passed"
 else:
 	print "Redirect integration test failed"
