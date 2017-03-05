@@ -25,7 +25,7 @@ test: unit_test integration_test
 
 integration_test: webserver
 	python $(TEST_DIR)/integration_test.py
-
+	python $(TEST_DIR)/integration_test_redirect.py
 
 multi_threading_test: webserver
 	python $(TEST_DIR)/threading_integration_test.py 2
