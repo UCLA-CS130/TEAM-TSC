@@ -83,10 +83,10 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
           BOOST_LOG_TRIVIAL(error) << "Illigal duplicate paths";
           return false;
         }
-        //if (uri_prefix.back() == '/') {
-        //   BOOST_LOG_TRIVIAL(error) << "Invalid path name terminated with /";
-        //   return false;
-        //}
+        if (uri_prefix.back() == '/' && uri_prefix != "/") {
+           BOOST_LOG_TRIVIAL(error) << "Invalid path name terminated with /";
+           return false;
+        }
         check_duplicate_path[uri_prefix] = true;
         if (handler_name == "EchoHandler") {
           config_opt.echo_uri_prefixes.emplace_back(uri_prefix);
