@@ -48,7 +48,7 @@ request = 'curl -i localhost:8080/echo'
 curl_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
 response = curl_proc.stdout.read().decode('utf-8')
 
-expected_response = 'HTTP/1.0 200 OK\r\n\
+expected_response = 'HTTP/1.1 200 OK\r\n\
 Content-Length: 82\r\n\
 Content-Type: text/plain\r\n\r\n\
 GET /echo HTTP/1.1\r\n\
@@ -78,13 +78,13 @@ request_proxy = 'curl -i localhost:8080/proxy1/'
 curl_proc = subprocess.Popen(request_proxy, stdout=subprocess.PIPE, shell=True)
 response_proxy = curl_proc.stdout.read()
 
-expected_response_proxy_code = "HTTP/1.0 200 OK"
+expected_response_proxy_code = "HTTP/1.1 200 OK"
 
 
 
 #MULTITHREAD TESTS------------------------------------------------------------------
 host = "localhost"
-expected_response_thread = 'HTTP/1.0 200 OK\r\n\
+expected_response_thread = 'HTTP/1.1 200 OK\r\n\
 Content-Length: 77\r\n\
 Content-Type: text/plain\r\n\r\n\
 GET /echo HTTP/1.1\r\n\

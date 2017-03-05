@@ -5,8 +5,8 @@ SRC_DIR=src
 BUILD_DIR=build
 
 CXX =g++
-CXXFLAGS =-g -Wall -pthread -std=c++11 -DBOOST_LOG_DYN_LINK  
-CXXLINK =-lboost_system -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
+CXXFLAGS =-g -Wall -std=c++11 
+CXXLINK =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
 TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
@@ -21,7 +21,7 @@ webserver: $(CCFILE) $(DEPS)
 
 .PHONY: clean test
 
-test: unit_test integration_test
+test: unit_test
 
 integration_test: webserver
 	python $(TEST_DIR)/integration_test.py
@@ -96,6 +96,14 @@ test_coverage: gtest_setup connection_test config_parser_test config_handler_tes
 	./$(BUILD_DIR)/request_test && gcov -r request_handler.cc;\
 	./$(BUILD_DIR)/response_test && gcov -r response_handler.cc;\
 	./$(BUILD_DIR)/proxy_handler_test && gcov -r proxy_handler.cc;\
+
+docker:
+	rm -f deploy/webserver
+	docker build -t httpserver.build .
+	docker run httpserver.build > deploy/binary.tar
+	cd deploy && tar -xvf binary.tar
+	rm -f deploy/binary.tar
+	docker build -t httpserver --file deploy/Dockerfile.run deploy
 
 clean:
 	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda
