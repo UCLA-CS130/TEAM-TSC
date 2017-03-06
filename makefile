@@ -21,7 +21,7 @@ webserver: $(CCFILE) $(DEPS)
 
 .PHONY: clean test
 
-test: unit_test
+test: unit_test integration_test multi_threading_test
 
 integration_test: webserver
 	python $(TEST_DIR)/integration_test.py
