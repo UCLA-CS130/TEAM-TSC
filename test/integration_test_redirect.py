@@ -26,7 +26,7 @@ config_contents = '\
 server {\
     port 8080;\
     path / ProxyHandler {\
-        host ucla.com;\
+        host ucla.edu;\
         port 80;\
     }\
 }'
