@@ -21,15 +21,12 @@ webserver: $(CCFILE) $(DEPS)
 
 .PHONY: clean test
 
-test: unit_test integration_test multi_threading_test
+test: unit_test integration_test
 
 integration_test: webserver
 	python $(TEST_DIR)/integration_test.py
 	python $(TEST_DIR)/integration_test_redirect.py
-
-multi_threading_test: webserver
 	python $(TEST_DIR)/threading_integration_test.py 2
-
 
 unit_test: gtest_setup connection_test config_parser_test config_handler_test static_file_handler_test echo_handler_test request_test response_test proxy_handler_test
 
