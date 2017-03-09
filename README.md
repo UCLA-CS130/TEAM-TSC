@@ -16,11 +16,11 @@ To get the wenserver docker image
 ```
 $ make docker
 ```
-To deploy the image on ec2
+To deploy the image on ec2<br>
+(Make sure that your server-image-name&pem-file&ec2-ip-address are configured correctly in makefile!)
 ```
 $ make deploy
 ```
-(Make sure that your server-image-name&pem-file&ec2-ip-address are configured correctly in makefile!)
 To run web-server
 ```
 $ make
