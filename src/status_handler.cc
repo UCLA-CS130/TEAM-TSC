@@ -19,7 +19,6 @@ StatusHandler::HandleRequest(const Request& request, Response* response)
     response->SetBody(body);
     response->AddHeader("Content-Length",  std::to_string(body.size()));
     response->AddHeader("Content-Type", "text/plain");
-    ServerStatus::getInstance().addUri(uri_prefix_);
     return RequestHandler::ok;
 }
 

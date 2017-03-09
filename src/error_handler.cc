@@ -17,7 +17,6 @@ ErrorHandler::HandleRequest(const Request& request, Response* response)
   response->SetBody(err_message);
   response->AddHeader("Content-Length", std::to_string(err_message.size()));
   response->AddHeader("Content-Type", "text/html");
-  ServerStatus::getInstance().addUri();
   return RequestHandler::ok; 
 }
 

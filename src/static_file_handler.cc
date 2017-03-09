@@ -90,7 +90,6 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   response->SetBody(body);
   response->AddHeader("Content-Length", std::to_string(body.size()));
   response->AddHeader("Content-Type", extension2type(extension));
-  ServerStatus::getInstance().addUri(request_uri);
   return RequestHandler::ok;
 }
 

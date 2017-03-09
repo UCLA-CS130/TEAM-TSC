@@ -13,8 +13,8 @@ ServerStatus::getRecordNum(){
 }
 
 std::string
-ServerStatus::responseToString(Response::ResponseCode response){
-	switch(response){
+ServerStatus::responseToString(const Response::ResponseCode& response_code){
+	switch(response_code){
 	case  Response::ResponseCode::ok:
 	  return "200";
 	case  Response::ResponseCode::bad_request:
@@ -27,23 +27,17 @@ ServerStatus::responseToString(Response::ResponseCode response){
 }
 
 void
-ServerStatus::addHandlerToUri(std::string handlerName, std::string uri){
+ServerStatus::addHandlerToUri(const std::string& handlerName, const std::string& uri){
 	handler_to_uri[handlerName].push_back(uri);
 }
 
 void 
-ServerStatus::addUri(std::string uri){
-	if(uri_visit_count.count(uri) <= 0)
-		uri_visit_count[uri] = 0;
-	uri_visit_count[uri]++;	
-}
-
-void 
-ServerStatus::addStatusCodeAndTotalVisit(Response::ResponseCode response){
-	if(status_code_count.count(responseToString(response)) <= 0)
-		status_code_count[responseToString(response)] = 0;
-	status_code_count[responseToString(response)]++;
-
+ServerStatus::insertRecord(const std::string& uri, const Response::ResponseCode& response_code)
+{
+	if (response_code == Response::ok)
+		uri_visit_count[uri]++;
+	else uri_visit_count["uri with unsuccessful responses"]++;
+	status_code_count[responseToString(response_code)]++;
 	total_visit++;
 }
 
