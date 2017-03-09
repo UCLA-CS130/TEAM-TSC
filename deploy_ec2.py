@@ -6,7 +6,7 @@ import signal
 import os
 
 if (len(sys.argv) < 4):
-	print "Usage python deploy_aws.py <pem_file> <image_name> <ec2_host>"
+	print "Usage python deploy_ec2.py <pem_file> <image_name> <ec2_host>"
 	exit(1)
 
 pem_file = sys.argv[1]
@@ -30,21 +30,23 @@ ec2_shell = spur.SshShell(
 
 
 # kill the running server container
-'''
+
 running_server_container_id_ = ec2_shell.run(["docker", "ps", "-q", "-f", "ancestor=" + image_name])
-running_server_container_id = running_server_container_id_.output
+running_server_container_id = running_server_container_id_.output[:-1]
 if running_server_container_id:
 	print running_server_container_id
 	ec2_shell.run(["docker", "kill", running_server_container_id])
+	ec2_shell.run(["docker", "rm", running_server_container_id])
 	print ("killing and the running server container: ", running_server_container_id)
 
 # delete the old image
 old_image_id_ = ec2_shell.run(["docker", "images", image_name, "-q"])
-old_image_id = old_image_id_.output
+old_image_id = old_image_id_.output[:-1]
 if old_image_id:
+	print old_image_id
 	ec2_shell.run(["docker", "rmi", old_image_id])
 	print ("delete the old server image: ", old_image_id)
-'''
+
 
 # create the new server image
 ec2_shell.run(["docker", "load", "-i", image_tar])
@@ -53,4 +55,4 @@ show_images = ec2_shell.run(["docker", "images"])
 print show_images.output
 
 ec2_shell.spawn(["docker", "run", "--rm", "-t", "-p", "8080:8080", image_name], store_pid=True)
-exit(1)
+exit(0)

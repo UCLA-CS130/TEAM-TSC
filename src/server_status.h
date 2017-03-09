@@ -16,15 +16,13 @@ public:
 		return theServerStatus;
 	}
 
-	void addHandlerToUri(std::string handlerName, std::string uri);
+	void addHandlerToUri(const std::string& handlerName, const std::string& uri);
 
-	void addUri(std::string uri = "Invalid uri");
-
-	void addStatusCodeAndTotalVisit(Response::ResponseCode response);
+	void insertRecord(const std::string& uri, const Response::ResponseCode& response_code);
 
 	long long getRecordNum();
 
-	std::string responseToString(Response::ResponseCode response);
+	std::string responseToString(const Response::ResponseCode& response_code);
 
 	std::string getStatusString();
 

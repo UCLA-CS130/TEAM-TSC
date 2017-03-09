@@ -95,12 +95,10 @@ test_coverage: gtest_setup connection_test config_parser_test config_handler_tes
 	./$(BUILD_DIR)/proxy_handler_test && gcov -r proxy_handler.cc;\
 
 docker:
-	rm -f deploy/webserver
-	docker build -t httpserver.build .
-	docker run httpserver.build > deploy/binary.tar
-	cd deploy && tar -xvf binary.tar
-	rm -f deploy/binary.tar
-	docker build -t httpserver --file deploy/Dockerfile.run deploy
+	./docker.sh
+
+deploy: docker
+	python deploy_ec2.py ../../TSC.pem httpserver ec2-35-163-116-30.us-west-2.compute.amazonaws.com
 
 clean:
 	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda

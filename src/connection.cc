@@ -103,21 +103,23 @@ bool
 Connection::ProcessRequest(const Request& request) 
 {
   std::string longest_prefix = request.uri();
-  std::string referer = request.GetHeaderValueByName("Referer");
-  std::string host = request.GetHeaderValueByName("Host");
-  // if is a followed proxy request
-  if (referer != "" && referer.find(host) != std::string::npos) {
-    auto ref_uri = referer.find("/",8);
-    longest_prefix = referer.substr(ref_uri);
-  }
-  if (longest_prefix == "/" && handlers.find("/") != handlers.end());
-  else {
-    while(!longest_prefix.empty()) {
-      auto it = handlers.find(longest_prefix);
-      if (it != handlers.end()) break;
-      std::size_t pos = longest_prefix.find_last_of("/");
-      longest_prefix = longest_prefix.substr(0, pos);
-    } 
+  while(!longest_prefix.empty()) {
+    auto it = handlers.find(longest_prefix);
+    if (it != handlers.end()) break;
+    std::size_t pos = longest_prefix.find_last_of("/");
+    longest_prefix = longest_prefix.substr(0, pos);
+  } 
+  if (longest_prefix == "") {
+    std::string referer = request.GetHeaderValueByName("Referer");
+    std::string host = request.GetHeaderValueByName("Host");
+    // if is a followed proxy request
+    if (referer != "" && 
+        referer.find(host) != std::string::npos &&
+        handlers.find("/") != handlers.end()) {
+        //auto ref_uri = referer.find("/",8);
+        //longest_prefix = referer.substr(ref_uri);
+        longest_prefix = "/";
+    }
   }
 
   if (longest_prefix == "") {
@@ -133,7 +135,7 @@ Connection::ProcessRequest(const Request& request)
 
 void 
 Connection::do_write() {
-  ServerStatus::getInstance().addStatusCodeAndTotalVisit(response.GetStatus());
+  ServerStatus::getInstance().insertRecord(request.uri(), response.GetStatus());
 	boost::asio::async_write(socket_, boost::asio::buffer(response.ToString()),
       boost::bind(&Connection::handle_write, shared_from_this(),
                   boost::asio::placeholders::error,
