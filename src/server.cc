@@ -1,5 +1,7 @@
 
 #include "server.h"
+#include "boost/shared_ptr.hpp"
+#include "boost/thread.hpp"
 #include <utility>
 
 namespace http {
@@ -22,6 +24,9 @@ Server::init(const char* config_file_path)
     return false;
   }
   config_opts server_opt = config_handler.get_config_opt();
+  //intialize how many thread to run on the server
+  total_thread_num_ = server_opt.threadCount;
+
 
   // initialize echo_handlers
   // echo_config is an essential parameter in Init(). However EchoHandler doesn't have config_block
@@ -33,6 +38,19 @@ Server::init(const char* config_file_path)
       std::cerr << "Error: Initialization of EchoHandler\n";
       return false;
     }
+    ServerStatus::getInstance().addHandlerToUri("EchoHandler",uri_prefix);
+  }
+
+  //intialize status_handlers
+  NginxConfig status_config;
+  for (auto uri_prefix: server_opt.status_uri_prefixes) {
+    handlers[uri_prefix] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("StatusHandler"));
+    RequestHandler::Status status = handlers[uri_prefix]->Init(uri_prefix,status_config);
+    if(status != RequestHandler::ok){
+      std::cerr << "Error: Initialization of StatusHandler\n";
+      return false;
+    }
+    ServerStatus::getInstance().addHandlerToUri("StatusHandler",uri_prefix);
   }
 
   // initialize static_handlers
@@ -48,7 +66,33 @@ Server::init(const char* config_file_path)
       std::cerr << "Error: Initialization of StaticHandler\n";
       return false;
     }
+    ServerStatus::getInstance().addHandlerToUri("StaticHandler",uri_prefix);
   }
+  
+  // initialize proxy_handlers
+  // BOOST_ASSERT(server_opt.static_file_uri_prefixes.size() == server_opt.static_file_config.size())
+  unsigned int proxy_handler_num = server_opt.proxy_uri_prefixes.size();
+  for (unsigned int i = 0; i < proxy_handler_num; ++i) {
+    std::string uri_prefix = server_opt.proxy_uri_prefixes[i];
+    NginxConfig proxy_config = server_opt.proxy_config[i];
+
+    handlers[uri_prefix] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("ProxyHandler"));
+    RequestHandler::Status status= handlers[uri_prefix]->Init(uri_prefix, proxy_config);
+    if (status != RequestHandler::ok) {
+      std::cerr << "Error: Initialization of ProxyHandler\n";
+      return false;
+    }
+    ServerStatus::getInstance().addHandlerToUri("ProxyHandler",uri_prefix);
+  }
+  
+  NginxConfig error_config;
+  handlers["ErrorHandler"] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("ErrorHandler"));
+  RequestHandler::Status err_handler_status = handlers["ErrorHandler"]->Init("ErrorHandler", error_config);
+  if(err_handler_status != RequestHandler::ok) {
+    std::cerr << "Error: Initialization of ErrorHandler\n";
+    return false;
+  }
+
 
   // initialize db_handlers
   handlers["DbHandler"] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("DbHandler"));
@@ -66,7 +110,15 @@ Server::init(const char* config_file_path)
 
 void Server::run()
 {
-  io_service_.run();
+  std::vector<boost::shared_ptr<boost::thread>> thread_pool;
+  for(int index = 0; index < total_thread_num_; index++){
+    boost::shared_ptr<boost::thread> thread(new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service_)));
+    thread_pool.push_back(thread);
+
+  }
+  for(int index = 0; index < total_thread_num_ ; index++){
+    thread_pool[index] -> join();
+  }
 }
 
 void Server::do_accept()

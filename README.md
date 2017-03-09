@@ -1,13 +1,71 @@
-#A simple echo web server.
+#A simple web server.
+A web server written in C++ using Boost Lib. 
 
-##Run
-- git clone --recursive https://github.com/UCLA-CS130/TSC.git
-- make
-- ./build/webserver src/config_file
-- To test, run 'make test' (or 'make unit_test'/'make integration_test' seperately)
-- To see test-coverage, run 'make test_coverage'
+##SetUp
+###Installation
+```
+$ git clone --recursive https://github.com/UCLA-CS130/TSC.git
+```
+###Dependencies
+####Boost
+```
+$ sudo apt-get install libboost-all-dev
+```
+###Usage
+To get the wenserver docker image
+```
+$ make docker
+```
+To deploy the image on ec2<br>
+(Make sure that your server-image-name&pem-file&ec2-ip-address are configured correctly in makefile!)
+```
+$ make deploy
+```
+To run web-server
+```
+$ make
+$ ./build/webserver src/config_file
+```
+To test (including unit-tests and integration-test)
+```
+$ make test
+```
+To see test-coverage
+```
+$ make test-coverage
+```
+##Source Code layout
+###Folder Layout
+- src : Source code for the webserver
+ - Server : Runs the server and accepts connections
+ - Connection : Handles connection-related events (reading and writing)
+ - ConfigHandler : Encapsulates config parsing and access to config options
+ - ConfigParser : Parses the config
+ - Request and Response : Classes that represent parsed requests and responses
+ - RequestHandler : Parent to the webserver handlers that defines shared functionality
+ - EchoHandler : Echo handling
+ - StaticFileHandler : Static file handling
+ - ProxyHandler: Handle requests to a remote host by proxy
+- test : Contains tests for each class
+- build : build files
+
+###Connection Class
+- Bulk of interaction with other classes occurs here
+- Connection::handle_read calls Request::parse to parse a request
+- Connection::handle_read will call the error handlers if the request cannot be parsed or if the requested file is not found
+- Connection::ProcessRequest will call the correct handler, if the request is valid and attempts to access a file that is present
+
+
+###RequestHandlers
+- EchoHandler : Echo client request.
+- StaticFileHandler : Return static file to client.
+- StatusHandler : Show the webserver status including details of request received and service provide.
+- ErrorHandler : Handle different HTTP errors and show details.
+- ProxyHandler : Open a new connection to a remote host and handle requests using new connection.
+
 
 ##Contributors
 - Thomas Chang
 - Xue Sun
 - Xin Xu
+- Thanks for Roi Barank & Abineet Das Sharma & Suchit Panjiyar's contribution to the ProxyHandler part!

@@ -30,7 +30,7 @@ TEST_F(EchoHandleRequest, SimpleHandleRequest) {
 	request.SetRawRequest("test");
 	EXPECT_EQ(HandleRequest(request, response), RequestHandler::ok);
 	std::string response_return = response->ToString();
-	std::string response_expect = "HTTP/1.0 200 OK\r\nContent-Length: 4\r\nContent-Type: text/plain\r\n\r\n" + 
+	std::string response_expect = "HTTP/1.1 200 OK\r\nContent-Length: 4\r\nContent-Type: text/plain\r\n\r\n" + 
 								   request.raw_request();
 	EXPECT_EQ(response_return, response_expect);
 

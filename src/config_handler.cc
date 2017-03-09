@@ -1,4 +1,5 @@
 #include <boost/log/trivial.hpp>
+#include <boost/lexical_cast.hpp>
 #include "config_handler.h"
 
 //Sets up config based on config file. Returns false
@@ -26,6 +27,8 @@ ConfigHandler::to_token_type(std::string token) {
     return TOKEN_SERVER;
   else if (token == "root")
     return TOKEN_ROOT;
+  else if (token == "thread")
+    return TOKEN_THREAD;
   else if (token == "default")
     return TOKEN_DEFAULT;
   else return TOKEN_INVALID;
@@ -80,9 +83,9 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
           BOOST_LOG_TRIVIAL(error) << "Illigal duplicate paths";
           return false;
         }
-        if (uri_prefix.back() == '/') {
-          BOOST_LOG_TRIVIAL(error) << "Invalid path name terminated with /";
-          return false;
+        if (uri_prefix.back() == '/' && uri_prefix != "/") {
+           BOOST_LOG_TRIVIAL(error) << "Invalid path name terminated with /";
+           return false;
         }
         check_duplicate_path[uri_prefix] = true;
         if (handler_name == "EchoHandler") {
@@ -92,6 +95,12 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
             return false;
           }
         }
+        else if (handler_name == "StatusHandler") {
+          config_opt.status_uri_prefixes.emplace_back(uri_prefix);
+          if(statementPtr->child_block_!=nullptr) {
+            BOOST_LOG_TRIVIAL(error) << "Invalid child block for StatusHandler";
+          }
+        }
         else if (handler_name == "StaticHandler") {
           config_opt.static_file_uri_prefixes.emplace_back(uri_prefix);
           if (statementPtr->child_block_ == nullptr) {
@@ -99,6 +108,15 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
             return false;
           }
           config_opt.static_file_config.emplace_back(*statementPtr->child_block_);
+        }
+	else if (handler_name == "ProxyHandler") {
+	  std::cout << uri_prefix << std::endl;
+	  config_opt.proxy_uri_prefixes.emplace_back(uri_prefix);
+          if (statementPtr->child_block_ == nullptr) {
+            BOOST_LOG_TRIVIAL(error) << "Missing child block for ProxyHandler";
+            return false;
+          }
+          config_opt.proxy_config.emplace_back(*statementPtr->child_block_);
         }
         continue;
       }
@@ -111,6 +129,34 @@ ConfigHandler::handle_statements(const std::vector<std::shared_ptr<NginxConfigSt
         bool child_return = handle_statements(statementPtr->child_block_->statements_);
         if (!child_return) {
           BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
+          return false;
+        }
+        continue;
+      }
+      case TOKEN_THREAD:
+      {
+        if (statementPtr->tokens_.size() != 2) {
+          BOOST_LOG_TRIVIAL(error) << "Invalid config file format for" << token_start;
+          return false;
+        }
+
+        // invalid number
+        int threadNum = 0;
+        try {
+          threadNum = boost::lexical_cast<int>(statementPtr->tokens_[1]);
+        }
+        catch(boost::bad_lexical_cast &e)
+        {
+          BOOST_LOG_TRIVIAL(error) << "Invalid thread number(not a number)";
+          return false;
+        }
+    
+        // invalid port
+        if(threadNum > 0) {
+          config_opt.threadCount = threadNum;
+        }
+        else {
+          BOOST_LOG_TRIVIAL(error) << "Invalid thread number(not positive).";
           return false;
         }
         continue;

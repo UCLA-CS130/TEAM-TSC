@@ -3,6 +3,7 @@
 
 #include <string>
 #include "request_handler.h"
+#include "server_status.h"
 
 namespace http {
 namespace server {
@@ -19,9 +20,8 @@ class StaticFileHandler: public RequestHandler
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
 
-
  private:
-  std::string uri_prefix;
+  std::string uri_prefix_;
 
   std::string base_dir;
 

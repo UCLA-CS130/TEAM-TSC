@@ -3,6 +3,7 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "server.h"
+#include "server_status.h"
 
 int main(int argc, char* argv[])
 {

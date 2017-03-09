@@ -35,6 +35,7 @@ private:
     TOKEN_SERVER = 2,
     TOKEN_ROOT = 3,
     TOKEN_DEFAULT = 4,
+    TOKEN_THREAD= 5,
     TOKEN_INVALID = 10
   };
 

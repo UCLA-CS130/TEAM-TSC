@@ -1,0 +1,11 @@
+server {
+
+	path / ProxyHandler {
+		host www.google.com;
+		port 80;
+	}
+	path /proxy2 ProxyHandler {
+		host ucla.edu;
+		port 80;
+	}	
+}

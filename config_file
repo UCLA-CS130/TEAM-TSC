@@ -1,10 +1,16 @@
 server {
 	port 8080;
+	thread 10;
 	path /echo EchoHandler;
+	path /status StatusHandler;
 	path /static1 StaticHandler {
 		root content1;
 	}
 	path /static2 StaticHandler {
 		root content2;
 	}
+	path / ProxyHandler {
+		host ucla.edu;
+		port 80;
+	}	
 }
