@@ -12,6 +12,15 @@ $ git clone --recursive https://github.com/UCLA-CS130/TSC.git
 $ sudo apt-get install libboost-all-dev
 ```
 ###Usage
+To get the wenserver docker image
+```
+$ make docker
+```
+To deploy the image on ec2
+```
+$ make deploy
+```
+(Make sure that your server-image-name&pem-file&ec2-ip-address are configured correctly in makefile!)
 To run web-server
 ```
 $ make
@@ -59,3 +68,4 @@ $ make test-coverage
 - Thomas Chang
 - Xue Sun
 - Xin Xu
+- Thanks for Roi Barank & Abineet Das Sharma & Suchit Panjiyar's contribution to the ProxyHandler part!
