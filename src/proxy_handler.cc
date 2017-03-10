@@ -69,8 +69,7 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
   {
   	response->Clear();
   	boost::system::error_code ec;
-	tcp::resolver resolver(io_service_);
-	BOOST_LOG_TRIVIAL(trace) << server_host << ":" << server_port;
+  	tcp::resolver resolver(io_service_);
     tcp::resolver::iterator endpoint_iterator = resolver.resolve({server_host, server_port}, ec);
     if (ec) return HandleError("resolve", ec);
 
@@ -78,9 +77,7 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
     boost::asio::connect(socket, endpoint_iterator, ec);
     if (ec) return HandleError("connect", ec);
 
-    std::cout << "URIBEINGSENT:  " << uri << std::endl;
-
-	boost::asio::streambuf requestBuf;
+	  boost::asio::streambuf requestBuf;
     std::ostream request_stream(&requestBuf);
     request_stream << request.method() << " " << uri << " HTTP/1.1\r\n";
     request_stream << "Host: " << server_host << ":" << server_port << "\r\n"; 
@@ -103,15 +100,12 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
     std::istream response_stream(&resp);
     std::string http_version;
     response_stream >> http_version;
-    std::cout << "http version: " << http_version << std::endl;
 
     unsigned int status_code;
     response_stream >> status_code;
-    std::cout << "status code: " << status_code << std::endl;
 
     std::string status_message;
     std::getline(response_stream, status_message);
-    std::cout << "status message: " << status_message << std::endl;
     
     response->SetVersion(http_version);
     response->SetStatus(status_code);
@@ -132,10 +126,8 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
     std::string header;
     while (std::getline(response_stream, header) && header != "\r"){
       header.pop_back();
-      std::cout << "response header: " << header << "\n";
 	  std::string head = header.substr(0, header.find(":"));
 	  std::string value = header.substr(header.find(":") + 2);
-	  //std::cout << head << "," << value << std::endl;
 	  response->AddHeader(head, value);
 	  if(status_code == 302 && head.compare("Location")==0) {
 		// absolute_path: Location: http(s)://host(:port)/url(?...)

@@ -12,7 +12,6 @@
 namespace http {
 namespace server {
 
-
 // Represents the parent of all request handlers. Implementations should expect to
 // be long lived and created at server constrution.
 class RequestHandler {

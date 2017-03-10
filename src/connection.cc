@@ -48,7 +48,6 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
     raw_request = ss.str();
 
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
-    std::cout << request_ptr->raw_request() << std::endl << std::endl;
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);
@@ -128,7 +127,10 @@ Connection::ProcessRequest(const Request& request)
     return false;
   }
   
-  RequestHandler::Status status = handlers[longest_prefix]->HandleRequest(request, &response);
+  RequestHandler::Status status;
+  if (request.method() == "POST")
+    status = handlers["DbHandler"]->HandleRequest(request, &response);
+  else status = handlers[longest_prefix]->HandleRequest(request, &response);
   if (status != RequestHandler::ok) return false;
   return true;
 }

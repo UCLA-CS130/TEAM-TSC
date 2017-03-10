@@ -6,18 +6,21 @@ BUILD_DIR=build
 
 CXX =g++
 CXXFLAGS =-g -Wall -std=c++11 
-CXXLINK =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
+CXXLINK =-static-libgcc -static-libstdc++ -pthread -lmysqlcppconn -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
 TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
 
-CCFILE = src/*.cc
-DEPS = src/*.h
+SRCFILE = src/*.cc cpp-markdown/*.cpp
+DEPS = src/*.h cpp-markdown/*.h
 
-all: webserver
+all: create_table webserver
 
-webserver: $(CCFILE) $(DEPS)
-	$(CXX) -o $(BUILD_DIR)/$@ $(CCFILE) $(CXXFLAGS) $(CXXLINK)
+create_table:
+	mysql -u root < $(SRC_DIR)/create_table.sql
+
+webserver: $(SRCFILE) $(DEPS) 
+	$(CXX) -o $(BUILD_DIR)/$@ $(SRCFILE) $(CXXFLAGS) $(CXXLINK)
 
 .PHONY: clean test
 
@@ -66,10 +69,10 @@ config_handler_test: $(TEST_DIR)/config_handler_test.cc $(SRC_DIR)/config_handle
 request_handler_test: $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc 
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
-static_file_handler_test: $(TEST_DIR)/static_file_handler_test.cc $(SRC_DIR)/static_file_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc $(SRC_DIR)/server_status.cc
+static_file_handler_test: $(TEST_DIR)/static_file_handler_test.cc $(SRC_DIR)/static_file_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc cpp-markdown/*.cpp
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
-echo_handler_test: $(TEST_DIR)/echo_handler_test.cc $(SRC_DIR)/echo_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc $(SRC_DIR)/server_status.cc
+echo_handler_test: $(TEST_DIR)/echo_handler_test.cc $(SRC_DIR)/echo_handler.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc 
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 request_test: $(TEST_DIR)/request_test.cc $(SRC_DIR)/request.cc
@@ -100,7 +103,10 @@ docker:
 deploy: docker
 	python deploy_ec2.py ../../TSC.pem httpserver ec2-35-163-116-30.us-west-2.compute.amazonaws.com
 
-clean:
+load_test:
+	python $(TEST_DIR)/load-testing.py ../../TSC.pem $(TEST_DIR)/load-testing.xml ec2-35-163-116-30.us-west-2.compute.amazonaws.com True
+
+clean: 
 	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda
 
 

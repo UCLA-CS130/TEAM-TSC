@@ -30,10 +30,10 @@ Server::init(const char* config_file_path)
 
   // initialize echo_handlers
   // echo_config is an essential parameter in Init(). However EchoHandler doesn't have config_block
-  NginxConfig echo_config;
+  NginxConfig config;
   for (auto uri_prefix: server_opt.echo_uri_prefixes) {
     handlers[uri_prefix] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("EchoHandler"));
-    RequestHandler::Status status = handlers[uri_prefix]->Init(uri_prefix, echo_config);
+    RequestHandler::Status status = handlers[uri_prefix]->Init(uri_prefix, config);
     if (status != RequestHandler::ok) {
       std::cerr << "Error: Initialization of EchoHandler\n";
       return false;
@@ -93,6 +93,10 @@ Server::init(const char* config_file_path)
     return false;
   }
 
+
+  // initialize db_handlers
+  handlers["DbHandler"] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("DbHandler"));
+  handlers["DbHandler"]->Init("DbHandler", config);
 
   boost::asio::ip::tcp::resolver resolver(io_service_);
   boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({server_opt.address, server_opt.port});

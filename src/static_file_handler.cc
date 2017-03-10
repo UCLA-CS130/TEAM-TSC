@@ -4,6 +4,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/filesystem.hpp>
 #include "static_file_handler.h"
+#include "../cpp-markdown/markdown.h"
 
 namespace http {
 namespace server {
@@ -44,7 +45,13 @@ StaticFileHandler::extension2type(std::string extension) {
 
 RequestHandler::Status 
 StaticFileHandler::HandleRequest(const Request& request, Response* response) {
-  std::string request_uri = request.uri();
+  std::string request_uri;
+
+  if (!Request::uri_decode(request.uri(), request_uri)) {
+    BOOST_LOG_TRIVIAL(trace) << "URI decode error";
+    response->SetStatus(Response::bad_request);
+    return RequestHandler::handle_fail;
+  }
 
   std::string file_path = base_dir + '/' + request_uri.substr(uri_prefix_.size());
 
@@ -80,9 +87,21 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
 
   // Fill out the response to be sent to the client.
   char buf[512];
-  std::string body = "";
-  while (is.read(buf, sizeof(buf)).gcount() > 0)
+  std::string body;
+  // Implement Markdown rendering using cpp-markdown library
+  if (extension == "md") {
+    std::ostringstream os_body;
+    markdown::Document doc;
+    doc.read(is);
+    doc.write(os_body);
+    body = os_body.str();
+    // convert the extension to 'html'
+    extension = "html";
+  }
+  else {
+    while (is.read(buf, sizeof(buf)).gcount() > 0)
     body.append(buf, is.gcount());
+  }
 
   // TODO here: If the url is a directory?
   //if (body.size() == 0) body = "Empty file or Directory!";
