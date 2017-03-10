@@ -19,6 +19,8 @@ class Request {
 
   static std::unique_ptr<Request> Parse(const std::string& raw_request);
 
+  static bool uri_decode(const std::string& in, std::string& out);
+
   using Headers = std::vector<std::pair<std::string, std::string>>;
 
   std::string ToString() const;

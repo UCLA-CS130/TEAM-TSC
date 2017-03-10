@@ -1,10 +1,8 @@
-#include <boost/regex.hpp>
-#include <boost/log/trivial.hpp>
 #include "request_handler.h"
 
 namespace http{
 namespace server{
-  
+
 std::map<std::string, RequestHandler* (*)(void)>* request_handler_builders = nullptr;
 
 RequestHandler* 

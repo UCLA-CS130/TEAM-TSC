@@ -45,7 +45,13 @@ StaticFileHandler::extension2type(std::string extension) {
 
 RequestHandler::Status 
 StaticFileHandler::HandleRequest(const Request& request, Response* response) {
-  std::string request_uri = request.uri();
+  std::string request_uri;
+
+  if (!Request::uri_decode(request.uri(), request_uri)) {
+    BOOST_LOG_TRIVIAL(trace) << "URI decode error";
+    response->SetStatus(Response::bad_request);
+    return RequestHandler::handle_fail;
+  }
 
   std::string file_path = base_dir + '/' + request_uri.substr(uri_prefix_.size());
 

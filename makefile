@@ -6,7 +6,7 @@ BUILD_DIR=build
 
 CXX =g++
 CXXFLAGS =-g -Wall -std=c++11 
-CXXLINK =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread -lmysqlcppconn
+CXXLINK =-static-libgcc -static-libstdc++ -pthread -lmysqlcppconn -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
 TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
@@ -14,7 +14,7 @@ TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -l
 SRCFILE = src/*.cc cpp-markdown/*.cpp
 DEPS = src/*.h cpp-markdown/*.h
 
-all: create_table webserver
+all: webserver
 
 create_table:
 	mysql -u root TSC < $(SRC_DIR)/create_table.sql
