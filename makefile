@@ -103,10 +103,7 @@ docker:
 deploy: docker
 	python deploy_ec2.py ../../TSC.pem httpserver ec2-35-163-116-30.us-west-2.compute.amazonaws.com
 
-drop_table:
-	mysql -u root < $(SRC_DIR)/drop_table.sql
-
-clean: drop_table
+clean: 
 	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda
 
 
