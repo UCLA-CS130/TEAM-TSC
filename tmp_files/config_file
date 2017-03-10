@@ -1,1 +1,0 @@
-server {    port 8080;    path / ProxyHandler {        host ucla.edu;        port 80;    }}
