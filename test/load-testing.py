@@ -35,8 +35,8 @@ print tsung_result.output
 log_dir = tsung_result.output.split(":")[1][1:-1]
 print "Going to log_file {0}".format(log_dir)
 
-stats_out = ec2_shell.run(["tsung_stats.pl"], cwd=log_dir)
+stats_out = ec2_shell.run(["/usr/lib/tsung/bin/tsung_stats.pl"], cwd=log_dir)
 print stats_out.output
 
 if copy_down:
-	local_shell.run(["scp", "-r", "-i", pem_file, "ec2-user@" + tsung_host + ":" + log_dir, "../load-test-resluts/."])
+	local_shell.run(["scp", "-r", "-i", pem_file, "ec2-user@" + tsung_host + ":" + log_dir, "load-test-resluts"])

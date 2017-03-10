@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
 <!--
-<!DOCTYPE tsung SYSTEM "/usr/local/Cellar/tsung/1.6.0/share/tsung/tsung-1.0.dtd">
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
 -->
+<!DOCTYPE tsung SYSTEM "/usr/local/Cellar/tsung/1.6.0/share/tsung/tsung-1.0.dtd">
+
 <tsung loglevel="warning">
 
   <clients>
@@ -75,7 +76,7 @@
       </request>
       <thinktime value="2" random="true"></thinktime>
 
-      <setdynvars sourcetype="random_number" start="4" end="1000">
+      <setdynvars sourcetype="random_number" start="4" end="10000">
         <var name="x" />
       </setdynvars>
 
