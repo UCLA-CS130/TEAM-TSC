@@ -14,10 +14,10 @@ TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -l
 SRCFILE = src/*.cc cpp-markdown/*.cpp
 DEPS = src/*.h cpp-markdown/*.h
 
-all: webserver
+all: create_table webserver
 
 create_table:
-	mysql -u root TSC < $(SRC_DIR)/create_table.sql
+	mysql -u root < $(SRC_DIR)/create_table.sql
 
 webserver: $(SRCFILE) $(DEPS) 
 	$(CXX) -o $(BUILD_DIR)/$@ $(SRCFILE) $(CXXFLAGS) $(CXXLINK)
@@ -104,7 +104,7 @@ deploy: docker
 	python deploy_ec2.py ../../TSC.pem httpserver ec2-35-163-116-30.us-west-2.compute.amazonaws.com
 
 drop_table:
-	mysql -u root TSC < $(SRC_DIR)/drop_table.sql
+	mysql -u root < $(SRC_DIR)/drop_table.sql
 
 clean: drop_table
 	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda
