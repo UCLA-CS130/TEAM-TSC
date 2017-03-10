@@ -16,6 +16,9 @@ DEPS = src/*.h cpp-markdown/*.h
 
 all: webserver
 
+create_table:
+	mysql -u root TSC < $(SRC_DIR)/create_table.sql
+
 webserver: $(SRCFILE) $(DEPS) 
 	$(CXX) -o $(BUILD_DIR)/$@ $(SRCFILE) $(CXXFLAGS) $(CXXLINK)
 

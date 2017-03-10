@@ -4,5 +4,7 @@ addons:
  apt:
    packages:
    - libboost-all-dev
+   - mysql-server
+   - libmysqlcppconn-dev
 dist: trusty
 sudo: required
