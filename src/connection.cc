@@ -48,7 +48,6 @@ bool Connection::handle_read_partial(const boost::system::error_code& ec,
     raw_request = ss.str();
 
     std::unique_ptr<Request> request_ptr = Request::Parse(raw_request);
-    //std::cout << request_ptr->raw_request() << std::endl << std::endl;
     if (!request_ptr) {
       response.SetStatus(Response::bad_request);
       handlers["ErrorHandler"]->HandleRequest(request, &response);

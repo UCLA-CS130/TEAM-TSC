@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+<!DOCTYPE tsung SYSTEM "/usr/local/Cellar/tsung/1.6.0/share/tsung/tsung-1.0.dtd">
+-->
+<tsung loglevel="warning">
+
+  <clients>
+    <client host="localhost" use_controller_vm="true" maxusers="15000"/>
+  </clients>
+
+  <servers>
+    <server host="35.165.85.42" port="8080" type="tcp"/>
+  </servers>
+
+  <load>
+    <!-- complex testing -->
+    <!-- phase 1: 45 secs, 1 user per sec -->
+    <arrivalphase phase="1" duration="30" unit="second">
+      <users arrivalrate="1" unit="second"></users>
+    </arrivalphase>
+
+    <!-- phase 2: 45 secs, 2 users per sec -->
+    <arrivalphase phase="2" duration="30" unit="second">
+      <users arrivalrate="2" unit="second"></users>
+    </arrivalphase> 
+
+    <!-- phase 3: 45 secs, 4 users per sec -->
+    <arrivalphase phase="3" duration="30" unit="second">
+      <users arrivalrate="4" unit="second"></users>
+    </arrivalphase> 
+    
+    <!-- phase 4: 30 secs, 8 users per sec -->
+    <arrivalphase phase="4" duration="30" unit="second">
+      <users arrivalrate="8" unit="second"></users>
+    </arrivalphase> 
+    <!-- end complex testing -->
+
+  </load>
+
+  <sessions>
+    <session name="es_load" weight="1" type="ts_http">
+      <request>
+        <http url="/" version="1.1" method="GET" />
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <request>
+        <http url="/echo" version="1.1" method="GET" />
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <request>
+        <http url="/static1/markdown_test.md" version="1.1" method="GET" />
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <request>
+        <http url="/static1/database_test.html"
+          version="1.1"
+          method="POST"
+          contents="query=SELECT+*+FROM+test"/>
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <setdynvars sourcetype="random_number" start="4" end="1000">
+        <var name="search" />
+      </setdynvars>
+
+      <request subst="true">
+        <http url="/static1/database_test.html"
+              version="1.1"
+              method="POST"
+              contents="query=SELECT+*+FROM+test+WHERE+x+%3D+%%_search%%"/>
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <setdynvars sourcetype="random_number" start="4" end="1000">
+        <var name="x" />
+      </setdynvars>
+
+      <setdynvars sourcetype="random_number" start="4" end="500">
+        <var name="y" />
+      </setdynvars>
+
+      <request subst="true">
+        <http url="/static1/database_test.html"
+              version="1.1"
+              method="POST"
+              contents="update=INSERT+INTO+test(x,y)+VALUES(%%_x%%,%%_y%%)"/>
+      </request>
+      <thinktime value="2" random="true"></thinktime>   
+
+    </session>
+  </sessions>
+</tsung>

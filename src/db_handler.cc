@@ -98,7 +98,7 @@ DbHandler::HandleRequest(const Request& request, Response* response)
   std::string req_body = request.body();
   DecodedBody decoded_body;
   if (!ParseBody(req_body, decoded_body)) {
-  	BOOST_LOG_TRIVIAL(info) << "Invalid request body format\n";
+  	BOOST_LOG_TRIVIAL(info) << "DB_HANDLER: Invalid request body format: ";
   	response->SetStatus(Response::bad_request);
   	return RequestHandler::handle_fail;
   }
@@ -111,7 +111,7 @@ DbHandler::HandleRequest(const Request& request, Response* response)
   	UpdateTable(decoded_body[0].second, response);
   }
   else {
-  	BOOST_LOG_TRIVIAL(info) << "Invalid request body format\n";
+  	BOOST_LOG_TRIVIAL(info) << "Invalid request body format";
   	response->SetStatus(Response::bad_request);
   	return RequestHandler::handle_fail;
   }

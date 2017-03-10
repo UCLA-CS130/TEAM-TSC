@@ -39,6 +39,7 @@ class DbHandler: public RequestHandler
   UpdateTable(const std::string& update, Response *response);
 
   using DecodedBody = std::vector<std::pair<std::string, std::string>>;
+  
   bool ParseBody(const std::string& body, DecodedBody& decoded_body);
 
  private:
