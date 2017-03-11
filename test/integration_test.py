@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 import telnetlib
+import time
 
 class bcolors:
     HEADER = '\033[95m'
@@ -41,6 +42,7 @@ wr.write(config_contents)
 wr.close()
 
 webserver = subprocess.Popen([EXE_PATH, TMP_FILE_DIR + '/config_file'])
+time.sleep(5)
 
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send echo request to server by curl')
 #ECHO TESTS----------------------------------------------------------------------
@@ -55,7 +57,8 @@ GET /echo HTTP/1.1\r\n\
 User-Agent: curl/7.35.0\r\n\
 Host: localhost:8080\r\n\
 Accept: */*\r\n\r\n'
-"""
+
+'''
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send static request to server by curl')
 
 #STATIC TESTS---------------------------------------------------------------------- 
@@ -63,14 +66,14 @@ request_static = 'curl -i localhost:8080/static1/test.html'
 curl_proc = subprocess.Popen(request_static, stdout=subprocess.PIPE, shell=True)
 response_static = curl_proc.stdout.read().decode('utf-8')
 
-expected_response_static = 'HTTP/1.0 200 OK\r\n\
+expected_response_static = 'HTTP/1.1 200 OK\r\n\
 Content-Length: 78\r\n\
 Content-Type: text/html\r\n\r\n\
 <html>\n\
   <head><title>hello</title></head>\n\
   <body><h1>TSC</h1></body>\n\
 </html>'
-"""
+
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send proxy request to server by curl')
 
 #PROXY TESTS---------------------------------------------------------------------- 
@@ -79,7 +82,7 @@ curl_proc = subprocess.Popen(request_proxy, stdout=subprocess.PIPE, shell=True)
 response_proxy = curl_proc.stdout.read()
 
 expected_response_proxy_code = "HTTP/1.1 200 OK"
-
+'''
 
 
 #MULTITHREAD TESTS------------------------------------------------------------------
@@ -120,7 +123,7 @@ if response != expected_response:
 	print('Response: ' + str(len(response)) + '\n' + response)
 else:
 	print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + 'Echo Test Succeeded!')
-"""
+'''
 if response_static != expected_response_static:
         print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + 'Incorrect Reply in Static Test!')
         print('Expected: ' + str(len(expected_response_static)) + '\n' + expected_response_static)
@@ -128,7 +131,7 @@ if response_static != expected_response_static:
         exit(1)
 else:
         print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + 'Static Test Succeeded!')
-
+'''
 if tn1_response != expected_response_thread or tn2_response != expected_response_thread:
     print(bcolors.FAIL + '[   FAIL   ] ' + bcolors.ENDC + "Incorrect Reply in multithread test!")
     print("Expected first response: " + str(len(expected_response_thread)) + '\n' + expected_response_thread)
@@ -138,4 +141,4 @@ if tn1_response != expected_response_thread or tn2_response != expected_response
 else:
     print(bcolors.OKBLUE + '[ SUCCESS! ] ' + bcolors.ENDC + "Multithread Test Succeeded!")
     exit(0)
-"""
+
