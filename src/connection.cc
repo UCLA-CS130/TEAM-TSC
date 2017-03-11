@@ -5,7 +5,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
 #include "connection.h"
-#include "body_compression.h"
+
 
 namespace http {
 namespace server {

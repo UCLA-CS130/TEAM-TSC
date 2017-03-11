@@ -13,7 +13,7 @@ CXXLINK=-pthread -lmysqlcppconn -lboost_system -lboost_log -lboost_regex -lboost
 #CXXLINK =-static-libgcc -static-libstdc++ -pthread -lmysqlcppconn -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
-TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
+TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread -lz
 
 SRCFILE = src/*.cc cpp-markdown/*.cpp 
 DEPS = src/*.h cpp-markdown/*.h 
@@ -60,7 +60,7 @@ gtest_setup:
 	rm gtest-all.o gmock-all.o
 
 
-connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_status.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc
+connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_status.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc $(SRC_DIR)/body_compression.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc

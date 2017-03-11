@@ -11,6 +11,7 @@
 #include "server_status.h"
 #include "request.h"
 #include "response.h"
+#include "body_compression.h"
 
 namespace http {
 namespace server {
