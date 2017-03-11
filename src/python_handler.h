@@ -1,5 +1,5 @@
-#ifndef HTTP_STATIC_FILE_HANDLER_H
-#define HTTP_STATIC_FILE_HANDLER_H
+#ifndef HTTP_PYTHON_HANDLER_H
+#define HTTP_PYTHON_HANDLER_H
 
 #include <string>
 #include "request_handler.h"
@@ -9,10 +9,10 @@ namespace http {
 namespace server {
   
 /// The common handler for all incoming requests.
-class StaticFileHandler: public RequestHandler
+class PythonHandler: public RequestHandler
 {
  public:
-  StaticFileHandler() {};
+  PythonHandler() {};
 
   RequestHandler::Status Init(const std::string& uri_prefix_,
                               const NginxConfig& config);
@@ -20,17 +20,22 @@ class StaticFileHandler: public RequestHandler
   RequestHandler::Status HandleRequest(const Request& request,
                                        Response* response);
 
+  using DecodedBody = std::vector<std::pair<std::string, std::string>>;
+
+  bool ParseBody(const std::string& body, DecodedBody& decoded_body);
+
  private:
   std::string uri_prefix_;
 
   std::string base_dir;
 
-  std::string extension2type(std::string);
+  std::string entry_func;
+
 };
 
-REGISTER_REQUEST_HANDLER(StaticFileHandler);
+REGISTER_REQUEST_HANDLER(PythonHandler);
 
 } // server
 } // http
 
-#endif // HTTP_STATIC_FILE_HANDLER_H
+#endif // HTTP_PYTHON_HANDLER_H

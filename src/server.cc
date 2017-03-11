@@ -54,7 +54,6 @@ Server::init(const char* config_file_path)
   }
 
   // initialize static_handlers
-  // BOOST_ASSERT(server_opt.static_file_uri_prefixes.size() == server_opt.static_file_config.size())
   unsigned int static_file_handler_num = server_opt.static_file_uri_prefixes.size();
   for (unsigned int i = 0; i < static_file_handler_num; ++i) {
     std::string uri_prefix = server_opt.static_file_uri_prefixes[i];
@@ -68,9 +67,23 @@ Server::init(const char* config_file_path)
     }
     ServerStatus::getInstance().addHandlerToUri("StaticHandler",uri_prefix);
   }
+
+  // initialize python_handlers
+  unsigned int python_handler_num = server_opt.python_uri_prefixes.size();
+  for (unsigned int i = 0; i < python_handler_num; ++i) {
+    std::string uri_prefix = server_opt.python_uri_prefixes[i];
+    NginxConfig python_config = server_opt.python_config[i];
+
+    handlers[uri_prefix] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("PythonHandler"));
+    RequestHandler::Status status= handlers[uri_prefix]->Init(uri_prefix, python_config);
+    if (status != RequestHandler::ok) {
+      std::cerr << "Error: Initialization of PythonHandler\n";
+      return false;
+    }
+    ServerStatus::getInstance().addHandlerToUri("PythonHandler",uri_prefix);
+  }
   
   // initialize proxy_handlers
-  // BOOST_ASSERT(server_opt.static_file_uri_prefixes.size() == server_opt.static_file_config.size())
   unsigned int proxy_handler_num = server_opt.proxy_uri_prefixes.size();
   for (unsigned int i = 0; i < proxy_handler_num; ++i) {
     std::string uri_prefix = server_opt.proxy_uri_prefixes[i];
@@ -95,8 +108,8 @@ Server::init(const char* config_file_path)
 
 
   // initialize db_handlers
-  handlers["DbHandler"] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("DbHandler"));
-  handlers["DbHandler"]->Init("DbHandler", config);
+  handlers["/DbHandler"] = std::unique_ptr<RequestHandler>(RequestHandler::CreateByName("DbHandler"));
+  handlers["/DbHandler"]->Init("DbHandler", config);
 
   boost::asio::ip::tcp::resolver resolver(io_service_);
   boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({server_opt.address, server_opt.port});

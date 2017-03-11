@@ -5,8 +5,12 @@ SRC_DIR=src
 BUILD_DIR=build
 
 CXX =g++
-CXXFLAGS =-g -Wall -std=c++11 
-CXXLINK =-static-libgcc -static-libstdc++ -pthread -lmysqlcppconn -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
+PYTHON_LDFLAG=-ldl -lutil -lm -lpython2.7 -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
+PYTHON_CFLAG=-fno-strict-aliasing -D_FORTIFY_SOURCE=2 -g -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes
+CXXFLAGS=-g -Wall -std=c++11 -DBOOST_LOG_DYN_LINK 
+CXXLINK=-pthread -lmysqlcppconn -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lboost_thread -lpython2.7 -DBOOST_LOG_DYN_LINK 
+#CXXFLAGS =-g -Wall -std=c++11 
+#CXXLINK =-static-libgcc -static-libstdc++ -pthread -lmysqlcppconn -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
 TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
