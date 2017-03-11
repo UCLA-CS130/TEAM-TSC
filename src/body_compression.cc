@@ -34,8 +34,8 @@ void Compression::CompressGzip(int compressionlevel)
         throw(std::runtime_error("deflateInit2 failed while compressing."));
     }
 
-    zs.next_in = (Bytef*)original_body.data();
-    zs.avail_in = original_body.size();           // set the z_stream's input
+    zs.next_in = (Bytef*)original_body_.data();
+    zs.avail_in = original_body_.size();           // set the z_stream's input
 
     int ret;
     char outbuffer[32768];
@@ -63,7 +63,7 @@ void Compression::CompressGzip(int compressionlevel)
         throw(std::runtime_error(oss.str()));
     }
 
-    compressed_body = outstring;
+    compressed_body_ = outstring;
 }
 
 
@@ -78,8 +78,8 @@ void Compression::CompressDeflate(int compressionlevel)
     if (deflateInit(&zs, compressionlevel) != Z_OK)
         throw(std::runtime_error("deflateInit failed while compressing."));
 
-    zs.next_in = (Bytef*)original_body.data();
-    zs.avail_in = original_body.size();           // set the z_stream's input
+    zs.next_in = (Bytef*)original_body_.data();
+    zs.avail_in = original_body_.size();           // set the z_stream's input
 
     int ret;
     char outbuffer[32768];
@@ -107,7 +107,7 @@ void Compression::CompressDeflate(int compressionlevel)
         throw(std::runtime_error(oss.str()));
     }
 
-    compressed_body = outstring;
+    compressed_body_ = outstring;
 }
 
 }

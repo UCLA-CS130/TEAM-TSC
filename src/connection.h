@@ -35,7 +35,7 @@ public:
 
     bool ProcessRequest(const Request& request);
 
-
+    void compress_payload();
 
   	bool handle_write(const boost::system::error_code& ec,
   					          std::size_t);

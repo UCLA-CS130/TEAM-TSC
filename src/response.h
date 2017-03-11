@@ -41,6 +41,10 @@ class Response {
     headers_.push_back(std::make_pair(header_name, header_value));
   }
 
+  std::string GetBody(){
+    return body_;
+  }
+
   void SetBody(const std::string& body) {
     body_ = body;
   }

@@ -20,19 +20,19 @@ class Compression
 
 
 private:
-	std::string original_body;
-	std::string compressed_body;
+	std::string original_body_;
+	std::string compressed_body_;
 
 public:
 
-	Compression(std::string original_body_):original_body(original_body_){}
+	Compression(std::string original_body):original_body_(original_body){}
 
 	void CompressGzip(int compressionlevel = Z_BEST_COMPRESSION);
 
 	void CompressDeflate(int compressionlevel = Z_BEST_COMPRESSION);
 
 	std::string GetCompressedBody(){
-		return compressed_body;
+		return compressed_body_;
 	} 
 
 }; 
