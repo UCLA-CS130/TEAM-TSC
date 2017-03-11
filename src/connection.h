@@ -35,6 +35,8 @@ public:
 
     bool ProcessRequest(const Request& request);
 
+
+
   	bool handle_write(const boost::system::error_code& ec,
   					          std::size_t);
 

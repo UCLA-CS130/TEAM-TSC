@@ -1,7 +1,10 @@
 #include <utility>
 #include <vector>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include "connection.h"
+#include "body_compression.h"
 
 namespace http {
 namespace server {
@@ -98,6 +101,8 @@ bool Connection::handle_read_body(const boost::system::error_code& ec,
   return false;
 }
 
+
+
 bool
 Connection::ProcessRequest(const Request& request) 
 {
@@ -132,6 +137,8 @@ Connection::ProcessRequest(const Request& request)
   if (status != RequestHandler::ok) return false;
   return true;
 }
+
+
 
 void 
 Connection::do_write() {
