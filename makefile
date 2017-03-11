@@ -28,7 +28,7 @@ webserver: $(SRCFILE) $(DEPS)
 
 .PHONY: clean test
 
-test: unit_test integration_test
+test: unit_test
 
 integration_test: webserver
 	python $(TEST_DIR)/integration_test.py
