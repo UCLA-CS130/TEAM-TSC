@@ -51,7 +51,7 @@ DbHandler::QueryTable(const std::string& query, Response *response)
     return true;
   } 
   catch (sql::SQLException &e) {
-  	BOOST_LOG_TRIVIAL(trace) << "# ERR: " << e.what() << " (MySQL error code: " << e.getErrorCode();
+  	//BOOST_LOG_TRIVIAL(trace) << "# ERR: " << e.what() << " (MySQL error code: " << e.getErrorCode();
   	std::string rep = std::string("ERR: ") + std::string(e.what());
   	response->SetStatus(Response::ok);
     response->AddHeader("Content-Length", std::to_string(rep.size()));

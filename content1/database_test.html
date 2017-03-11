@@ -2,7 +2,7 @@
   <head><title>hello</title></head>
   <body><h1>TSC</h1></body>
 
-  <form method="POST">
+  <form action="/DbHandler" method="POST">
     Query Statement
     <br>
 	  <input type="text" name="query" value="select * from test">
@@ -10,7 +10,7 @@
 	<input type="submit" value="Submit">
   </form>
 
-  <form method="POST">
+  <form action="/DbHandler" method="POST">
 	Update Statement: 
 	<br>
 	  <input type="text" name="update" value="insert into test(x, y) values(3, 3)">

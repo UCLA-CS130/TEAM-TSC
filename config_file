@@ -13,4 +13,9 @@ server {
 		host ucla.edu;
 		port 80;
 	}	
+
+	path /python-bin PythonHandler {
+		root python-bin;
+		func PythonApp;
+	}
 }

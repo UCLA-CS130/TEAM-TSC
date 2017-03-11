@@ -6,5 +6,6 @@ addons:
    - libboost-all-dev
    - mysql-server-5.6
    - libmysqlcppconn-dev
+   - python-mysql.connector
 dist: trusty
 sudo: required
