@@ -2,7 +2,7 @@ import subprocess
 import os
 import shutil
 import sys
-import telnetlib
+import time
 
 class bcolors:
     HEADER = '\033[95m'
@@ -34,10 +34,11 @@ wr.write(config_contents)
 wr.close()
 
 webserver = subprocess.Popen([EXE_PATH, TMP_FILE_DIR + '/config_file'])
+time.sleep(5)
 
 print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'send a request to server by curl')
 
-request = 'curl -i localhost:8080/'
+request = 'curl -i localhost:8080'
 curl_proc = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
 response = curl_proc.stdout.read().decode('utf-8')
 
