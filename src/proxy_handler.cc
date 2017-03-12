@@ -106,7 +106,6 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
       while(!cached_response.eof()) {
 	std::getline(cached_response, line);
 	if(line == "\r") {
-	  BOOST_LOG_TRIVIAL(info) << "GOOD\n";
 	  break;
 
 	}
@@ -125,9 +124,12 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	response->AddHeader(head, value);
       }
       //Read in the body
-      while(std::getline(cached_response, line)) { 
-	response->AppendBody(line);
-      }
+      std::stringstream buff;
+      buff << cached_response.rdbuf();
+      response->AppendBody(buff.str());
+      //      while(std::getline(cached_response, line)) { 
+      //response->AppendBody(line);
+      //}
       cached_response.close();
       return RequestHandler::ok;
     }
