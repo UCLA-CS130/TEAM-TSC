@@ -68,10 +68,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
     extension = file_path.substr(last_dot_pos + 1);
   }
 
-
-/*
   if(extension == "")
-
 
   boost::filesystem::path boost_path(file_path);
   if (!boost::filesystem::exists(file_path) || 
@@ -80,7 +77,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
     response->SetStatus(Response::not_found);
     return RequestHandler::handle_fail;
   }
-  */
+  
 
   // Open the file to send back.
   std::ifstream is(file_path.c_str(), std::ios::in | std::ios::binary);

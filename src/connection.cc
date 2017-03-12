@@ -24,7 +24,7 @@ void Connection::start()
 
 void Connection::do_read_partial() 
 {
-
+  response.Clear();
   boost::asio::async_read_until(socket_, buffer_, "\r\n\r\n",
                                 boost::bind(&Connection::handle_read_partial, shared_from_this(),
                                             boost::asio::placeholders::error,
@@ -178,6 +178,11 @@ Connection::compress_payload()
 
 void 
 Connection::do_write() {
+
+  if(request.GetHeaderValueByName("Connection") == "close"){
+     response.AddHeader("Connection","close");
+  } else response.AddHeader("Connection","keep-alive");
+
   ServerStatus::getInstance().insertRecord(request.uri(), response.GetStatus());
   if(!response.getIsImage())compress_payload();
 	boost::asio::async_write(socket_, boost::asio::buffer(response.ToString()),
@@ -191,10 +196,14 @@ Connection::handle_write(const boost::system::error_code& ec, std::size_t) {
   bool none_ec = false;
   if (!ec) {
     boost::system::error_code ignored_ec;
-    socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+    if(request.GetHeaderValueByName("Connection") == "close")
+      socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+    else do_read_partial();
+
+    //socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
     none_ec = true;
   }
-  if (ec != boost::asio::error::operation_aborted) {
+  if (ec && ec!= boost::asio::error::operation_aborted) {
     socket_.close();
   }
   return none_ec;
