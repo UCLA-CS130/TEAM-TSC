@@ -128,9 +128,7 @@ Connection::ProcessRequest(const Request& request)
   }
   
   RequestHandler::Status status;
-  if (request.method() == "POST")
-    status = handlers["DbHandler"]->HandleRequest(request, &response);
-  else status = handlers[longest_prefix]->HandleRequest(request, &response);
+  status = handlers[longest_prefix]->HandleRequest(request, &response);
   if (status != RequestHandler::ok) return false;
   return true;
 }

@@ -13,11 +13,17 @@ struct config_opts
   int threadCount = 10;
   std::vector<std::string> static_file_uri_prefixes;
   std::vector<NginxConfig> static_file_config;
+
   std::vector<std::string> echo_uri_prefixes;
+
   std::vector<std::string> status_uri_prefixes;
   //Add other options below
   std::vector<std::string> proxy_uri_prefixes;
   std::vector<NginxConfig> proxy_config;
+
+  std::vector<std::string> python_uri_prefixes;
+  std::vector<NginxConfig> python_config;
+
 };
 
 #endif //CONFIG_OPTS_H

@@ -105,8 +105,11 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
       }
       while(!cached_response.eof()) {
 	std::getline(cached_response, line);
-	if(line == "\r")
+	if(line == "\r") {
+	  BOOST_LOG_TRIVIAL(info) << "GOOD\n";
 	  break;
+
+	}
 	line.pop_back();
       
 
