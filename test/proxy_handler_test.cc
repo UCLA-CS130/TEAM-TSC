@@ -115,7 +115,7 @@ TEST_F(ProxyHandleRequest, ResourceNotFound) {
 	request.SetUri("/proxy1/thisisprobablynotavalidresource");
 	request.SetVersion("HTTP/1.1");
 
-	EXPECT_EQ(HandleRequest(request, response), RequestHandler::handle_fail);
+	EXPECT_EQ(HandleRequest(request, response), RequestHandler::ok);
 	delete response;
 }
 

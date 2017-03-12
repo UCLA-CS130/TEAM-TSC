@@ -56,6 +56,7 @@ Response::SetStatus(const unsigned int response_code)
 std::string
 Response::ToString()
 {
+  if (!raw_response_.empty()) return raw_response_;
   std::string str = "";
   if (version_ == "") version_ = "HTTP/1.1"; 
   str += version_ + " " + status_to_string(status_);
