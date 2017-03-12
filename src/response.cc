@@ -70,5 +70,23 @@ Response::ToString()
   return str;
 }
 
+
+void Response::AddHeader(std::string header_name, std::string header_value) 
+{
+
+  bool flag = false;
+  for(auto it : headers_){
+    if(it.first == header_name){
+      it.second = header_value;
+      flag = true;
+    }
+  }
+  if(!flag)
+    headers_.push_back(std::make_pair(header_name, header_value));
+}
+  
+
+
 } // namespace server
 } // namespace http
+

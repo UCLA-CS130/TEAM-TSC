@@ -155,15 +155,17 @@ Connection::compress_payload()
 
     if(find(encode_format.begin(),encode_format.end(),"deflate") != encode_format.end()){
       response.AddHeader("Content-Encoding","deflate");
-      std::cout<<"Compressing using deflate"<<std::endl;
+      BOOST_LOG_TRIVIAL(trace)<<"Compressing using deflate"<<std::endl;
       com.CompressDeflate();
       response.SetBody(com.GetCompressedBody());
+      response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
 
     } else if(find(encode_format.begin(),encode_format.end(),"gzip") != encode_format.end()){
       response.AddHeader("Content-Encoding","gzip");
-      std::cout<<"Compressing using gzip"<<std::endl;
+      BOOST_LOG_TRIVIAL(trace)<<"Compressing using gzip"<<std::endl;
       com.CompressGzip();
       response.SetBody(com.GetCompressedBody());
+      response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
     }
   }
 }
