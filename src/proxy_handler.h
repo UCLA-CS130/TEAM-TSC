@@ -6,6 +6,8 @@
 #include "request_handler.h"
 #include "server_status.h"
 #include "request.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <unordered_map>
 
 namespace http {
 namespace server {
@@ -38,6 +40,8 @@ class ProxyHandler: public RequestHandler
   std::string server_host_;
 
   std::string server_port_;
+
+  std::unordered_map<std::string, boost::posix_time::ptime > cache_;
 };
 
 REGISTER_REQUEST_HANDLER(ProxyHandler);

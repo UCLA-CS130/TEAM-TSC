@@ -13,4 +13,8 @@ server {
 		host ucla.edu;
 		port 80;
 	}	
+	path /test ProxyHandler {
+	     host www.google.com;
+	     port 80;
+	}
 }

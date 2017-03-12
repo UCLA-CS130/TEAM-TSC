@@ -6,6 +6,9 @@
 #include <boost/asio.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/log/trivial.hpp>
+#include <unordered_map>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <fstream>
 
 namespace http{
 namespace server{
@@ -60,11 +63,37 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
   std::string server_port = server_port_;
   std::string uri = request.uri();
   std::size_t findLoc = uri.find(uri_prefix_);
+
+  //If the request if cached, used the cached version instead
+  if(cache_.find(request.uri()) != cache_.end()) {
+    boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+    if(now < cache_[request.uri()]) {
+      BOOST_LOG_TRIVIAL(info) << "Using cache\n";
+      response->SetBody("");
+      std::ifstream cached_response("server_cache/"+request.uri());
+      while(!cached_response.eof()) {
+	std::string line;
+	std::getline(cached_response, line);
+	if(line.find("Date:") != std::string::npos) {
+	  static char const* const fmt = "%a, %d, %b, %Y, %H:%M:%S GMT";
+	  std::ostringstream sstream;
+	  sstream.imbue(std::locale(std::cout.getloc(), new boost::posix_time::time_facet(fmt)));
+	  sstream << boost::posix_time::second_clock::universal_time();
+	  line = "Date: " + sstream.str();
+	}
+	response->AppendBody(line);
+      }
+      cached_response.close();
+      return RequestHandler::ok;
+    }
+  }
   if(findLoc != std::string::npos) {
 	uri.erase(findLoc, uri_prefix_.size());
   }
   if (uri == "" || uri[0] != '/') uri = "/" + uri;
 
+  std::ofstream cache_file;
+  bool is_cache = false;
   while(true) 
   {
   	response->Clear();
@@ -128,7 +157,31 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
       header.pop_back();
 	  std::string head = header.substr(0, header.find(":"));
 	  std::string value = header.substr(header.find(":") + 2);
-	  response->AddHeader(head, value);
+
+	  if(head == "Cache-Control" 
+	     && value.find("no-store") == std::string::npos 
+	     && value.find("no-cache") == std::string::npos) {
+	    //Prevents the browser from doing its own caching
+	    response->AddHeader(head, "no-store");
+
+	    std::size_t location_of_max_age = value.find("max-age");
+	    if(location_of_max_age != std::string::npos) {
+	      std::string cache_life = value.substr(location_of_max_age);
+	      std::size_t end_location = cache_life.find(",");
+	      if(end_location != std::string::npos) {
+		cache_life = cache_life.substr(0, end_location);
+	      }
+	    
+	      cache_life = cache_life.substr(8);
+	      boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+	      boost::posix_time::time_duration cache_duration(0, 0, std::stoi(cache_life), 0);
+	      boost::posix_time::ptime expiration = now + cache_duration;
+	      cache_[request.uri()] = expiration;
+	    }
+	  }
+	  else {
+	    response->AddHeader(head, value);
+	  }  
 	  if(status_code == 302 && head.compare("Location")==0) {
 		// absolute_path: Location: http(s)://host(:port)/url(?...)
 		// relative_path: Location: /url(?...)
@@ -137,15 +190,26 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	  }
     }
 
+    if (cache_.find(request.uri()) != cache_.end()) {
+	is_cache = true;
+    }
+    if(is_cache) {
+      cache_file.open("server_cache/"+request.uri());
+    }
+
     // Read until EOF, writing data to output as we go.
     std::ostringstream ss;
   	ss << &resp;
   	response->SetBody(ss.str());
+	if(is_cache)
+	  cache_file << ss.str();
 
     while (boost::asio::read(socket, resp, ec)) {
       std::ostringstream ss;
       ss << &resp;
       response->AppendBody(ss.str());
+      if(is_cache)
+	cache_file << ss.str();
       if (ec) {
         break;
       }
@@ -153,12 +217,16 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
     
     if (ec != boost::asio::error::eof) {
       response->SetStatus(Response::internal_server_error);
+      if(cache_file.is_open())
+	cache_file.close();
       return RequestHandler::handle_fail;
     }
 
     if(status_code == 200)
       break;
   }
+  if(cache_file.is_open())
+    cache_file.close();
   return RequestHandler::ok;
 }
 
