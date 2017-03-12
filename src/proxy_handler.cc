@@ -75,8 +75,8 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
       if(request.uri() == "" || request.uri() == "/")
 	cached_response.open("server_cache/index");
       else 
-	cached_response.open("server_cache/"+request.uri());
-
+	cached_response.open("server_cache"+request.uri());
+      BOOST_LOG_TRIVIAL(info) << "server_cache" << request.uri();
       std::string line;
       std::getline(cached_response, line);
       std::size_t space = line.find(" ");
@@ -84,7 +84,6 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	BOOST_LOG_TRIVIAL(error) << "Cached file has no version num\n";
 	return RequestHandler::handle_fail;
       }
-      BOOST_LOG_TRIVIAL(info) << "1\n";
       std::string http_version = line.substr(0, space);
       line = line.substr(space+1);
       space = line.find(" ");
@@ -93,9 +92,7 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	return RequestHandler::handle_fail;
       }
       unsigned int status_code = stoi(line.substr(0, space));
-      BOOST_LOG_TRIVIAL(info) << "2\n";
       line = line.substr(space+1);
-      BOOST_LOG_TRIVIAL(info) << "3\n";
       response->SetVersion(http_version);
       response->SetStatus(status_code);
       
@@ -103,7 +100,6 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	response->SetStatus(Response::internal_server_error);
 	return RequestHandler::handle_fail;
       }
-      BOOST_LOG_TRIVIAL(info) << "4\n";
       if(status_code != 200 && status_code != 302) {
 	return RequestHandler::handle_fail;
       }
@@ -113,7 +109,6 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	  break;
 	line.pop_back();
       
-	BOOST_LOG_TRIVIAL(info) << "5\n";
 
 	if(line.find("Date:") != std::string::npos) {
 	  static char const* const fmt = "%a, %d, %b, %Y, %H:%M:%S GMT";
@@ -121,19 +116,14 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
 	  sstream.imbue(std::locale(std::cout.getloc(), new boost::posix_time::time_facet(fmt)));
 	  sstream << boost::posix_time::second_clock::universal_time();
 	  line = "Date: " + sstream.str();
-	  BOOST_LOG_TRIVIAL(info) << "6\n";
 	}
-	BOOST_LOG_TRIVIAL(info) << "7\n";
-	BOOST_LOG_TRIVIAL(info) << line << "\n";
 	std::string head = line.substr(0, line.find(":"));
 	std::string value = line.substr(line.find(":")+2);
 	response->AddHeader(head, value);
-	BOOST_LOG_TRIVIAL(info) << "8\n";
       }
       //Read in the body
       while(std::getline(cached_response, line)) { 
 	response->AppendBody(line);
-	BOOST_LOG_TRIVIAL(info) << line;
       }
       cached_response.close();
       return RequestHandler::ok;
@@ -292,8 +282,6 @@ ProxyHandler::HandleRequest(const Request& request, Response* response)
     cache_file.open("server_cache"+request.uri());
     BOOST_LOG_TRIVIAL(info) << request.uri() << "\n";
     cache_file << response->ToString();
-    if(cache_file.is_open())
-      BOOST_LOG_TRIVIAL(info) << "HAHFAGAGGA";
     cache_file.close();
   }
   return RequestHandler::ok;
