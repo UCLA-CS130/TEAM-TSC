@@ -111,7 +111,7 @@ load_test:
 	python $(TEST_DIR)/load-testing.py ../../TSC.pem $(TEST_DIR)/load-testing.xml ec2-35-163-116-30.us-west-2.compute.amazonaws.com True
 
 clean: 
-	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda
+	rm -rf $(BUILD_DIR)/* *.o *.a *.gcno *.gcov *.gcda proxy_cache/*
 
 
 
