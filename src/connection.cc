@@ -133,6 +133,7 @@ Connection::ProcessRequest(const Request& request)
     return false;
   }
   
+  response.setIsImage(false);
   RequestHandler::Status status;
   status = handlers[longest_prefix]->HandleRequest(request, &response);
   if (status != RequestHandler::ok) return false;
@@ -153,29 +154,32 @@ Connection::compress_payload()
    
     Compression com(response.GetBody());
 
-    if(find(encode_format.begin(),encode_format.end(),"deflate") != encode_format.end()){
+    if(find(encode_format.begin(),encode_format.end(),"gzip") != encode_format.end()){
+      response.AddHeader("Content-Encoding","gzip");
+      //std::cout<<"before compressing "<<std::to_string(response.GetBody().size())<<std::endl;
+      BOOST_LOG_TRIVIAL(trace)<<"Compressing using gzip"<<std::endl;
+      com.CompressGzip();
+      response.SetBody(com.GetCompressedBody());
+      //std::cout<<"after compressing "<<std::to_string(response.GetBody().size())<<std::endl;
+      response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
+    } 
+
+
+    else if(find(encode_format.begin(),encode_format.end(),"deflate") != encode_format.end()){
       response.AddHeader("Content-Encoding","deflate");
       BOOST_LOG_TRIVIAL(trace)<<"Compressing using deflate"<<std::endl;
       com.CompressDeflate();
       response.SetBody(com.GetCompressedBody());
       response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
-
-    } else if(find(encode_format.begin(),encode_format.end(),"gzip") != encode_format.end()){
-      response.AddHeader("Content-Encoding","gzip");
-      BOOST_LOG_TRIVIAL(trace)<<"Compressing using gzip"<<std::endl;
-      com.CompressGzip();
-      response.SetBody(com.GetCompressedBody());
-      response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
-    }
+    } 
   }
 }
-
 
 
 void 
 Connection::do_write() {
   ServerStatus::getInstance().insertRecord(request.uri(), response.GetStatus());
-  compress_payload();
+  if(!response.getIsImage())compress_payload();
 	boost::asio::async_write(socket_, boost::asio::buffer(response.ToString()),
       boost::bind(&Connection::handle_write, shared_from_this(),
                   boost::asio::placeholders::error,

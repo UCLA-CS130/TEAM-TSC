@@ -68,12 +68,21 @@ class Response {
 
   std::string ToString();
 
+  void setIsImage(bool is_image){
+    is_image_ = is_image;
+  }
+
+  bool getIsImage(){
+    return is_image_;
+  }
+
  private:
   std::string version_;
   ResponseCode status_;
   Headers headers_;
   std::string body_;
   std::string raw_response_;
+  bool is_image_;
 };
 
 } // namespace server
