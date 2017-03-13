@@ -43,9 +43,20 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 
 <br>
 ![user-flow](user-flow.png)
-
-<br>
 ![comparison-1](comparison-1.png)
+* Our user flow contains 
+  1. Visit some different urls on proxy
+  2. /echo
+  3. Fetch .md file
+  4. Fetch a large file
+* We don't contain the interactions with mysql database in our user flow because mysql requires the number of 
+  simultaneous connections less than 151. However in our load-testing, our simultaneous users are more than 200. 
+  We are still trying to solve this problem. 
+* Analysis.
+  The right picture shows the results of our webserver before optimization. We can see that after about 500 seconds, 
+  the mean transcation and page duration becomes so large, more than 1000 msec. This means our webserver cannot perform well at that time.
+  the left picture shows the results of our webserver after optimization. We can see that now its page response time are all under 1000 msec.
+  This is a big improvement.
 
 <br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
