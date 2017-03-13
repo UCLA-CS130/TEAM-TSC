@@ -64,7 +64,9 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## Keep-alive Connection
-   Keep the connection alive as long as the client use keep-alive scheme.
+   Read the connection status from request header.
+   Keep the connection alive when client use keep-alive scheme.
+   Response with "Connection: close" when client use close scheme.
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## A Cache Proxy
