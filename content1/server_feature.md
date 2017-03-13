@@ -51,9 +51,9 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## HTTP Compression
 * General explanation
-  Support for gzip and deflate format
-  Compress only big files.
-  Compress files except for jpg/jpeg/png format
+  Support for gzip and deflate format<br>
+  Compress only big files.<br>
+  Compress files except for jpg/jpeg/png format<br>
   
 * Without Compression:
 ![without-compression](without-compression.png)
