@@ -38,7 +38,7 @@ StaticFileHandler::extension2type(std::string extension) {
   if (extension == "gif") return "image/gif";
   else if (extension == "htm") return "text/html";
   else if (extension == "html") return "text/html";
-  else if (extension == "jpg") return "image/jpeg";
+  else if (extension == "jpg" ||extension == "jpeg") return "image/jpeg";
   else if (extension == "png") return "image/png";
   else return "text/plain";
 }
@@ -68,6 +68,8 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
     extension = file_path.substr(last_dot_pos + 1);
   }
 
+  if(extension == "")
+
   boost::filesystem::path boost_path(file_path);
   if (!boost::filesystem::exists(file_path) || 
       !boost::filesystem::is_regular_file(file_path)) {
@@ -75,6 +77,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
     response->SetStatus(Response::not_found);
     return RequestHandler::handle_fail;
   }
+  
 
   // Open the file to send back.
   std::ifstream is(file_path.c_str(), std::ios::in | std::ios::binary);
@@ -109,6 +112,7 @@ StaticFileHandler::HandleRequest(const Request& request, Response* response) {
   response->SetBody(body);
   response->AddHeader("Content-Length", std::to_string(body.size()));
   response->AddHeader("Content-Type", extension2type(extension));
+  if(extension == "jpg" || extension == "png" || extension == "jpeg") response->setIsImage(true);
   return RequestHandler::ok;
 }
 

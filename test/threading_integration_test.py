@@ -53,17 +53,20 @@ print(bcolors.OKBLUE + '[----------] ' + bcolors.ENDC + 'Begin testing for mutit
 #MULTITHREAD TESTS------------------------------------------------------------------
 host = "localhost"
 expected_response_thread = 'HTTP/1.1 200 OK\r\n\
-Content-Length: 77\r\n\
-Content-Type: text/plain\r\n\r\n\
+Content-Length: 96\r\n\
+Content-Type: text/plain\r\n\
+Connection: close\r\n\r\n\
 GET /echo HTTP/1.1\r\n\
 User-Agent: telnet\r\n\
 Host: localhost:8080\r\n\
+Connection: close\r\n\
 Accept: */*\r\n\r\n'
 
 first_half_message = "GET /echo HTTP/1.1\r\n\
 User-Agent: telnet\r\n\
 Host: localhost:8080\r\n"
-second_half_message = "Accept: */*\r\n\r\n"
+second_half_message = "Connection: close\r\n\
+Accept: */*\r\n\r\n"
 
 thread_num = int(sys.argv[1])
 print (bcolors.OKBLUE + '[----------] ' + bcolors.ENDC +'total thread number : '+ str(thread_num))

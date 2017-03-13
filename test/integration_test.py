@@ -52,7 +52,8 @@ response = curl_proc.stdout.read().decode('utf-8')
 
 expected_response = 'HTTP/1.1 200 OK\r\n\
 Content-Length: 82\r\n\
-Content-Type: text/plain\r\n\r\n\
+Content-Type: text/plain\r\n\
+Connection: keep-alive\r\n\r\n\
 GET /echo HTTP/1.1\r\n\
 User-Agent: curl/7.35.0\r\n\
 Host: localhost:8080\r\n\
@@ -88,17 +89,20 @@ expected_response_proxy_code = "HTTP/1.1 200 OK"
 #MULTITHREAD TESTS------------------------------------------------------------------
 host = "localhost"
 expected_response_thread = 'HTTP/1.1 200 OK\r\n\
-Content-Length: 77\r\n\
-Content-Type: text/plain\r\n\r\n\
+Content-Length: 96\r\n\
+Content-Type: text/plain\r\n\
+Connection: close\r\n\r\n\
 GET /echo HTTP/1.1\r\n\
 User-Agent: telnet\r\n\
 Host: localhost:8080\r\n\
+Connection: close\r\n\
 Accept: */*\r\n\r\n'
 
 first_half_message = "GET /echo HTTP/1.1\r\n\
 User-Agent: telnet\r\n\
 Host: localhost:8080\r\n"
-second_half_message = "Accept: */*\r\n\r\n"
+second_half_message = "Connection: close\r\n\
+Accept: */*\r\n\r\n"
 
 tn1 = telnetlib.Telnet(host, 8080, 5)
 tn1.write(first_half_message)
@@ -110,6 +114,7 @@ tn2_response = tn2.read_all()
 
 tn1.write(second_half_message)
 tn1_response = tn1_response + tn1.read_all()
+print tn1_response
 
 webserver.kill()
 shutil.rmtree(TMP_FILE_DIR)

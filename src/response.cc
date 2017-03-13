@@ -76,9 +76,9 @@ void Response::AddHeader(std::string header_name, std::string header_value)
 {
 
   bool flag = false;
-  for(auto it : headers_){
-    if(it.first == header_name){
-      it.second = header_value;
+  for(auto it = headers_.begin();it != headers_.end();it++){
+    if(it->first == header_name){
+      it->second = header_value;
       flag = true;
     }
   }
