@@ -195,8 +195,10 @@ Connection::handle_write(const boost::system::error_code& ec, std::size_t) {
   bool none_ec = false;
   if (!ec) {
     boost::system::error_code ignored_ec;
-    if(request.GetHeaderValueByName("Connection") == "close")
+    if(request.GetHeaderValueByName("Connection") == "close") {
       socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+      socket_.close();
+    }
     else do_read_partial();
 
     //socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
