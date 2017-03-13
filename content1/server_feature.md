@@ -65,7 +65,10 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## A Cache Proxy
 ![proxy-cache](proxy_cache.png)
-* some explanation
+* The reverse proxy maintains its own cache
+* Browsers may internally do their own caching, but requests to the reverse proxy from other browsers / clients will utilize the cache
+* The cache is controlled by HTTP headers and functions similarly to browser caching, using Cache-Control to configure caching and etags to validate old copies of files
+* Image comparison below shows the performance boost of caching. Pages load significantly faster on cache hits
 * Without Cache:
 ![non-cache](non-cache.png)
 * With Cache:
