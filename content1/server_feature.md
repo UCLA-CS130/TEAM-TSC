@@ -50,7 +50,7 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## HTTP Compression
-* General explanation
+* General explanation<br>
   Support for gzip and deflate format<br>
   Compress only big files.<br>
   Compress files except for jpg/jpeg/png format<br>
