@@ -52,6 +52,11 @@ class Response {
   void Clear() {
     headers_.clear();
     body_.clear();
+    raw_response_.clear();
+  }
+
+  void SetRawResponse(const std::string& raw_response) {
+    raw_response_ = raw_response;
   }
   
   ResponseCode GetStatus() {
@@ -65,6 +70,7 @@ class Response {
   ResponseCode status_;
   Headers headers_;
   std::string body_;
+  std::string raw_response_;
 };
 
 } // namespace server
