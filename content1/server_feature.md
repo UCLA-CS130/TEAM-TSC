@@ -61,7 +61,11 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## HTTP Compression
-* some explanation
+* General explanation<br>
+  Support for gzip and deflate format<br>
+  Compress only big files.<br>
+  Compress files except for jpg/jpeg/png format<br>
+  
 * Without Compression:
 ![without-compression](without-compression.png)
 * With Compression:
@@ -71,7 +75,9 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## Keep-alive Connection
-
+   Read the connection status from request header.<br>
+   Keep the connection alive when client use keep-alive scheme.<br>
+   Response with "Connection: close" when client use close scheme.<br>
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## A Cache Proxy
