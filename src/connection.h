@@ -11,6 +11,7 @@
 #include "server_status.h"
 #include "request.h"
 #include "response.h"
+#include "body_compression.h"
 
 namespace http {
 namespace server {
@@ -34,6 +35,8 @@ public:
                           size_t bytes_transferred); 
 
     bool ProcessRequest(const Request& request);
+
+    void compress_payload();
 
   	bool handle_write(const boost::system::error_code& ec,
   					          std::size_t);

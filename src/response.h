@@ -37,8 +37,11 @@ class Response {
 
   void SetStatus(const unsigned int response_code);
 
-  void AddHeader(std::string header_name, std::string header_value) {
-    headers_.push_back(std::make_pair(header_name, header_value));
+  void AddHeader(std::string header_name, std::string header_value);
+
+
+  std::string GetBody(){
+    return body_;
   }
 
   void SetBody(const std::string& body) {

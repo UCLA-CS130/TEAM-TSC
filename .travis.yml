@@ -7,5 +7,7 @@ addons:
    - mysql-server-5.6
    - libmysqlcppconn-dev
    - python-mysql.connector
+   - zlib1g-dev
+
 dist: trusty
 sudo: required

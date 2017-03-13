@@ -1,7 +1,11 @@
 #include <utility>
 #include <vector>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
 #include "connection.h"
+
 
 namespace http {
 namespace server {
@@ -98,6 +102,8 @@ bool Connection::handle_read_body(const boost::system::error_code& ec,
   return false;
 }
 
+
+
 bool
 Connection::ProcessRequest(const Request& request) 
 {
@@ -133,9 +139,43 @@ Connection::ProcessRequest(const Request& request)
   return true;
 }
 
+
+
+void
+Connection::compress_payload()
+{
+  std::string encoding_string = request.GetHeaderValueByName("Accept-Encoding");
+  if(encoding_string!=""){
+    //then there is a accepted compression format
+    std::vector<std::string> encode_format;
+    boost::replace_all(encoding_string," ","");
+    boost::split(encode_format,encoding_string,boost::is_any_of(","));
+   
+    Compression com(response.GetBody());
+
+    if(find(encode_format.begin(),encode_format.end(),"deflate") != encode_format.end()){
+      response.AddHeader("Content-Encoding","deflate");
+      BOOST_LOG_TRIVIAL(trace)<<"Compressing using deflate"<<std::endl;
+      com.CompressDeflate();
+      response.SetBody(com.GetCompressedBody());
+      response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
+
+    } else if(find(encode_format.begin(),encode_format.end(),"gzip") != encode_format.end()){
+      response.AddHeader("Content-Encoding","gzip");
+      BOOST_LOG_TRIVIAL(trace)<<"Compressing using gzip"<<std::endl;
+      com.CompressGzip();
+      response.SetBody(com.GetCompressedBody());
+      response.AddHeader("Content-Length",std::to_string(response.GetBody().size()));
+    }
+  }
+}
+
+
+
 void 
 Connection::do_write() {
   ServerStatus::getInstance().insertRecord(request.uri(), response.GetStatus());
+  compress_payload();
 	boost::asio::async_write(socket_, boost::asio::buffer(response.ToString()),
       boost::bind(&Connection::handle_write, shared_from_this(),
                   boost::asio::placeholders::error,

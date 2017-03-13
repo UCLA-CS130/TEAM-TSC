@@ -8,15 +8,15 @@ CXX =g++
 PYTHON_LDFLAG=-ldl -lutil -lm -lpython2.7 -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
 PYTHON_CFLAG=-fno-strict-aliasing -D_FORTIFY_SOURCE=2 -g -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes
 CXXFLAGS=-g -Wall -std=c++11 -DBOOST_LOG_DYN_LINK 
-CXXLINK=-pthread -lmysqlcppconn -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lboost_thread -lpython2.7 -DBOOST_LOG_DYN_LINK 
+CXXLINK=-pthread -lmysqlcppconn -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lboost_thread -lz -lpython2.7 -DBOOST_LOG_DYN_LINK 
 #CXXFLAGS =-g -Wall -std=c++11 
 #CXXLINK =-static-libgcc -static-libstdc++ -pthread -lmysqlcppconn -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_regex -lboost_filesystem -lboost_thread
 TESTFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TESTARGS =-pthread
-TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread
+TESTLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_regex -lboost_filesystem -lpthread -lz
 
-SRCFILE = src/*.cc cpp-markdown/*.cpp
-DEPS = src/*.h cpp-markdown/*.h
+SRCFILE = src/*.cc cpp-markdown/*.cpp 
+DEPS = src/*.h cpp-markdown/*.h 
 
 all: create_table webserver
 
@@ -60,7 +60,7 @@ gtest_setup:
 	rm gtest-all.o gmock-all.o
 
 
-connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_status.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc
+connection_test: $(TEST_DIR)/connection_test.cc $(SRC_DIR)/connection.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_status.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc $(SRC_DIR)/body_compression.cc
 	$(CXX) $(TESTFLAGS) $(TESTARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TESTLINK) -o $(BUILD_DIR)/$@
 
 config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc
