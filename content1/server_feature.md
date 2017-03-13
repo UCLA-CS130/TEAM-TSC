@@ -64,7 +64,7 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## Keep-alive Connection
-
+   Keep the connection alive as long as the client use keep-alive scheme.
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## A Cache Proxy
