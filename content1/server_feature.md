@@ -39,9 +39,7 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## Load Testing
 * Use Tsung for load testing.
-* User Flow and comparison:
-
-<br>
+* User Flow and comparison:<br>
 ![user-flow](user-flow.png)
 ![comparison-1](comparison-1.png)
 * Our user flow contains 
@@ -52,7 +50,7 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 * We don't contain the interactions with mysql database in our user flow because mysql requires the number of 
   simultaneous connections less than 151. However in our load-testing, our simultaneous users are more than 200. 
   We are still trying to solve this problem. 
-* Analysis.
+* Analysis.<br>
   The right picture shows the results of our webserver before optimization. We can see that after about 500 seconds, 
   the mean transcation and page duration becomes so large, more than 1000 msec. This means our webserver cannot perform well at that time.
   the left picture shows the results of our webserver after optimization. We can see that now its page response time are all under 1000 msec.
@@ -75,9 +73,9 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## Keep-alive Connection
-   Read the connection status from request header.<br>
-   Keep the connection alive when client use keep-alive scheme.<br>
-   Response with "Connection: close" when client use close scheme.<br>
+* Read the connection status from request header.<br>
+* Keep the connection alive when client use keep-alive scheme.<br>
+* Response with "Connection: close" when client use close scheme.<br>
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## A Cache Proxy
@@ -86,7 +84,7 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 * Browsers may internally do their own caching, but requests to the reverse proxy from other browsers / clients will utilize the cache
 * The cache is controlled by HTTP headers and functions similarly to browser caching, using Cache-Control to configure caching and etags to validate old copies of files
 * Image comparison below shows the performance boost of caching. Pages load significantly faster on cache hits
-* Without Cache:
+* Without Cache:<br>
 ![non-cache](non-cache.png)
-* With Cache:
+* With Cache:<br>
 ![using-cache](using-cache.png)
