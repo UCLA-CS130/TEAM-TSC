@@ -18,6 +18,7 @@ class Response {
  public:
   enum ResponseCode {
     // Define your HTTP response codes here.
+    none = 0,
     ok = 200,
     bad_request = 400,
     not_found = 404,
@@ -54,8 +55,11 @@ class Response {
 
   void Clear() {
     headers_.clear();
+    status_ = ResponseCode::none;
     body_.clear();
+    version_.clear();
     raw_response_.clear();
+    is_image_ = false;
   }
 
   void SetRawResponse(const std::string& raw_response) {
@@ -78,11 +82,11 @@ class Response {
 
  private:
   std::string version_;
-  ResponseCode status_;
+  ResponseCode status_ = none;
   Headers headers_;
   std::string body_;
   std::string raw_response_;
-  bool is_image_;
+  bool is_image_ = false;
 };
 
 } // namespace server

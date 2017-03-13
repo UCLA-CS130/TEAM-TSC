@@ -133,7 +133,6 @@ Connection::ProcessRequest(const Request& request)
     return false;
   }
   
-  response.setIsImage(false);
   RequestHandler::Status status;
   status = handlers[longest_prefix]->HandleRequest(request, &response);
   if (status != RequestHandler::ok) return false;
