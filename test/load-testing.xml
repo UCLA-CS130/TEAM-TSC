@@ -17,32 +17,72 @@
   <load>
     <!-- complex testing -->
     <!-- phase 1: 45 secs, 1 user per sec -->
-    <arrivalphase phase="1" duration="30" unit="second">
+    <arrivalphase phase="1" duration="60" unit="second">
       <users arrivalrate="1" unit="second"></users>
     </arrivalphase>
 
+    <arrivalphase phase="2" duration="60" unit="second">
+      <users arrivalrate="1.5" unit="second"></users>
+    </arrivalphase>    
+
     <!-- phase 2: 45 secs, 2 users per sec -->
-    <arrivalphase phase="2" duration="30" unit="second">
-      <users arrivalrate="2" unit="second"></users>
+    <arrivalphase phase="3" duration="60" unit="second">
+      <users arrivalrate="4" unit="second"></users>
     </arrivalphase> 
 
     <!-- phase 3: 45 secs, 4 users per sec -->
-    <arrivalphase phase="3" duration="30" unit="second">
-      <users arrivalrate="4" unit="second"></users>
-    </arrivalphase> 
-    
-    <!-- phase 4: 30 secs, 8 users per sec -->
-    <arrivalphase phase="4" duration="30" unit="second">
+    <arrivalphase phase="4" duration="60" unit="second">
       <users arrivalrate="8" unit="second"></users>
     </arrivalphase> 
-    <!-- end complex testing -->
+    
+    <arrivalphase phase="5" duration="60" unit="second">
+      <users arrivalrate="6" unit="second"></users>
+    </arrivalphase> 
 
+    <arrivalphase phase="6" duration="60" unit="second">
+      <users arrivalrate="10" unit="second"></users>
+    </arrivalphase>
+
+    <arrivalphase phase="7" duration="60" unit="second">
+      <users arrivalrate="16" unit="second"></users>
+    </arrivalphase>
+
+    <arrivalphase phase="8" duration="60" unit="second">
+      <users arrivalrate="20" unit="second"></users>
+    </arrivalphase>
+
+    <arrivalphase phase="9" duration="60" unit="second">
+      <users arrivalrate="25" unit="second"></users>
+    </arrivalphase>
+
+    <arrivalphase phase="10" duration="60" unit="second">
+      <users arrivalrate="30" unit="second"></users>
+    </arrivalphase>
+
+    <arrivalphase phase="11" duration="60" unit="second">
+      <users arrivalrate="40" unit="second"></users>
+    </arrivalphase>
+
+    <arrivalphase phase="12" duration="60" unit="second">
+      <users arrivalrate="50" unit="second"></users>
+    </arrivalphase>
   </load>
 
   <sessions>
     <session name="es_load" weight="1" type="ts_http">
       <request>
-        <http url="/" version="1.1" method="GET" />
+        <http url="/css/main.css" version="1.1" method="GET">
+          <http_header name="Host" value="35.165.85.42:8080"/>
+          <http_header name="Referer" value="http://35.165.85.42:8080/"/>
+        </http>
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <request>
+        <http url="/css/responsive.css" version="1.1" method="GET">
+          <http_header name="Host" value="35.165.85.42:8080"/>
+          <http_header name="Referer" value="http://35.165.85.42:8080/"/>
+        </http>
       </request>
       <thinktime value="2" random="true"></thinktime>
 
@@ -57,7 +97,15 @@
       <thinktime value="2" random="true"></thinktime>
 
       <request>
-        <http url="/static1/database_test.html"
+        <http url="/static1/big_file.html" version="1.1" method="GET">
+          <http_header name="Accept-Encoding" value="gzip, deflate"/>
+        </http>
+      </request>
+      <thinktime value="2" random="true"></thinktime>
+
+      <!-- 
+      <request>
+        <http url="/DbHandler"
           version="1.1"
           method="POST"
           contents="query=SELECT+*+FROM+test"/>
@@ -69,7 +117,7 @@
       </setdynvars>
 
       <request subst="true">
-        <http url="/static1/database_test.html"
+        <http url="/DbHandler"
               version="1.1"
               method="POST"
               contents="query=SELECT+*+FROM+test+WHERE+x+%3D+%%_search%%"/>
@@ -84,13 +132,16 @@
         <var name="y" />
       </setdynvars>
 
+
       <request subst="true">
-        <http url="/static1/database_test.html"
+        <http url="/DbHandler"
               version="1.1"
               method="POST"
-              contents="update=INSERT+INTO+test(x,y)+VALUES(%%_x%%,%%_y%%)"/>
+              contents="query=INSERT+INTO+test(x,y)+VALUES(%%_x%%,%%_y%%)"/>
       </request>
-      <thinktime value="2" random="true"></thinktime>   
+      <thinktime value="2" random="true"></thinktime>  
+
+      --> 
 
     </session>
   </sessions>

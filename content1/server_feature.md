@@ -34,17 +34,28 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 <br>
   ![python-app](python_app.png)
 
+* demo: [http://35.165.85.42:8080/static1](http://35.165.85.42:8080/static1)
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## Load Testing
 * Use Tsung for load testing.
-* Performance before optimization:
-* Performance after optimization ( Proxy Cache + HTTP Compression + Keep-alive Connection):
+* User Flow and comparison:
 
+<br>
+![user-flow](user-flow.png)
 
-<br><br>
+<br>
+![comparison-1](comparison-1.png)
+
+<br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## HTTP Compression
+* some explanation
+* Without Compression:
+![without-compression](without-compression.png)
+* With Compression:
+![with-compression](with-compression.png)
+* demo: [http://35.165.85.42:8080/static1/big_file.html](http://35.165.85.42:8080/static1/big_file.html)
 
 <br><br>
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
@@ -54,3 +65,8 @@ github: [https://github.com/sevenjay/cpp-markdown](https://github.com/sevenjay/c
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 ## A Cache Proxy
 ![proxy-cache](proxy_cache.png)
+* some explanation
+* Without Cache:
+![non-cache](non-cache.png)
+* With Cache:
+![using-cache](using-cache.png)
